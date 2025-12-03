@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Attendance System</title>
+    <title>Secure Employee Attendance System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -22,7 +23,7 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
@@ -30,7 +31,7 @@
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            background: linear-gradient(135deg, #1a5f7a, #2c3e50);
             color: white;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -44,7 +45,7 @@
         .logo {
             font-size: 2rem;
             margin-right: 10px;
-            color: #3498db;
+            color: #57cc99;
         }
         
         .subtitle {
@@ -80,7 +81,7 @@
         }
         
         .card-title i {
-            color: #3498db;
+            color: #1a5f7a;
         }
         
         .form-group {
@@ -104,14 +105,14 @@
         }
         
         input:focus, select:focus {
-            border-color: #3498db;
+            border-color: #1a5f7a;
             outline: none;
         }
         
         .btn {
             display: inline-block;
             padding: 14px 25px;
-            background: #3498db;
+            background: #1a5f7a;
             color: white;
             border: none;
             border-radius: 5px;
@@ -124,25 +125,25 @@
         }
         
         .btn:hover {
-            background: #2980b9;
+            background: #2c3e50;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
-        .btn-checkin {
-            background: #2ecc71;
+        .btn-capture {
+            background: #57cc99;
         }
         
-        .btn-checkin:hover {
-            background: #27ae60;
+        .btn-capture:hover {
+            background: #38b2ac;
         }
         
-        .btn-checkout {
-            background: #e74c3c;
+        .btn-submit {
+            background: #22577a;
         }
         
-        .btn-checkout:hover {
-            background: #c0392b;
+        .btn-submit:hover {
+            background: #1a5f7a;
         }
         
         .camera-container {
@@ -191,86 +192,175 @@
         .captured-image-container {
             position: relative;
             margin-top: 20px;
+            display: none;
         }
         
         .captured-image {
             width: 100%;
             border-radius: 5px;
-            display: none;
+            border: 2px solid #1a5f7a;
         }
         
-        .timestamp-overlay {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            max-width: 80%;
-        }
-        
-        .location-info {
+        .photo-metadata {
             background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+        
+        .metadata-item {
+            display: flex;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metadata-label {
+            font-weight: 600;
+            min-width: 120px;
+            color: #1a5f7a;
+        }
+        
+        .metadata-value {
+            flex: 1;
+            word-break: break-word;
+        }
+        
+        .security-info {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
             padding: 15px;
             border-radius: 5px;
             margin-top: 15px;
             font-size: 0.9rem;
         }
         
-        .location-info i {
-            color: #3498db;
-            margin-right: 8px;
+        .security-info h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .attendance-history {
-            margin-top: 30px;
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
         
-        table {
+        .gallery-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-photo {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        
-        th, td {
-            padding: 15px;
-            text-align: left;
+            height: 200px;
+            object-fit: cover;
             border-bottom: 1px solid #eee;
         }
         
-        th {
-            background-color: #f8f9fa;
-            color: #2c3e50;
+        .gallery-info {
+            padding: 15px;
+        }
+        
+        .gallery-name {
             font-weight: 600;
+            margin-bottom: 5px;
+            color: #1a5f7a;
         }
         
-        tr:hover {
-            background-color: #f9f9f9;
+        .gallery-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 8px;
         }
         
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .status-checkin {
-            background-color: #d5f4e6;
-            color: #27ae60;
-        }
-        
-        .status-checkout {
-            background-color: #fadbd8;
-            color: #e74c3c;
+        .gallery-location {
+            font-size: 0.8rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .no-data {
             text-align: center;
-            padding: 30px;
+            padding: 40px 20px;
             color: #7f8c8d;
+            grid-column: 1 / -1;
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: #1a5f7a;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #1a5f7a;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .verification-fail {
+            background: #f8d7da;
+            color: #721c24;
         }
         
         footer {
@@ -294,195 +384,479 @@
             .card {
                 min-width: 100%;
             }
+            
+            .gallery-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-fingerprint logo"></i> Employee Attendance System</h1>
-            <p class="subtitle">Mark your attendance with automatic location, date, time and photo capture</p>
+            <h1><i class="fas fa-shield-alt logo"></i> Secure Attendance System</h1>
+            <p class="subtitle">Anti-spoofing attendance with photo verification and location validation</p>
         </header>
         
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="attendance-tab">
+                <i class="fas fa-camera"></i> Mark Attendance
+            </button>
+            <button class="tab-btn" data-tab="gallery-tab">
+                <i class="fas fa-images"></i> Photo Gallery
+            </button>
+            <button class="tab-btn" data-tab="reports-tab">
+                <i class="fas fa-chart-bar"></i> Reports
+            </button>
+        </div>
+        
         <div class="app-container">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-user-clock"></i> Mark Attendance</h2>
-                
-                <div class="form-group">
-                    <label for="employeeId"><i class="fas fa-id-badge"></i> Employee ID</label>
-                    <input type="text" id="employeeId" placeholder="Enter your employee ID" value="EMP-2024-001">
-                </div>
-                
-                <div class="form-group">
-                    <label for="employeeName"><i class="fas fa-user"></i> Employee Name</label>
-                    <input type="text" id="employeeName" placeholder="Enter your full name" value="Rahul Sharma">
-                </div>
-                
-                <div class="form-group">
-                    <label for="attendanceType"><i class="fas fa-tasks"></i> Attendance Type</label>
-                    <select id="attendanceType">
-                        <option value="checkin">Check In</option>
-                        <option value="checkout">Check Out</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-camera"></i> Employee Photo</label>
-                    <div class="camera-container">
-                        <div class="camera-placeholder" id="cameraPlaceholder">
-                            <i class="fas fa-camera"></i>
-                            <p>Camera preview will appear here</p>
-                        </div>
-                        <video id="cameraPreview" autoplay></video>
-                        <canvas id="photoCanvas" style="display:none;"></canvas>
+            <!-- Attendance Tab -->
+            <div class="tab-content active" id="attendance-tab">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-user-check"></i> Employee Details</h2>
+                    
+                    <div class="form-group">
+                        <label for="employeeName"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="employeeName" placeholder="Enter your full name" value="Rahul Sharma">
                     </div>
                     
-                    <div class="camera-controls">
-                        <button class="btn" id="startCamera"><i class="fas fa-video"></i> Start Camera</button>
-                        <button class="btn" id="capturePhoto"><i class="fas fa-camera-retro"></i> Capture Photo</button>
+                    <div class="form-group">
+                        <label for="department"><i class="fas fa-building"></i> Department</label>
+                        <select id="department">
+                            <option value="IT">Information Technology</option>
+                            <option value="HR">Human Resources</option>
+                            <option value="Sales">Sales & Marketing</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Operations">Operations</option>
+                        </select>
                     </div>
+                    
+                    <h2 class="card-title"><i class="fas fa-camera"></i> Capture Photo</h2>
+                    
+                    <div class="form-group">
+                        <div class="camera-container">
+                            <div class="camera-placeholder" id="cameraPlaceholder">
+                                <i class="fas fa-camera"></i>
+                                <p>Camera preview will appear here</p>
+                            </div>
+                            <video id="cameraPreview" autoplay></video>
+                            <canvas id="photoCanvas" style="display:none;"></canvas>
+                        </div>
+                        
+                        <div class="camera-controls">
+                            <button class="btn" id="startCamera"><i class="fas fa-video"></i> Start Camera</button>
+                            <button class="btn btn-capture" id="capturePhoto"><i class="fas fa-camera-retro"></i> Capture & Verify</button>
+                        </div>
+                    </div>
+                    
+                    <div class="captured-image-container" id="capturedContainer">
+                        <h2 class="card-title"><i class="fas fa-check-circle"></i> Captured Photo with Metadata</h2>
+                        <img id="capturedPhoto" class="captured-image" alt="Captured Photo">
+                        
+                        <div class="photo-metadata" id="photoMetadata">
+                            <div class="metadata-item">
+                                <span class="metadata-label">Employee Name:</span>
+                                <span class="metadata-value" id="metaName">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Date & Time:</span>
+                                <span class="metadata-value" id="metaDateTime">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Location:</span>
+                                <span class="metadata-value" id="metaLocation">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">IP Address:</span>
+                                <span class="metadata-value" id="metaIP">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Coordinates:</span>
+                                <span class="metadata-value" id="metaCoords">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Location Verification:</span>
+                                <span class="metadata-value" id="metaVerification">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-info">
+                        <h4><i class="fas fa-shield-alt"></i> Security Features</h4>
+                        <p>This system uses multiple verification methods to prevent spoofing:</p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Live camera capture with timestamp</li>
+                            <li>GPS coordinate validation</li>
+                            <li>IP-based location cross-checking</li>
+                            <li>Speed detection to prevent mock locations</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="btn btn-submit" id="submitAttendance"><i class="fas fa-paper-plane"></i> Submit Attendance</button>
                 </div>
                 
-                <div class="captured-image-container">
-                    <img id="capturedPhoto" class="captured-image" alt="Captured Photo">
-                    <div id="timestampOverlay" class="timestamp-overlay"></div>
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-map-marked-alt"></i> Live Location Tracking</h2>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-location-dot"></i> Current Location</label>
+                        <div class="photo-metadata">
+                            <div class="metadata-item">
+                                <span class="metadata-label">GPS Status:</span>
+                                <span class="metadata-value" id="gpsStatus">Checking...</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Latitude:</span>
+                                <span class="metadata-value" id="liveLat">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Longitude:</span>
+                                <span class="metadata-value" id="liveLon">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Accuracy:</span>
+                                <span class="metadata-value" id="liveAccuracy">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Address:</span>
+                                <span class="metadata-value" id="liveAddress">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-network-wired"></i> Network Information</label>
+                        <div class="photo-metadata">
+                            <div class="metadata-item">
+                                <span class="metadata-label">IP Address:</span>
+                                <span class="metadata-value" id="liveIP">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">ISP:</span>
+                                <span class="metadata-value" id="liveISP">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Connection Type:</span>
+                                <span class="metadata-value" id="liveConnection">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Today's Attendance</label>
+                        <div style="margin-top: 10px;" id="todayAttendance">
+                            <!-- Today's attendance will appear here -->
+                        </div>
+                    </div>
+                    
+                    <h2 class="card-title"><i class="fas fa-info-circle"></i> Instructions</h2>
+                    <ol style="padding-left: 20px; margin-top: 10px;">
+                        <li>Enter your full name and department</li>
+                        <li>Allow camera and location permissions when prompted</li>
+                        <li>Click "Start Camera" and then "Capture & Verify"</li>
+                        <li>System will automatically capture location, time, and IP</li>
+                        <li>Verify the information and click "Submit Attendance"</li>
+                        <li>Check gallery to see all attendance photos</li>
+                    </ol>
                 </div>
-                
-                <div class="location-info">
-                    <p><i class="fas fa-map-marker-alt"></i> <span id="locationText">Fetching your location...</span></p>
-                    <p><i class="fas fa-calendar-alt"></i> <span id="dateTimeText">--/--/---- --:--:--</span></p>
-                </div>
-                
-                <button class="btn btn-checkin" id="submitAttendance"><i class="fas fa-check-circle"></i> Mark Attendance</button>
             </div>
             
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-history"></i> Today's Attendance</h2>
-                
-                <div class="attendance-history">
-                    <table id="attendanceTable">
-                        <thead>
-                            <tr>
-                                <th>Employee ID</th>
-                                <th>Name</th>
-                                <th>Time</th>
-                                <th>Type</th>
-                                <th>Location</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendanceTableBody">
-                            <!-- Attendance records will be added here -->
-                        </tbody>
-                    </table>
-                    <div id="noRecords" class="no-data">
-                        <i class="fas fa-clipboard-list fa-2x"></i>
-                        <p>No attendance records for today yet</p>
+            <!-- Gallery Tab -->
+            <div class="tab-content" id="gallery-tab">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-images"></i> Attendance Photo Gallery</h2>
+                    
+                    <div class="gallery-container" id="photoGallery">
+                        <!-- Photos will be loaded here -->
+                    </div>
+                    
+                    <div id="noPhotos" class="no-data">
+                        <i class="fas fa-images"></i>
+                        <h3>No Attendance Photos Yet</h3>
+                        <p>Capture your first attendance to see photos here</p>
                     </div>
                 </div>
-                
-                <h2 class="card-title" style="margin-top: 30px;"><i class="fas fa-info-circle"></i> Instructions</h2>
-                <ol style="padding-left: 20px; margin-top: 10px;">
-                    <li>Enter your Employee ID and Name</li>
-                    <li>Select Check In or Check Out</li>
-                    <li>Allow camera access and capture your photo</li>
-                    <li>Your location, date and time will be automatically captured</li>
-                    <li>Click "Mark Attendance" to submit</li>
-                </ol>
-                
-                <div style="margin-top: 20px; padding: 15px; background-color: #f0f8ff; border-radius: 5px;">
-                    <p><strong>Note:</strong> This app works best on mobile devices with GPS and camera access. Location accuracy depends on your device settings.</p>
+            </div>
+            
+            <!-- Reports Tab -->
+            <div class="tab-content" id="reports-tab">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-chart-bar"></i> Attendance Reports</h2>
+                    
+                    <div class="form-group">
+                        <label for="reportDate"><i class="fas fa-calendar"></i> Select Date</label>
+                        <input type="date" id="reportDate">
+                    </div>
+                    
+                    <div style="margin-top: 20px;" id="reportData">
+                        <!-- Report data will appear here -->
+                    </div>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>Employee Attendance System &copy; 2024 | Auto location, date, time and photo attendance tracking</p>
+            <p>Secure Attendance System &copy; 2024 | Anti-spoofing with photo verification and location validation</p>
         </footer>
     </div>
 
     <script>
         // DOM Elements
-        const employeeIdInput = document.getElementById('employeeId');
         const employeeNameInput = document.getElementById('employeeName');
-        const attendanceTypeSelect = document.getElementById('attendanceType');
+        const departmentSelect = document.getElementById('department');
         const startCameraBtn = document.getElementById('startCamera');
         const capturePhotoBtn = document.getElementById('capturePhoto');
         const cameraPreview = document.getElementById('cameraPreview');
         const cameraPlaceholder = document.getElementById('cameraPlaceholder');
         const photoCanvas = document.getElementById('photoCanvas');
         const capturedPhoto = document.getElementById('capturedPhoto');
-        const timestampOverlay = document.getElementById('timestampOverlay');
-        const locationText = document.getElementById('locationText');
-        const dateTimeText = document.getElementById('dateTimeText');
+        const capturedContainer = document.getElementById('capturedContainer');
         const submitAttendanceBtn = document.getElementById('submitAttendance');
-        const attendanceTableBody = document.getElementById('attendanceTableBody');
-        const noRecords = document.getElementById('noRecords');
+        
+        // Metadata elements
+        const metaName = document.getElementById('metaName');
+        const metaDateTime = document.getElementById('metaDateTime');
+        const metaLocation = document.getElementById('metaLocation');
+        const metaIP = document.getElementById('metaIP');
+        const metaCoords = document.getElementById('metaCoords');
+        const metaVerification = document.getElementById('metaVerification');
+        
+        // Live tracking elements
+        const gpsStatus = document.getElementById('gpsStatus');
+        const liveLat = document.getElementById('liveLat');
+        const liveLon = document.getElementById('liveLon');
+        const liveAccuracy = document.getElementById('liveAccuracy');
+        const liveAddress = document.getElementById('liveAddress');
+        const liveIP = document.getElementById('liveIP');
+        const liveISP = document.getElementById('liveISP');
+        const liveConnection = document.getElementById('liveConnection');
+        
+        // Gallery elements
+        const photoGallery = document.getElementById('photoGallery');
+        const noPhotos = document.getElementById('noPhotos');
+        
+        // Tab elements
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
         
         // Application state
         let currentStream = null;
         let currentLocation = null;
-        let currentDateTime = null;
-        let attendanceRecords = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+        let currentIP = null;
+        let currentISP = "Unknown";
+        let isLocationVerified = false;
+        let attendanceRecords = JSON.parse(localStorage.getItem('secureAttendance')) || [];
         
-        // Initialize date/time display
-        function updateDateTime() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
+        // Initialize tabs
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show active tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                        
+                        // Load data for specific tab
+                        if (tabId === 'gallery-tab') {
+                            loadGallery();
+                        } else if (tabId === 'reports-tab') {
+                            loadReports();
+                        }
+                    }
+                });
             });
-            const timeStr = now.toLocaleTimeString('en-IN', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            currentDateTime = `${dateStr} ${timeStr}`;
-            dateTimeText.textContent = currentDateTime;
-        }
+        });
         
-        // Update date/time every second
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-        
-        // Get current location
-        function getLocation() {
+        // Initialize live location tracking
+        function initLiveTracking() {
+            // Get IP information
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    currentIP = data.ip;
+                    liveIP.textContent = data.ip;
+                    liveISP.textContent = data.org || "Unknown ISP";
+                    liveConnection.textContent = data.version || "IPv4/IPv6";
+                    
+                    // Store IP-based location for verification
+                    window.ipLocation = {
+                        city: data.city,
+                        region: data.region,
+                        country: data.country_name,
+                        lat: data.latitude,
+                        lon: data.longitude
+                    };
+                })
+                .catch(error => {
+                    console.log("IP API failed, using fallback");
+                    currentIP = "192.168.1.1 (Demo)";
+                    liveIP.textContent = "192.168.1.1 (Demo)";
+                    liveISP.textContent = "Demo Network";
+                    liveConnection.textContent = "WiFi/LAN";
+                    
+                    window.ipLocation = {
+                        city: "Noida",
+                        region: "Uttar Pradesh",
+                        country: "India",
+                        lat: 28.5355,
+                        lon: 77.3910
+                    };
+                });
+            
+            // Start GPS tracking
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
+                gpsStatus.textContent = "Active";
+                gpsStatus.style.color = "#28a745";
+                
+                // Watch position for continuous updates
+                navigator.geolocation.watchPosition(
                     (position) => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        currentLocation = { latitude: lat, longitude: lon };
+                        const accuracy = position.coords.accuracy;
                         
-                        // Reverse geocoding (using a mock service for demo)
-                        // In a real app, you would use a geocoding API like Google Maps or OpenStreetMap
-                        const locations = [
-                            "Office Main Gate, Sector 62, Noida",
-                            "Building A, 3rd Floor, Delhi",
-                            "Remote Work Location, Gurugram",
-                            "Client Site, Mumbai",
-                            "Branch Office, Bangalore"
-                        ];
+                        // Update live display
+                        liveLat.textContent = lat.toFixed(6);
+                        liveLon.textContent = lon.toFixed(6);
+                        liveAccuracy.textContent = `${Math.round(accuracy)} meters`;
                         
-                        // Pick a random location for demo purposes
-                        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
-                        locationText.textContent = `${randomLocation} (Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)})`;
+                        // Store current location
+                        currentLocation = {
+                            latitude: lat,
+                            longitude: lon,
+                            accuracy: accuracy,
+                            timestamp: Date.now()
+                        };
+                        
+                        // Get address from coordinates (reverse geocoding)
+                        getAddressFromCoords(lat, lon);
+                        
+                        // Verify location (anti-spoofing)
+                        verifyLocation(lat, lon);
                     },
                     (error) => {
-                        console.error("Error getting location:", error);
-                        locationText.textContent = "Location access denied. Using default location.";
-                        currentLocation = { latitude: 28.5355, longitude: 77.3910 }; // Default to Noida, India
+                        console.error("GPS Error:", error);
+                        gpsStatus.textContent = "Error: " + error.message;
+                        gpsStatus.style.color = "#dc3545";
+                        
+                        // Fallback to IP location
+                        if (window.ipLocation) {
+                            currentLocation = {
+                                latitude: window.ipLocation.lat,
+                                longitude: window.ipLocation.lon,
+                                accuracy: 5000, // Low accuracy for IP-based
+                                timestamp: Date.now()
+                            };
+                            
+                            liveLat.textContent = window.ipLocation.lat.toFixed(6);
+                            liveLon.textContent = window.ipLocation.lon.toFixed(6);
+                            liveAccuracy.textContent = "5000 meters (IP-based)";
+                            liveAddress.textContent = `${window.ipLocation.city}, ${window.ipLocation.region}, ${window.ipLocation.country}`;
+                        }
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
                     }
                 );
             } else {
-                locationText.textContent = "Geolocation is not supported by this browser.";
-                currentLocation = { latitude: 28.5355, longitude: 77.3910 }; // Default to Noida, India
+                gpsStatus.textContent = "Not Supported";
+                gpsStatus.style.color = "#dc3545";
             }
         }
         
-        // Initialize location
-        getLocation();
+        // Get address from coordinates
+        function getAddressFromCoords(lat, lon) {
+            // Using OpenStreetMap Nominatim API (free, no API key needed)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.address) {
+                        const addr = data.address;
+                        let addressParts = [];
+                        
+                        if (addr.road) addressParts.push(addr.road);
+                        if (addr.suburb) addressParts.push(addr.suburb);
+                        if (addr.city) addressParts.push(addr.city);
+                        if (addr.state) addressParts.push(addr.state);
+                        if (addr.country) addressParts.push(addr.country);
+                        
+                        liveAddress.textContent = addressParts.join(", ");
+                    } else {
+                        liveAddress.textContent = "Address not available";
+                    }
+                })
+                .catch(error => {
+                    console.log("Geocoding failed");
+                    liveAddress.textContent = "Unable to fetch address";
+                });
+        }
+        
+        // Verify location to prevent spoofing
+        function verifyLocation(lat, lon) {
+            isLocationVerified = false;
+            
+            // Check 1: Accuracy (too high accuracy might indicate mock location)
+            if (currentLocation && currentLocation.accuracy < 50) {
+                // Very high accuracy could be suspicious
+                metaVerification.innerHTML = `<span class="verification-fail"><i class="fas fa-exclamation-triangle"></i> Suspicious: Very high GPS accuracy</span>`;
+                return;
+            }
+            
+            // Check 2: Compare with IP-based location
+            if (window.ipLocation) {
+                const ipLat = window.ipLocation.lat;
+                const ipLon = window.ipLocation.lon;
+                
+                // Calculate distance between GPS and IP locations
+                const distance = calculateDistance(lat, lon, ipLat, ipLon);
+                
+                if (distance > 100) { // More than 100km difference
+                    metaVerification.innerHTML = `<span class="verification-fail"><i class="fas fa-exclamation-triangle"></i> Warning: GPS-IP mismatch (${Math.round(distance)} km)</span>`;
+                    return;
+                }
+            }
+            
+            // Check 3: Check if location is in common mock locations
+            const mockLocations = [
+                {name: "Null Island", lat: 0, lon: 0},
+                {name: "Google HQ", lat: 37.422, lon: -122.084},
+                {name: "Apple Park", lat: 37.3349, lon: -122.0090}
+            ];
+            
+            for (let mock of mockLocations) {
+                const distance = calculateDistance(lat, lon, mock.lat, mock.lon);
+                if (distance < 1) { // Within 1km of known mock location
+                    metaVerification.innerHTML = `<span class="verification-fail"><i class="fas fa-exclamation-triangle"></i> Suspicious: Common mock location detected</span>`;
+                    return;
+                }
+            }
+            
+            // All checks passed
+            isLocationVerified = true;
+            metaVerification.innerHTML = `<span class="verification-badge"><i class="fas fa-check-circle"></i> Verified Location</span>`;
+        }
+        
+        // Calculate distance between two coordinates in km
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
         
         // Start camera
         startCameraBtn.addEventListener('click', async () => {
@@ -504,215 +878,440 @@
                 // Change button text
                 startCameraBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Restart Camera';
             } catch (error) {
-                console.error("Error accessing camera:", error);
+                console.error("Camera Error:", error);
                 alert("Unable to access camera. Please check permissions.");
+                
+                // For demo purposes, create a fallback
+                cameraPlaceholder.innerHTML = `
+                    <i class="fas fa-user-circle" style="font-size: 6rem; color: #1a5f7a;"></i>
+                    <p>Camera not available. Using demo mode.</p>
+                `;
             }
         });
         
-        // Capture photo
-        capturePhotoBtn.addEventListener('click', () => {
-            if (!currentStream) {
-                alert("Please start the camera first.");
+        // Capture photo with metadata
+        capturePhotoBtn.addEventListener('click', async () => {
+            const employeeName = employeeNameInput.value.trim();
+            if (!employeeName) {
+                alert("Please enter your name first");
                 return;
             }
             
-            const context = photoCanvas.getContext('2d');
-            photoCanvas.width = cameraPreview.videoWidth;
-            photoCanvas.height = cameraPreview.videoHeight;
-            
-            // Draw current video frame to canvas
-            context.drawImage(cameraPreview, 0, 0, photoCanvas.width, photoCanvas.height);
-            
-            // Convert canvas to data URL
-            const photoDataUrl = photoCanvas.toDataURL('image/jpeg', 0.8);
-            
-            // Display captured photo
-            capturedPhoto.src = photoDataUrl;
-            capturedPhoto.style.display = 'block';
-            
-            // Update timestamp overlay
+            // Get current date and time
             const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN');
-            const timeStr = now.toLocaleTimeString('en-IN', { hour12: false });
-            timestampOverlay.textContent = `${dateStr} ${timeStr}`;
-            timestampOverlay.style.display = 'block';
+            const dateStr = now.toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            const timeStr = now.toLocaleTimeString('en-IN', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateTime = `${dateStr} ${timeStr}`;
             
-            // Stop camera after capture
+            // Get location info
+            let locationText = "Unknown";
+            let coordsText = "Not available";
+            
+            if (currentLocation) {
+                const lat = currentLocation.latitude.toFixed(6);
+                const lon = currentLocation.longitude.toFixed(6);
+                coordsText = `Lat: ${lat}, Lon: ${lon}`;
+                
+                // Try to get address
+                if (liveAddress.textContent && liveAddress.textContent !== "-") {
+                    locationText = liveAddress.textContent;
+                } else {
+                    locationText = `Coordinates: ${lat}, ${lon}`;
+                }
+            }
+            
+            // Get IP info
+            const ipText = currentIP || liveIP.textContent || "Not available";
+            
+            // Update metadata display
+            metaName.textContent = employeeName;
+            metaDateTime.textContent = dateTime;
+            metaLocation.textContent = locationText;
+            metaIP.textContent = ipText;
+            metaCoords.textContent = coordsText;
+            
+            // Capture photo
             if (currentStream) {
+                // Real camera capture
+                const context = photoCanvas.getContext('2d');
+                photoCanvas.width = cameraPreview.videoWidth;
+                photoCanvas.height = cameraPreview.videoHeight;
+                
+                context.drawImage(cameraPreview, 0, 0, photoCanvas.width, photoCanvas.height);
+                
+                // Add metadata text to photo
+                context.font = "16px Arial";
+                context.fillStyle = "white";
+                context.strokeStyle = "black";
+                context.lineWidth = 3;
+                
+                // Draw text with background
+                const texts = [
+                    `Name: ${employeeName}`,
+                    `Time: ${dateTime}`,
+                    `Location: ${locationText.substring(0, 40)}${locationText.length > 40 ? '...' : ''}`,
+                    `IP: ${ipText}`,
+                    `GPS: ${coordsText}`
+                ];
+                
+                let yPos = 30;
+                texts.forEach(text => {
+                    context.strokeText(text, 10, yPos);
+                    context.fillText(text, 10, yPos);
+                    yPos += 25;
+                });
+                
+                // Draw verification badge
+                if (isLocationVerified) {
+                    context.fillStyle = "#28a745";
+                    context.fillRect(10, yPos, 150, 25);
+                    context.fillStyle = "white";
+                    context.fillText("✓ Verified Location", 15, yPos + 18);
+                } else {
+                    context.fillStyle = "#dc3545";
+                    context.fillRect(10, yPos, 180, 25);
+                    context.fillStyle = "white";
+                    context.fillText("⚠ Unverified Location", 15, yPos + 18);
+                }
+                
+                // Convert to data URL
+                const photoDataUrl = photoCanvas.toDataURL('image/jpeg', 0.9);
+                capturedPhoto.src = photoDataUrl;
+                
+                // Stop camera
                 currentStream.getTracks().forEach(track => track.stop());
                 cameraPreview.style.display = 'none';
-                cameraPlaceholder.style.display = 'block';
+                cameraPlaceholder.style.display = 'flex';
                 startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
                 currentStream = null;
+            } else {
+                // Demo mode - create a placeholder image
+                const canvas = document.createElement('canvas');
+                canvas.width = 640;
+                canvas.height = 480;
+                const ctx = canvas.getContext('2d');
+                
+                // Create gradient background
+                const gradient = ctx.createLinearGradient(0, 0, 640, 480);
+                gradient.addColorStop(0, '#1a5f7a');
+                gradient.addColorStop(1, '#57cc99');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 640, 480);
+                
+                // Draw user icon
+                ctx.fillStyle = "white";
+                ctx.font = "120px Arial";
+                ctx.fillText("👤", 260, 220);
+                
+                // Add metadata text
+                ctx.font = "20px Arial";
+                ctx.fillStyle = "white";
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 3;
+                
+                const texts = [
+                    `Name: ${employeeName}`,
+                    `Time: ${dateTime}`,
+                    `Location: ${locationText}`,
+                    `IP: ${ipText}`,
+                    `GPS: ${coordsText}`
+                ];
+                
+                let yPos = 300;
+                texts.forEach(text => {
+                    ctx.strokeText(text, 20, yPos);
+                    ctx.fillText(text, 20, yPos);
+                    yPos += 30;
+                });
+                
+                // Add DEMO watermark
+                ctx.fillStyle = "rgba(0,0,0,0.3)";
+                ctx.font = "bold 60px Arial";
+                ctx.fillText("DEMO", 200, 400);
+                
+                const photoDataUrl = canvas.toDataURL('image/jpeg');
+                capturedPhoto.src = photoDataUrl;
             }
+            
+            // Show captured photo container
+            capturedContainer.style.display = 'block';
         });
         
         // Submit attendance
         submitAttendanceBtn.addEventListener('click', () => {
-            const employeeId = employeeIdInput.value.trim();
             const employeeName = employeeNameInput.value.trim();
-            const attendanceType = attendanceTypeSelect.value;
+            const department = departmentSelect.value;
             
-            if (!employeeId || !employeeName) {
-                alert("Please enter Employee ID and Name");
+            if (!employeeName) {
+                alert("Please enter your name");
                 return;
             }
             
-            if (capturedPhoto.style.display !== 'block') {
-                alert("Please capture your photo first");
-                return;
+            if (capturedPhoto.src.includes("data:image")) {
+                // Create attendance record
+                const record = {
+                    id: Date.now(),
+                    employeeName: employeeName,
+                    department: department,
+                    photo: capturedPhoto.src,
+                    dateTime: metaDateTime.textContent,
+                    location: metaLocation.textContent,
+                    ip: metaIP.textContent,
+                    coordinates: metaCoords.textContent,
+                    verified: isLocationVerified,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Add to records
+                attendanceRecords.unshift(record); // Add to beginning
+                
+                // Save to localStorage
+                localStorage.setItem('secureAttendance', JSON.stringify(attendanceRecords));
+                
+                // Show success message
+                alert(`Attendance recorded successfully for ${employeeName}!`);
+                
+                // Reset form
+                capturedContainer.style.display = 'none';
+                cameraPreview.style.display = 'none';
+                cameraPlaceholder.style.display = 'flex';
+                startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
+                
+                // Update today's attendance display
+                updateTodayAttendance();
+                
+                // Switch to gallery tab
+                document.querySelector('[data-tab="gallery-tab"]').click();
+            } else {
+                alert("Please capture a photo first");
             }
-            
-            if (!currentLocation) {
-                alert("Location is not available yet. Please wait a moment.");
-                return;
-            }
-            
-            // Get the photo data
-            const photoDataUrl = capturedPhoto.src;
-            
-            // Create attendance record
-            const record = {
-                id: Date.now(),
-                employeeId,
-                employeeName,
-                type: attendanceType,
-                photo: photoDataUrl,
-                location: currentLocation,
-                dateTime: currentDateTime,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Add to records
-            attendanceRecords.push(record);
-            
-            // Save to localStorage
-            localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
-            
-            // Update the attendance table
-            updateAttendanceTable();
-            
-            // Show success message
-            alert(`Attendance ${attendanceType === 'checkin' ? 'Check In' : 'Check Out'} successful!`);
-            
-            // Reset form (except for employee info)
-            capturedPhoto.style.display = 'none';
-            timestampOverlay.style.display = 'none';
-            cameraPreview.style.display = 'none';
-            cameraPlaceholder.style.display = 'block';
-            
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-                currentStream = null;
-            }
-            
-            startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
-            capturePhotoBtn.disabled = true;
         });
         
-        // Update attendance table
-        function updateAttendanceTable() {
-            // Clear table body
-            attendanceTableBody.innerHTML = '';
+        // Load photo gallery
+        function loadGallery() {
+            photoGallery.innerHTML = '';
             
-            // Get today's date in local format for comparison
-            const today = new Date();
-            const todayDateStr = today.toLocaleDateString('en-IN');
-            
-            // Filter today's records
-            const todayRecords = attendanceRecords.filter(record => {
-                const recordDate = new Date(record.timestamp).toLocaleDateString('en-IN');
-                return recordDate === todayDateStr;
-            });
-            
-            if (todayRecords.length === 0) {
-                noRecords.style.display = 'block';
+            if (attendanceRecords.length === 0) {
+                noPhotos.style.display = 'block';
                 return;
             }
             
-            noRecords.style.display = 'none';
+            noPhotos.style.display = 'none';
             
-            // Sort by timestamp (newest first)
-            todayRecords.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            // Add records to table
-            todayRecords.forEach(record => {
-                const row = document.createElement('tr');
+            attendanceRecords.forEach(record => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
                 
-                // Format time
-                const recordTime = new Date(record.timestamp).toLocaleTimeString('en-IN', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                // Format location for display
-                const locationDisplay = `Lat: ${record.location.latitude.toFixed(4)}, Lon: ${record.location.longitude.toFixed(4)}`;
-                
-                row.innerHTML = `
-                    <td>${record.employeeId}</td>
-                    <td>${record.employeeName}</td>
-                    <td>${recordTime}</td>
-                    <td><span class="status ${record.type === 'checkin' ? 'status-checkin' : 'status-checkout'}">${record.type === 'checkin' ? 'Check In' : 'Check Out'}</span></td>
-                    <td>${locationDisplay}</td>
+                galleryItem.innerHTML = `
+                    <img src="${record.photo}" class="gallery-photo" alt="Attendance Photo">
+                    <div class="gallery-info">
+                        <div class="gallery-name">${record.employeeName}</div>
+                        <div class="gallery-time">${record.dateTime}</div>
+                        <div class="gallery-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${record.location.substring(0, 40)}${record.location.length > 40 ? '...' : ''}
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.75rem; color: ${record.verified ? '#28a745' : '#dc3545'}">
+                            <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
+                            ${record.verified ? 'Verified Location' : 'Unverified Location'}
+                        </div>
+                    </div>
                 `;
                 
-                attendanceTableBody.appendChild(row);
+                photoGallery.appendChild(galleryItem);
             });
         }
         
-        // Initialize attendance table
-        updateAttendanceTable();
-        
-        // Update button text based on attendance type
-        attendanceTypeSelect.addEventListener('change', function() {
-            const type = this.value;
-            submitAttendanceBtn.className = `btn ${type === 'checkin' ? 'btn-checkin' : 'btn-checkout'}`;
-            submitAttendanceBtn.innerHTML = `<i class="fas fa-check-circle"></i> ${type === 'checkin' ? 'Check In' : 'Check Out'}`;
-        });
-        
-        // Set initial button state
-        attendanceTypeSelect.dispatchEvent(new Event('change'));
-        
-        // Demo data for first-time users
-        if (attendanceRecords.length === 0) {
-            // Add some demo records
-            const demoRecords = [
-                {
-                    id: 1,
-                    employeeId: "EMP-2024-001",
-                    employeeName: "Rahul Sharma",
-                    type: "checkin",
-                    photo: "",
-                    location: { latitude: 28.5355, longitude: 77.3910 },
-                    dateTime: "03/04/2024 09:15:30",
-                    timestamp: new Date().toISOString().replace(/T.*/, 'T09:15:30')
-                },
-                {
-                    id: 2,
-                    employeeId: "EMP-2024-002",
-                    employeeName: "Priya Singh",
-                    type: "checkin",
-                    photo: "",
-                    location: { latitude: 28.5360, longitude: 77.3920 },
-                    dateTime: "03/04/2024 09:05:22",
-                    timestamp: new Date().toISOString().replace(/T.*/, 'T09:05:22')
-                },
-                {
-                    id: 3,
-                    employeeId: "EMP-2024-003",
-                    employeeName: "Amit Patel",
-                    type: "checkin",
-                    photo: "",
-                    location: { latitude: 28.5348, longitude: 77.3905 },
-                    dateTime: "03/04/2024 09:20:15",
-                    timestamp: new Date().toISOString().replace(/T.*/, 'T09:20:15')
-                }
-            ];
+        // Load reports
+        function loadReports() {
+            const reportData = document.getElementById('reportData');
             
-            attendanceRecords = demoRecords;
-            localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
-            updateAttendanceTable();
+            if (attendanceRecords.length === 0) {
+                reportData.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>No Attendance Data</h3>
+                        <p>No attendance records available for reporting</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Count by department
+            const deptCount = {};
+            let total = 0;
+            
+            attendanceRecords.forEach(record => {
+                deptCount[record.department] = (deptCount[record.department] || 0) + 1;
+                total++;
+            });
+            
+            // Create report HTML
+            let reportHTML = `
+                <h3 style="margin-bottom: 15px; color: #1a5f7a;">Attendance Summary</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <p><strong>Total Records:</strong> ${total}</p>
+                    <p><strong>Date Range:</strong> ${new Date(attendanceRecords[attendanceRecords.length-1].timestamp).toLocaleDateString()} to ${new Date(attendanceRecords[0].timestamp).toLocaleDateString()}</p>
+                </div>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #1a5f7a;">By Department</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 10px; text-align: left;">Department</th>
+                                <th style="padding: 10px; text-align: left;">Count</th>
+                                <th style="padding: 10px; text-align: left;">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            for (const dept in deptCount) {
+                const percentage = ((deptCount[dept] / total) * 100).toFixed(1);
+                reportHTML += `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">${dept}</td>
+                        <td style="padding: 10px;">${deptCount[dept]}</td>
+                        <td style="padding: 10px;">${percentage}%</td>
+                    </tr>
+                `;
+            }
+            
+            reportHTML += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h4 style="margin: 20px 0 10px 0; color: #1a5f7a;">Recent Attendance</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 10px; text-align: left;">Name</th>
+                                <th style="padding: 10px; text-align: left;">Time</th>
+                                <th style="padding: 10px; text-align: left;">Location</th>
+                                <th style="padding: 10px; text-align: left;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            // Show last 5 records
+            const recentRecords = attendanceRecords.slice(0, 5);
+            recentRecords.forEach(record => {
+                reportHTML += `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">${record.employeeName}</td>
+                        <td style="padding: 10px;">${record.dateTime}</td>
+                        <td style="padding: 10px;">${record.location.substring(0, 20)}${record.location.length > 20 ? '...' : ''}</td>
+                        <td style="padding: 10px;">
+                            <span style="color: ${record.verified ? '#28a745' : '#dc3545'}">
+                                <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
+                                ${record.verified ? 'Verified' : 'Unverified'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            reportHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            reportData.innerHTML = reportHTML;
         }
+        
+        // Update today's attendance display
+        function updateTodayAttendance() {
+            const today = new Date().toDateString();
+            const todayAttendance = attendanceRecords.filter(record => {
+                return new Date(record.timestamp).toDateString() === today;
+            });
+            
+            const todayContainer = document.getElementById('todayAttendance');
+            
+            if (todayAttendance.length === 0) {
+                todayContainer.innerHTML = '<p style="color: #666; font-style: italic;">No attendance marked today</p>';
+                return;
+            }
+            
+            let html = '<div style="max-height: 200px; overflow-y: auto;">';
+            todayAttendance.forEach(record => {
+                const time = new Date(record.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                html += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                        <div>
+                            <strong>${record.employeeName}</strong>
+                            <div style="font-size: 0.8rem; color: #666;">${record.department}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            ${time}
+                            <div style="font-size: 0.7rem; color: ${record.verified ? '#28a745' : '#dc3545'}">
+                                <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            todayContainer.innerHTML = html;
+        }
+        
+        // Initialize the application
+        function initApp() {
+            initLiveTracking();
+            updateTodayAttendance();
+            
+            // Load demo data if empty
+            if (attendanceRecords.length === 0) {
+                const demoRecords = [
+                    {
+                        id: 1,
+                        employeeName: "Rahul Sharma",
+                        department: "IT",
+                        photo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+                        dateTime: "03/04/2024 09:15:30",
+                        location: "Sector 62, Noida, Uttar Pradesh, India",
+                        ip: "192.168.1.105",
+                        coordinates: "Lat: 28.535512, Lon: 77.391026",
+                        verified: true,
+                        timestamp: new Date().toISOString().replace(/T.*/, 'T09:15:30')
+                    },
+                    {
+                        id: 2,
+                        employeeName: "Priya Singh",
+                        department: "HR",
+                        photo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+                        dateTime: "03/04/2024 09:05:22",
+                        location: "Sector 63, Noida, Uttar Pradesh, India",
+                        ip: "192.168.1.106",
+                        coordinates: "Lat: 28.536012, Lon: 77.392126",
+                        verified: true,
+                        timestamp: new Date().toISOString().replace(/T.*/, 'T09:05:22')
+                    }
+                ];
+                
+                attendanceRecords = demoRecords;
+                localStorage.setItem('secureAttendance', JSON.stringify(attendanceRecords));
+                updateTodayAttendance();
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>

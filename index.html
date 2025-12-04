@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Attendance System</title>
+    <title>Smart Attendance System - GPS + Camera + Map</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,7 +20,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
@@ -33,13 +34,13 @@
             padding: 0;
         }
         
-        /* Header with gradient */
+        /* Header */
         .app-header {
-            background: linear-gradient(135deg, #22577a 0%, #1a5f7a 100%);
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
             color: white;
             padding: 20px 20px;
             border-radius: 0 0 25px 25px;
-            box-shadow: 0 5px 20px rgba(26, 95, 122, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
             text-align: center;
             position: relative;
@@ -53,7 +54,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #57cc99, #38b2ac);
+            background: linear-gradient(90deg, #ff9a00, #ff5e00);
         }
         
         .app-title {
@@ -66,7 +67,7 @@
         
         .app-logo {
             font-size: 2rem;
-            color: #57cc99;
+            color: #ff9a00;
             background: rgba(255, 255, 255, 0.1);
             width: 60px;
             height: 60px;
@@ -74,81 +75,117 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 154, 0, 0.3);
         }
         
         h1 {
             font-size: 1.8rem;
-            font-weight: 600;
+            font-weight: 700;
             margin: 0;
+            background: linear-gradient(90deg, #ff9a00, #ff5e00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         .subtitle {
             font-size: 0.9rem;
-            opacity: 0.85;
+            opacity: 0.9;
             margin-top: 5px;
+            color: #e6e6e6;
         }
         
-        /* Settings button */
-        #settingsBtn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 100;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background 0.3s;
-        }
-        
-        #settingsBtn:hover {
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 5px;
+            margin: 0 20px 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Main app container */
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 10px;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #ff9a00 0%, #ff5e00 100%);
+            box-shadow: 0 5px 15px rgba(255, 94, 0, 0.3);
+        }
+        
+        .tab i {
+            font-size: 1.2rem;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Main Container */
         .app-container {
             padding: 0 20px 30px;
             max-width: 800px;
             margin: 0 auto;
         }
         
-        /* Card design */
+        /* Card Design */
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: transform 0.3s, box-shadow 0.3s;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
         .card-title {
             font-size: 1.4rem;
-            color: #22577a;
+            color: #0f3460;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 12px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #f0f4f8;
+            border-bottom: 2px solid rgba(15, 52, 96, 0.1);
         }
         
         .card-title i {
-            color: #57cc99;
+            color: #ff9a00;
             font-size: 1.3rem;
         }
         
-        /* Form elements */
+        /* Form Elements */
         .form-group {
             margin-bottom: 20px;
         }
@@ -163,39 +200,82 @@
             left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #1a5f7a;
+            color: #0f3460;
             font-size: 1.1rem;
         }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 18px 18px 18px 50px;
             border: 2px solid #e1e8f0;
             border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s;
-            background: #f9fbfd;
+            background: rgba(255, 255, 255, 0.9);
             color: #333;
             -webkit-appearance: none;
             appearance: none;
         }
         
-        input:focus, select:focus {
-            border-color: #57cc99;
+        input:focus, select:focus, textarea:focus {
+            border-color: #ff9a00;
             outline: none;
             background: white;
-            box-shadow: 0 0 0 3px rgba(87, 204, 153, 0.1);
+            box-shadow: 0 0 0 3px rgba(255, 154, 0, 0.1);
         }
         
-        /* Camera section */
-        .camera-section {
-            margin-top: 10px;
+        /* Map Container */
+        .map-container {
+            width: 100%;
+            height: 300px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 3px solid white;
         }
         
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .location-info {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        
+        .location-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .location-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .location-label {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+        }
+        
+        .location-value {
+            font-weight: 600;
+            color: white;
+            word-break: break-word;
+        }
+        
+        /* Camera Section */
         .camera-container {
             width: 100%;
             height: 320px;
-            background: #0f172a;
+            background: #000;
             border-radius: 16px;
             margin-bottom: 15px;
             display: flex;
@@ -203,7 +283,7 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-            border: 3px solid #1e293b;
+            border: 3px solid #333;
         }
         
         #cameraPreview {
@@ -216,18 +296,14 @@
         
         .camera-placeholder {
             text-align: center;
-            color: #94a3b8;
+            color: #aaa;
             padding: 20px;
         }
         
         .camera-placeholder i {
             font-size: 4rem;
             margin-bottom: 15px;
-            color: #475569;
-        }
-        
-        .camera-placeholder p {
-            font-size: 1rem;
+            color: #555;
         }
         
         .camera-controls {
@@ -237,7 +313,7 @@
             margin-top: 15px;
         }
         
-        /* Button styles */
+        /* Button Styles */
         .btn {
             display: flex;
             align-items: center;
@@ -256,86 +332,57 @@
             overflow: hidden;
         }
         
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(40, 40);
-                opacity: 0;
-            }
-        }
-        
         .btn-primary {
-            background: linear-gradient(135deg, #1a5f7a 0%, #22577a 100%);
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
             color: white;
         }
         
         .btn-primary:hover, .btn-primary:active {
-            background: linear-gradient(135deg, #22577a 0%, #2c3e50 100%);
-            box-shadow: 0 5px 15px rgba(26, 95, 122, 0.3);
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            box-shadow: 0 5px 15px rgba(15, 52, 96, 0.3);
         }
         
         .btn-success {
-            background: linear-gradient(135deg, #57cc99 0%, #38b2ac 100%);
+            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
             color: white;
         }
         
         .btn-success:hover, .btn-success:active {
-            background: linear-gradient(135deg, #38b2ac 0%, #57cc99 100%);
-            box-shadow: 0 5px 15px rgba(87, 204, 153, 0.3);
+            background: linear-gradient(135deg, #96c93d 0%, #00b09b 100%);
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.3);
         }
         
         .btn-warning {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            background: linear-gradient(135deg, #ff9a00 0%, #ff5e00 100%);
             color: white;
         }
         
         .btn-warning:hover, .btn-warning:active {
-            background: linear-gradient(135deg, #feb47b 0%, #ff7e5f 100%);
-            box-shadow: 0 5px 15px rgba(254, 180, 123, 0.3);
+            background: linear-gradient(135deg, #ff5e00 0%, #ff9a00 100%);
+            box-shadow: 0 5px 15px rgba(255, 94, 0, 0.3);
         }
         
-        .btn-info {
-            background: linear-gradient(135deg, #38b2ac 0%, #22577a 100%);
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             color: white;
         }
         
-        /* Captured photo section */
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ff4b2b 0%, #ff416c 100%);
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Captured Photo Section */
         .captured-section {
             display: none;
             margin-top: 25px;
             animation: fadeIn 0.5s ease;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
         .captured-image-container {
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             margin-bottom: 20px;
             border: 3px solid white;
         }
@@ -355,123 +402,125 @@
             margin-bottom: 25px;
         }
         
-        .photo-metadata {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 20px;
-            border-radius: 16px;
-            border-left: 5px solid #57cc99;
+        /* Attendance Records */
+        .records-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
         }
         
-        .metadata-grid {
+        .record-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #ff9a00;
+            transition: transform 0.3s;
+        }
+        
+        .record-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .record-name {
+            font-weight: 700;
+            color: #0f3460;
+            font-size: 1.1rem;
+        }
+        
+        .record-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .record-details {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
         }
         
-        .metadata-item {
+        .record-detail {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 3px;
         }
         
-        .metadata-label {
-            font-size: 0.85rem;
-            color: #64748b;
+        .record-label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .record-value {
             font-weight: 500;
+            color: #333;
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
         }
         
-        .metadata-value {
-            font-weight: 600;
-            color: #1e293b;
-            word-break: break-word;
-        }
-        
-        .verification-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #d1fae5;
-            color: #065f46;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .verification-fail {
-            background: #fee2e2;
-            color: #7f1d1d;
-        }
-        
-        /* Location info card */
-        .location-card {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-        
-        .location-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .loading-spinner {
+            width: 70px;
+            height: 70px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff9a00;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
         
-        .location-header i {
-            color: #57cc99;
-            font-size: 1.5rem;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .location-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .location-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 3px solid #57cc99;
-        }
-        
-        .location-label {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-bottom: 5px;
-        }
-        
-        .location-value {
-            font-weight: 600;
+        .loading-text {
             color: white;
-            word-break: break-word;
+            font-size: 1.2rem;
+            margin-top: 10px;
         }
         
-        /* Toast notification */
+        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 52, 96, 0.95);
             color: white;
             padding: 16px 24px;
             border-radius: 12px;
             z-index: 1000;
             font-size: 0.95rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             gap: 12px;
             max-width: 90%;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+            transition: all 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -485,132 +534,45 @@
             font-size: 1.2rem;
         }
         
-        .toast.success i { color: #57cc99; }
-        .toast.error i { color: #ff7e5f; }
-        .toast.warning i { color: #feb47b; }
-        .toast.info i { color: #38b2ac; }
-        
-        /* Loading overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            display: none;
-        }
-        
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #57cc99;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
             margin-bottom: 20px;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         
-        .loading-text {
-            color: white;
-            font-size: 1.1rem;
-            margin-top: 10px;
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f3460;
+            margin-bottom: 5px;
         }
         
-        /* Network status indicator */
-        #networkStatus {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            z-index: 999;
-            display: none;
-            background: #57cc99;
-            color: white;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Settings card */
-        .settings-card {
-            display: none;
-        }
-        
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            margin-left: 15px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #57cc99;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        /* Install App button */
-        #installBtn {
-            margin: 10px auto;
-            display: none;
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
         }
         
         /* Footer */
         .app-footer {
             text-align: center;
             padding: 20px;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 0.85rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: 30px;
-            background: rgba(255, 255, 255, 0.5);
         }
         
-        /* Mobile optimizations */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
             .app-header {
                 padding: 15px 15px;
@@ -627,6 +589,10 @@
                 font-size: 1.8rem;
             }
             
+            .tabs {
+                margin: 0 15px 15px;
+            }
+            
             .app-container {
                 padding: 0 15px 20px;
             }
@@ -636,7 +602,7 @@
                 border-radius: 16px;
             }
             
-            .camera-container {
+            .map-container, .camera-container {
                 height: 280px;
             }
             
@@ -645,7 +611,7 @@
                 gap: 10px;
             }
             
-            .metadata-grid, .location-grid {
+            .stats-container {
                 grid-template-columns: 1fr;
             }
             
@@ -667,11 +633,11 @@
                 font-size: 1.2rem;
             }
             
-            .camera-container {
+            .map-container, .camera-container {
                 height: 250px;
             }
             
-            input, select {
+            input, select, textarea {
                 padding: 16px 16px 16px 45px;
                 font-size: 15px;
             }
@@ -681,60 +647,61 @@
                 font-size: 1rem;
             }
             
-            #settingsBtn {
-                top: 15px;
-                right: 15px;
+            .tab {
+                padding: 12px 5px;
+                font-size: 0.9rem;
+            }
+            
+            .tab i {
                 font-size: 1rem;
             }
         }
         
-        /* Dark mode support */
+        /* Dark Mode Support */
         @media (prefers-color-scheme: dark) {
             body {
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-                color: #e2e8f0;
+                background: linear-gradient(135deg, #0c2461 0%, #1e3799 100%);
             }
             
             .card {
-                background: #1e293b;
-                border-color: #334155;
+                background: rgba(30, 30, 46, 0.95);
+                color: #e6e6e6;
             }
             
-            input, select {
-                background: #334155;
-                border-color: #475569;
-                color: #e2e8f0;
+            input, select, textarea {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: #444;
+                color: #e6e6e6;
             }
             
-            input:focus, select:focus {
-                background: #475569;
+            input:focus, select:focus, textarea:focus {
+                background: rgba(255, 255, 255, 0.15);
             }
             
-            .camera-placeholder {
-                color: #94a3b8;
+            .record-card {
+                background: rgba(40, 40, 60, 0.95);
+                color: #e6e6e6;
             }
             
-            .photo-metadata {
-                background: #334155;
-            }
-            
-            .metadata-value {
-                color: #e2e8f0;
-            }
-            
-            .app-footer {
-                background: rgba(30, 41, 59, 0.5);
-                border-color: #334155;
-                color: #94a3b8;
+            .stat-card {
+                background: rgba(40, 40, 60, 0.95);
+                color: #e6e6e6;
             }
         }
         
-        /* Ripple animation */
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #ff9a00 0%, #ff5e00 100%);
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -742,199 +709,202 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">Loading...</div>
+        <div class="loading-text" id="loadingText">Initializing GPS & Camera...</div>
     </div>
-    
-    <!-- Network Status Indicator -->
-    <div id="networkStatus"></div>
     
     <div class="container">
         <!-- App Header -->
         <header class="app-header">
-            <button id="settingsBtn">
-                <i class="fas fa-cog"></i>
-            </button>
             <div class="app-title">
                 <div class="app-logo">
-                    <i class="fas fa-shield-alt"></i>
+                    <i class="fas fa-fingerprint"></i>
                 </div>
                 <div>
-                    <h1>Mobile Attendance</h1>
-                    <p class="subtitle">Secure attendance with photo capture & location tracking</p>
+                    <h1>Smart Attendance</h1>
+                    <p class="subtitle">GPS + Camera + Real-time Tracking</p>
                 </div>
             </div>
         </header>
         
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <div class="tab active" data-tab="attendance">
+                <i class="fas fa-camera"></i>
+                <span>Mark Attendance</span>
+            </div>
+            <div class="tab" data-tab="map">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Live Map</span>
+            </div>
+            <div class="tab" data-tab="records">
+                <i class="fas fa-history"></i>
+                <span>Records</span>
+            </div>
+        </div>
+        
         <!-- Main App Container -->
         <div class="app-container">
-            <!-- Employee Details Card -->
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-user-check"></i> Employee Information</h2>
-                
-                <div class="input-group">
-                    <i class="fas fa-user input-icon"></i>
-                    <input type="text" id="employeeName" placeholder="Enter your full name" value="Rahul Sharma">
+            <!-- Attendance Tab -->
+            <div class="tab-content active" id="attendanceTab">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-user-check"></i> Employee Details</h2>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="employeeName" placeholder="Enter your full name" value="Rahul Sharma">
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" id="employeeId" placeholder="Employee ID" value="EMP2024001">
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-building input-icon"></i>
+                        <input type="text" id="department" placeholder="Department" value="Panchayat Development">
+                    </div>
                 </div>
                 
-                <div class="input-group">
-                    <i class="fas fa-flag input-icon"></i>
-                    <input type="text" id="panchayatName" placeholder="Enter your Panchayat name" value="Noida Panchayat">
+                <!-- GPS Location Card -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-map-marker-alt"></i> Live Location</h2>
+                    
+                    <div class="map-container">
+                        <div id="map"></div>
+                    </div>
+                    
+                    <div class="location-info">
+                        <div class="location-details">
+                            <div class="location-item">
+                                <span class="location-label">GPS Status</span>
+                                <span class="location-value" id="gpsStatus">Initializing...</span>
+                            </div>
+                            <div class="location-item">
+                                <span class="location-label">Coordinates</span>
+                                <span class="location-value" id="coordinates">-</span>
+                            </div>
+                            <div class="location-item">
+                                <span class="location-label">Address</span>
+                                <span class="location-value" id="address">-</span>
+                            </div>
+                            <div class="location-item">
+                                <span class="location-label">Accuracy</span>
+                                <span class="location-value" id="accuracy">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Camera Card -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-camera"></i> Capture Photo</h2>
+                    
+                    <div class="camera-container">
+                        <div class="camera-placeholder" id="cameraPlaceholder">
+                            <i class="fas fa-camera"></i>
+                            <p>Camera will appear here</p>
+                        </div>
+                        <video id="cameraPreview" autoplay playsinline></video>
+                        <canvas id="photoCanvas" style="display:none;"></canvas>
+                    </div>
+                    
+                    <div class="camera-controls">
+                        <button class="btn btn-primary" id="startCamera">
+                            <i class="fas fa-video"></i> Start Camera
+                        </button>
+                        <button class="btn btn-success" id="capturePhoto" disabled>
+                            <i class="fas fa-camera-retro"></i> Capture
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Captured Photo Section -->
+                <div class="captured-section" id="capturedSection">
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-image"></i> Captured Photo</h2>
+                        
+                        <div class="captured-image-container">
+                            <img id="capturedPhoto" alt="Captured Attendance Photo">
+                        </div>
+                        
+                        <div class="photo-actions">
+                            <button class="btn btn-warning" id="retakePhoto">
+                                <i class="fas fa-redo"></i> Retake
+                            </button>
+                            <button class="btn btn-success" id="submitAttendance">
+                                <i class="fas fa-paper-plane"></i> Submit
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Camera Card -->
-            <div class="card camera-section">
-                <h2 class="card-title"><i class="fas fa-camera"></i> Capture Attendance Photo</h2>
-                
-                <div class="camera-container">
-                    <div class="camera-placeholder" id="cameraPlaceholder">
-                        <i class="fas fa-camera"></i>
-                        <p>Camera preview will appear here</p>
+            <!-- Map Tab -->
+            <div class="tab-content" id="mapTab">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-globe-asia"></i> Live GPS Map</h2>
+                    
+                    <div class="map-container" style="height: 400px;">
+                        <div id="liveMap"></div>
                     </div>
-                    <video id="cameraPreview" autoplay playsinline></video>
-                    <canvas id="photoCanvas" style="display:none;"></canvas>
-                </div>
-                
-                <div class="camera-controls">
-                    <button class="btn btn-primary" id="startCamera">
-                        <i class="fas fa-video"></i> Start Camera
+                    
+                    <div class="location-details" style="margin-top: 15px;">
+                        <div class="location-item">
+                            <span class="location-label">Latitude</span>
+                            <span class="location-value" id="liveLat">-</span>
+                        </div>
+                        <div class="location-item">
+                            <span class="location-label">Longitude</span>
+                            <span class="location-value" id="liveLon">-</span>
+                        </div>
+                        <div class="location-item">
+                            <span class="location-label">Speed</span>
+                            <span class="location-value" id="liveSpeed">-</span>
+                        </div>
+                        <div class="location-item">
+                            <span class="location-label">Heading</span>
+                            <span class="location-value" id="liveHeading">-</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="refreshLocation" style="margin-top: 15px;">
+                        <i class="fas fa-sync-alt"></i> Refresh Location
                     </button>
-                    <button class="btn btn-success" id="capturePhoto">
-                        <i class="fas fa-camera-retro"></i> Capture Photo
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Captured Photo Section (Initially Hidden) -->
-            <div class="captured-section" id="capturedSection">
-                <div class="captured-image-container">
-                    <img id="capturedPhoto" alt="Captured Attendance Photo">
                 </div>
                 
-                <div class="photo-actions">
-                    <button class="btn btn-warning" id="saveToGallery">
-                        <i class="fas fa-download"></i> Save to Mobile Gallery
-                    </button>
-                    <button class="btn btn-primary" id="submitAttendance">
-                        <i class="fas fa-paper-plane"></i> Submit Attendance
-                    </button>
-                </div>
-                
-                <div class="photo-metadata">
-                    <h3 style="color: #1a5f7a; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-info-circle"></i> Photo Metadata
-                    </h3>
-                    <div class="metadata-grid" id="photoMetadata">
-                        <div class="metadata-item">
-                            <span class="metadata-label"><i class="fas fa-user"></i> Employee Name</span>
-                            <span class="metadata-value" id="metaName">-</span>
-                        </div>
-                        <div class="metadata-item">
-                            <span class="metadata-label"><i class="fas fa-flag"></i> Panchayat</span>
-                            <span class="metadata-value" id="metaPanchayat">-</span>
-                        </div>
-                        <div class="metadata-item">
-                            <span class="metadata-label"><i class="fas fa-clock"></i> Date & Time</span>
-                            <span class="metadata-value" id="metaDateTime">-</span>
-                        </div>
-                        <div class="metadata-item">
-                            <span class="metadata-label"><i class="fas fa-map-marker-alt"></i> Location</span>
-                            <span class="metadata-value" id="metaLocation">-</span>
-                        </div>
-                        <div class="metadata-item">
-                            <span class="metadata-label"><i class="fas fa-network-wired"></i> IP Address</span>
-                            <span class="metadata-value" id="metaIP">-</span>
-                        </div>
-                        <div class="metadata-item">
-                            <span class="metadata-label"><i class="fas fa-shield-alt"></i> Verification</span>
-                            <span class="metadata-value" id="metaVerification">-</span>
-                        </div>
+                <!-- Today's Stats -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayCount">0</div>
+                        <div class="stat-label">Today's Attendance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-label">Total Records</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Settings Card -->
-            <div class="card settings-card" id="settingsCard">
-                <h2 class="card-title"><i class="fas fa-cog"></i> Settings</h2>
-                
-                <div class="form-group">
-                    <label style="display: block; margin-bottom: 10px; font-weight: 500;">Camera Quality</label>
-                    <select id="cameraQuality" class="form-select">
-                        <option value="low">Low (Faster)</option>
-                        <option value="medium" selected>Medium (Balanced)</option>
-                        <option value="high">High (Best Quality)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" style="display: flex; align-items: center; justify-content: space-between;">
-                    <label style="font-weight: 500;">Auto-save Photos</label>
-                    <label class="switch">
-                        <input type="checkbox" id="autoSaveToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                
-                <div class="form-group">
-                    <label style="display: block; margin-bottom: 10px; font-weight: 500;">Location Update Frequency</label>
-                    <select id="locationFrequency" class="form-select">
-                        <option value="5000">Every 5 seconds</option>
-                        <option value="15000" selected>Every 15 seconds</option>
-                        <option value="30000">Every 30 seconds</option>
-                    </select>
-                </div>
-                
-                <button class="btn btn-info" id="exportData">
-                    <i class="fas fa-file-export"></i> Export Attendance Data
-                </button>
-                
-                <button class="btn btn-warning" id="backupRestore" style="margin-top: 10px;">
-                    <i class="fas fa-history"></i> Restore Backup
-                </button>
-                
-                <button class="btn btn-success" id="closeSettings" style="margin-top: 10px;">
-                    <i class="fas fa-times"></i> Close Settings
-                </button>
-            </div>
-            
-            <!-- Location Tracking Card -->
-            <div class="location-card">
-                <div class="location-header">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <h3>Live Location Tracking</h3>
-                </div>
-                
-                <div class="location-grid">
-                    <div class="location-item">
-                        <div class="location-label">GPS Status</div>
-                        <div class="location-value" id="gpsStatus">Checking...</div>
+            <!-- Records Tab -->
+            <div class="tab-content" id="recordsTab">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-clipboard-list"></i> Attendance Records</h2>
+                    
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                        <input type="date" id="filterDate" class="form-control" style="flex: 1; padding: 12px;">
+                        <button class="btn btn-primary" id="filterBtn">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <button class="btn btn-success" id="exportBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
                     </div>
-                    <div class="location-item">
-                        <div class="location-label">Coordinates</div>
-                        <div class="location-value">
-                            <span id="liveLat">-</span>, <span id="liveLon">-</span>
-                        </div>
-                    </div>
-                    <div class="location-item">
-                        <div class="location-label">Accuracy</div>
-                        <div class="location-value" id="liveAccuracy">-</div>
-                    </div>
-                    <div class="location-item">
-                        <div class="location-label">Address</div>
-                        <div class="location-value" id="liveAddress">-</div>
+                    
+                    <div class="records-container" id="recordsContainer">
+                        <!-- Records will be loaded here -->
                     </div>
                 </div>
             </div>
-            
-            <!-- Today's Attendance Card -->
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-history"></i> Today's Attendance</h2>
-                <div id="todayAttendance">
-                    <p style="color: #64748b; text-align: center; padding: 20px;">No attendance marked today</p>
-                </div>
-            </div>
-            
-            <!-- Install App Button Container -->
-            <div id="installBtnContainer"></div>
         </div>
         
         <!-- Toast Notification -->
@@ -945,14 +915,26 @@
         
         <!-- Footer -->
         <footer class="app-footer">
-            <p>Secure Mobile Attendance System &copy; 2024 | Designed for Panchayat employees</p>
+            <p>Smart Attendance System &copy; 2024 | GPS + Camera + Real-time Tracking</p>
         </footer>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
         // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Attendance Elements
         const employeeNameInput = document.getElementById('employeeName');
-        const panchayatInput = document.getElementById('panchayatName');
+        const employeeIdInput = document.getElementById('employeeId');
+        const departmentInput = document.getElementById('department');
         const startCameraBtn = document.getElementById('startCamera');
         const capturePhotoBtn = document.getElementById('capturePhoto');
         const cameraPreview = document.getElementById('cameraPreview');
@@ -961,111 +943,93 @@
         const capturedPhoto = document.getElementById('capturedPhoto');
         const capturedSection = document.getElementById('capturedSection');
         const submitAttendanceBtn = document.getElementById('submitAttendance');
-        const saveToGalleryBtn = document.getElementById('saveToGallery');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsCard = document.getElementById('settingsCard');
-        const closeSettingsBtn = document.getElementById('closeSettings');
-        const cameraQualitySelect = document.getElementById('cameraQuality');
-        const autoSaveToggle = document.getElementById('autoSaveToggle');
-        const locationFrequencySelect = document.getElementById('locationFrequency');
-        const exportDataBtn = document.getElementById('exportData');
-        const backupRestoreBtn = document.getElementById('backupRestore');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingText = document.getElementById('loadingText');
-        const networkStatus = document.getElementById('networkStatus');
+        const retakePhotoBtn = document.getElementById('retakePhoto');
         
-        // Metadata elements
-        const metaName = document.getElementById('metaName');
-        const metaPanchayat = document.getElementById('metaPanchayat');
-        const metaDateTime = document.getElementById('metaDateTime');
-        const metaLocation = document.getElementById('metaLocation');
-        const metaIP = document.getElementById('metaIP');
-        const metaVerification = document.getElementById('metaVerification');
-        
-        // Live tracking elements
+        // GPS Elements
         const gpsStatus = document.getElementById('gpsStatus');
+        const coordinates = document.getElementById('coordinates');
+        const address = document.getElementById('address');
+        const accuracy = document.getElementById('accuracy');
+        const refreshLocationBtn = document.getElementById('refreshLocation');
+        
+        // Map Elements
         const liveLat = document.getElementById('liveLat');
         const liveLon = document.getElementById('liveLon');
-        const liveAccuracy = document.getElementById('liveAccuracy');
-        const liveAddress = document.getElementById('liveAddress');
+        const liveSpeed = document.getElementById('liveSpeed');
+        const liveHeading = document.getElementById('liveHeading');
         
-        // Toast elements
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
+        // Records Elements
+        const todayCount = document.getElementById('todayCount');
+        const totalCount = document.getElementById('totalCount');
+        const filterDate = document.getElementById('filterDate');
+        const filterBtn = document.getElementById('filterBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const recordsContainer = document.getElementById('recordsContainer');
         
-        // Application state
+        // Application State
         let currentStream = null;
         let currentLocation = null;
-        let currentIP = null;
-        let isLocationVerified = false;
-        let attendanceRecords = JSON.parse(localStorage.getItem('secureAttendance')) || [];
+        let map = null;
+        let liveMap = null;
+        let userMarker = null;
+        let watchId = null;
+        let attendanceRecords = JSON.parse(localStorage.getItem('smartAttendance')) || [];
         let currentPhotoDataUrl = null;
-        let locationWatchId = null;
-        let deferredPrompt = null;
-        let inactivityTimer = null;
-        let appSettings = JSON.parse(localStorage.getItem('attendanceSettings')) || {
-            cameraQuality: 'medium',
-            autoSave: true,
-            locationFrequency: 15000
-        };
+        let mapInitialized = false;
+        let liveMapInitialized = false;
         
-        // Initialize the application
-        async function initApp() {
-            showLoading("Initializing application...");
-            
-            // Load settings
-            loadSettings();
-            
-            // Initialize features
-            await initLiveTracking();
-            setupNetworkMonitoring();
-            setupAutoBackup();
-            setupInactivityTimer();
-            setupPWAInstallPrompt();
-            updateTodayAttendance();
-            
-            // Load demo data if empty
-            if (attendanceRecords.length === 0) {
-                loadDemoData();
-            }
-            
-            // Setup button ripple effects
-            setupRippleEffects();
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            hideLoading();
-            showToast("Mobile Attendance System ready!", 'success');
-        }
+        // Tab Switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}Tab`) {
+                        content.classList.add('active');
+                        
+                        // Initialize map if needed
+                        if (tabId === 'map' && !liveMapInitialized) {
+                            initLiveMap();
+                        }
+                    }
+                });
+            });
+        });
         
-        // Show loading overlay
-        function showLoading(message = "Loading...") {
+        // Show loading
+        function showLoading(message) {
             loadingText.textContent = message;
             loadingOverlay.style.display = 'flex';
         }
         
-        // Hide loading overlay
+        // Hide loading
         function hideLoading() {
             loadingOverlay.style.display = 'none';
         }
         
         // Show toast notification
-        function showToast(message, type = 'info') {
+        function showToast(message, type = 'success') {
             toastMessage.textContent = message;
             
-            // Set icon based on type
             const icon = toast.querySelector('i');
-            toast.className = `toast ${type}`;
-            
-            if (type === 'success') {
-                icon.className = 'fas fa-check-circle';
-            } else if (type === 'error') {
+            if (type === 'error') {
                 icon.className = 'fas fa-exclamation-circle';
+                toast.style.background = 'rgba(220, 53, 69, 0.95)';
             } else if (type === 'warning') {
                 icon.className = 'fas fa-exclamation-triangle';
-            } else {
+                toast.style.background = 'rgba(255, 193, 7, 0.95)';
+            } else if (type === 'info') {
                 icon.className = 'fas fa-info-circle';
+                toast.style.background = 'rgba(23, 162, 184, 0.95)';
+            } else {
+                icon.className = 'fas fa-check-circle';
+                toast.style.background = 'rgba(40, 167, 69, 0.95)';
             }
             
             toast.classList.add('show');
@@ -1075,619 +1039,531 @@
             }, 3000);
         }
         
-        // Setup event listeners
-        function setupEventListeners() {
-            // Camera controls
-            startCameraBtn.addEventListener('click', toggleCamera);
-            capturePhotoBtn.addEventListener('click', capturePhoto);
+        // Initialize the application
+        async function initApp() {
+            showLoading("Initializing Smart Attendance System...");
             
-            // Photo actions
-            saveToGalleryBtn.addEventListener('click', savePhotoToGallery);
-            submitAttendanceBtn.addEventListener('click', submitAttendance);
-            
-            // Settings
-            settingsBtn.addEventListener('click', () => {
-                settingsCard.style.display = 'block';
-                settingsCard.scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            closeSettingsBtn.addEventListener('click', () => {
-                settingsCard.style.display = 'none';
-            });
-            
-            // Settings changes
-            cameraQualitySelect.addEventListener('change', (e) => {
-                appSettings.cameraQuality = e.target.value;
-                saveSettings();
-                showToast("Camera quality setting saved", 'success');
-            });
-            
-            autoSaveToggle.addEventListener('change', (e) => {
-                appSettings.autoSave = e.target.checked;
-                saveSettings();
-                showToast(`Auto-save ${e.target.checked ? 'enabled' : 'disabled'}`, 'success');
-            });
-            
-            locationFrequencySelect.addEventListener('change', (e) => {
-                appSettings.locationFrequency = parseInt(e.target.value);
-                saveSettings();
-                restartLocationTracking();
-                showToast("Location update frequency updated", 'success');
-            });
-            
-            exportDataBtn.addEventListener('click', exportAttendanceData);
-            backupRestoreBtn.addEventListener('click', restoreFromBackup);
-            
-            // Input validation
-            employeeNameInput.addEventListener('blur', validateName);
-            panchayatInput.addEventListener('blur', validatePanchayat);
-        }
-        
-        // Load app settings
-        function loadSettings() {
-            cameraQualitySelect.value = appSettings.cameraQuality;
-            autoSaveToggle.checked = appSettings.autoSave;
-            locationFrequencySelect.value = appSettings.locationFrequency;
-        }
-        
-        // Save app settings
-        function saveSettings() {
-            localStorage.setItem('attendanceSettings', JSON.stringify(appSettings));
-        }
-        
-        // Initialize live location tracking
-        async function initLiveTracking() {
-            // Get IP information
             try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                currentIP = data.ip;
+                // Load today's date for filter
+                filterDate.valueAsDate = new Date();
                 
-                // Store IP-based location for verification
-                window.ipLocation = {
-                    city: data.city,
-                    region: data.region,
-                    country: data.country_name,
-                    lat: data.latitude,
-                    lon: data.longitude
-                };
+                // Initialize GPS
+                await initGPS();
                 
-                // Update live address if GPS not available
-                if (!currentLocation && window.ipLocation) {
-                    liveAddress.textContent = `${window.ipLocation.city}, ${window.ipLocation.region}, ${window.ipLocation.country}`;
-                }
+                // Initialize main map
+                initMap();
+                
+                // Load attendance records
+                loadAttendanceRecords();
+                
+                // Update stats
+                updateStats();
+                
+                // Setup event listeners
+                setupEventListeners();
+                
+                showToast("System ready! You can now mark attendance.", 'success');
             } catch (error) {
-                console.log("IP API failed, using fallback");
-                currentIP = "192.168.1.1 (Demo)";
-                
-                window.ipLocation = {
-                    city: "Noida",
-                    region: "Uttar Pradesh",
-                    country: "India",
-                    lat: 28.5355,
-                    lon: 77.3910
-                };
+                console.error("Initialization error:", error);
+                showToast("Some features may not work properly", 'warning');
+            } finally {
+                hideLoading();
             }
-            
-            // Start GPS tracking
-            startContinuousLocationTracking();
         }
         
-        // Start continuous location tracking
-        function startContinuousLocationTracking() {
-            if (navigator.geolocation) {
-                gpsStatus.textContent = "Active";
-                gpsStatus.style.color = "#57cc99";
+        // Initialize GPS tracking
+        function initGPS() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    gpsStatus.textContent = "GPS not supported";
+                    gpsStatus.style.color = "#ff416c";
+                    reject(new Error("GPS not supported"));
+                    return;
+                }
                 
-                // Get initial position
+                gpsStatus.textContent = "Getting location...";
+                gpsStatus.style.color = "#ff9a00";
+                
+                // Get current position
                 navigator.geolocation.getCurrentPosition(
-                    (position) => updateLocation(position),
-                    (error) => handleLocationError(error)
-                );
-                
-                // Watch for position changes
-                locationWatchId = navigator.geolocation.watchPosition(
-                    (position) => updateLocation(position),
-                    (error) => handleLocationError(error),
+                    (position) => {
+                        updateLocation(position);
+                        resolve(position);
+                        
+                        // Start watching position
+                        watchId = navigator.geolocation.watchPosition(
+                            updateLocation,
+                            handleLocationError,
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 10000,
+                                maximumAge: 0
+                            }
+                        );
+                    },
+                    handleLocationError,
                     {
                         enableHighAccuracy: true,
-                        maximumAge: 10000,
-                        timeout: 15000
+                        timeout: 10000,
+                        maximumAge: 0
                     }
                 );
-            } else {
-                gpsStatus.textContent = "Not Supported";
-                gpsStatus.style.color = "#ff7e5f";
-            }
+            });
         }
         
-        // Update location display
+        // Update location information
         function updateLocation(position) {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            const accuracy = position.coords.accuracy;
+            const acc = position.coords.accuracy;
+            const speed = position.coords.speed || 0;
+            const heading = position.coords.heading || 0;
             
-            // Update live display
+            // Update status
+            gpsStatus.textContent = "Active";
+            gpsStatus.style.color = "#00b09b";
+            
+            // Update coordinates display
+            coordinates.textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+            accuracy.textContent = `${Math.round(acc)} meters`;
+            
+            // Update live map display
             liveLat.textContent = lat.toFixed(6);
             liveLon.textContent = lon.toFixed(6);
-            liveAccuracy.textContent = `${Math.round(accuracy)} meters`;
+            liveSpeed.textContent = speed > 0 ? `${(speed * 3.6).toFixed(1)} km/h` : "Stationary";
+            liveHeading.textContent = heading > 0 ? `${Math.round(heading)}°` : "-";
             
             // Store current location
             currentLocation = {
                 latitude: lat,
                 longitude: lon,
-                accuracy: accuracy,
-                timestamp: Date.now()
+                accuracy: acc,
+                speed: speed,
+                heading: heading,
+                timestamp: new Date().toISOString()
             };
             
             // Get address from coordinates
             getAddressFromCoords(lat, lon);
             
-            // Verify location (anti-spoofing)
-            verifyLocation(lat, lon);
+            // Update map if initialized
+            if (mapInitialized && map) {
+                updateMap(lat, lon);
+            }
+            
+            // Update live map if initialized
+            if (liveMapInitialized && liveMap) {
+                updateLiveMap(lat, lon, heading);
+            }
         }
         
         // Handle location error
         function handleLocationError(error) {
             console.error("GPS Error:", error);
-            gpsStatus.textContent = "Location access denied";
-            gpsStatus.style.color = "#ff7e5f";
             
-            // Fallback to IP location
-            if (window.ipLocation) {
-                currentLocation = {
-                    latitude: window.ipLocation.lat,
-                    longitude: window.ipLocation.lon,
-                    accuracy: 5000,
-                    timestamp: Date.now()
-                };
+            let message = "Unknown error";
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Permission denied";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Position unavailable";
+                    break;
+                case error.TIMEOUT:
+                    message = "Request timeout";
+                    break;
+            }
+            
+            gpsStatus.textContent = message;
+            gpsStatus.style.color = "#ff416c";
+            
+            // Fallback to demo location
+            const demoLat = 28.5355;
+            const demoLon = 77.3910;
+            
+            coordinates.textContent = `${demoLat.toFixed(6)}, ${demoLon.toFixed(6)}`;
+            accuracy.textContent = "100 meters (Demo)";
+            address.textContent = "Noida, Uttar Pradesh, India";
+            
+            currentLocation = {
+                latitude: demoLat,
+                longitude: demoLon,
+                accuracy: 100,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (mapInitialized && map) {
+                updateMap(demoLat, demoLon);
+            }
+        }
+        
+        // Get address from coordinates using Nominatim
+        async function getAddressFromCoords(lat, lon) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`
+                );
                 
-                liveLat.textContent = window.ipLocation.lat.toFixed(6);
-                liveLon.textContent = window.ipLocation.lon.toFixed(6);
-                liveAccuracy.textContent = "5000 meters (IP-based)";
-                liveAddress.textContent = `${window.ipLocation.city}, ${window.ipLocation.region}, ${window.ipLocation.country}`;
-            }
-        }
-        
-        // Restart location tracking with new frequency
-        function restartLocationTracking() {
-            if (locationWatchId) {
-                navigator.geolocation.clearWatch(locationWatchId);
-            }
-            startContinuousLocationTracking();
-        }
-        
-        // Get address from coordinates
-        function getAddressFromCoords(lat, lon) {
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.address) {
-                        const addr = data.address;
-                        let addressParts = [];
-                        
-                        if (addr.road) addressParts.push(addr.road);
-                        if (addr.suburb) addressParts.push(addr.suburb);
-                        if (addr.city) addressParts.push(addr.city);
-                        if (addr.state) addressParts.push(addr.state);
-                        if (addr.country) addressParts.push(addr.country);
-                        
-                        const address = addressParts.join(", ");
-                        liveAddress.textContent = address;
-                        
-                        // Update location for captured photo if available
-                        if (currentLocation) {
-                            currentLocation.address = address;
-                        }
-                    } else {
-                        liveAddress.textContent = "Address not available";
+                if (!response.ok) throw new Error("Network error");
+                
+                const data = await response.json();
+                
+                if (data && data.display_name) {
+                    address.textContent = data.display_name;
+                    
+                    if (currentLocation) {
+                        currentLocation.address = data.display_name;
                     }
-                })
-                .catch(error => {
-                    console.log("Geocoding failed");
-                    liveAddress.textContent = "Unable to fetch address";
-                });
+                } else {
+                    address.textContent = "Address not found";
+                }
+            } catch (error) {
+                console.log("Geocoding failed:", error);
+                address.textContent = "Could not fetch address";
+            }
         }
         
-        // Verify location to prevent spoofing
-        function verifyLocation(lat, lon) {
-            isLocationVerified = false;
-            
-            // Check 1: Accuracy (too high accuracy might indicate mock location)
-            if (currentLocation && currentLocation.accuracy < 20) {
-                // Very high accuracy could be suspicious
-                metaVerification.innerHTML = `<span class="verification-fail"><i class="fas fa-exclamation-triangle"></i> Suspicious accuracy</span>`;
-                return;
+        // Initialize main map
+        function initMap() {
+            if (!mapInitialized) {
+                map = L.map('map').setView([20.5937, 78.9629], 5); // Center on India
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+                
+                mapInitialized = true;
             }
+        }
+        
+        // Update main map with user location
+        function updateMap(lat, lon) {
+            if (!map) return;
             
-            // Check 2: Compare with IP-based location
-            if (window.ipLocation) {
-                const ipLat = window.ipLocation.lat;
-                const ipLon = window.ipLocation.lon;
+            // Clear existing markers
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            
+            // Set view to user location
+            map.setView([lat, lon], 16);
+            
+            // Add marker
+            const marker = L.marker([lat, lon]).addTo(map);
+            marker.bindPopup("<b>Your Current Location</b><br>Attendance will be marked here").openPopup();
+            
+            // Add circle for accuracy
+            if (currentLocation && currentLocation.accuracy) {
+                L.circle([lat, lon], {
+                    color: '#ff9a00',
+                    fillColor: '#ff9a00',
+                    fillOpacity: 0.1,
+                    radius: currentLocation.accuracy
+                }).addTo(map);
+            }
+        }
+        
+        // Initialize live map for tracking
+        function initLiveMap() {
+            if (!liveMapInitialized) {
+                liveMap = L.map('liveMap').setView([20.5937, 78.9629], 5);
                 
-                // Calculate distance between GPS and IP locations
-                const distance = calculateDistance(lat, lon, ipLat, ipLon);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(liveMap);
                 
-                if (distance > 100) { // More than 100km difference
-                    metaVerification.innerHTML = `<span class="verification-fail"><i class="fas fa-exclamation-triangle"></i> GPS-IP mismatch (${Math.round(distance)} km)</span>`;
-                    return;
+                liveMapInitialized = true;
+                
+                // Add user marker if location is available
+                if (currentLocation) {
+                    updateLiveMap(currentLocation.latitude, currentLocation.longitude, currentLocation.heading);
                 }
             }
-            
-            // All checks passed
-            isLocationVerified = true;
-            metaVerification.innerHTML = `<span class="verification-badge"><i class="fas fa-check-circle"></i> Verified Location</span>`;
         }
         
-        // Calculate distance between two coordinates in km
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth's radius in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+        // Update live map with user location and direction
+        function updateLiveMap(lat, lon, heading) {
+            if (!liveMap) return;
+            
+            // Remove existing marker
+            if (userMarker) {
+                liveMap.removeLayer(userMarker);
+            }
+            
+            // Create custom icon with direction
+            const icon = L.divIcon({
+                className: 'user-marker',
+                html: `<div style="transform: rotate(${heading}deg);">
+                         <i class="fas fa-location-arrow" style="font-size: 24px; color: #ff416c;"></i>
+                       </div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            
+            // Add marker
+            userMarker = L.marker([lat, lon], { icon: icon }).addTo(liveMap);
+            
+            // Center map on user
+            liveMap.setView([lat, lon], 16);
+            
+            // Add accuracy circle
+            if (currentLocation && currentLocation.accuracy) {
+                L.circle([lat, lon], {
+                    color: '#ff416c',
+                    fillColor: '#ff416c',
+                    fillOpacity: 0.1,
+                    radius: currentLocation.accuracy
+                }).addTo(liveMap);
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Camera controls
+            startCameraBtn.addEventListener('click', toggleCamera);
+            capturePhotoBtn.addEventListener('click', capturePhoto);
+            retakePhotoBtn.addEventListener('click', retakePhoto);
+            submitAttendanceBtn.addEventListener('click', submitAttendance);
+            
+            // Location refresh
+            refreshLocationBtn.addEventListener('click', () => {
+                showLoading("Refreshing location...");
+                setTimeout(() => {
+                    initGPS().then(() => {
+                        hideLoading();
+                        showToast("Location refreshed!", 'success');
+                    });
+                }, 1000);
+            });
+            
+            // Records filter and export
+            filterBtn.addEventListener('click', filterRecords);
+            exportBtn.addEventListener('click', exportRecords);
+            
+            // Enter key to submit
+            employeeNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    startCameraBtn.focus();
+                }
+            });
         }
         
         // Toggle camera on/off
         async function toggleCamera() {
             try {
-                // Stop any existing stream
                 if (currentStream) {
-                    stopCamera();
-                    return;
+                    // Stop camera
+                    currentStream.getTracks().forEach(track => track.stop());
+                    cameraPreview.style.display = 'none';
+                    cameraPlaceholder.style.display = 'flex';
+                    startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
+                    capturePhotoBtn.disabled = true;
+                    currentStream = null;
+                    showToast("Camera stopped", 'info');
+                } else {
+                    // Start camera
+                    showLoading("Starting camera...");
+                    
+                    const constraints = {
+                        video: { 
+                            facingMode: 'user',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    };
+                    
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    currentStream = stream;
+                    cameraPreview.srcObject = stream;
+                    cameraPreview.style.display = 'block';
+                    cameraPlaceholder.style.display = 'none';
+                    capturePhotoBtn.disabled = false;
+                    
+                    startCameraBtn.innerHTML = '<i class="fas fa-stop-circle"></i> Stop Camera';
+                    
+                    hideLoading();
+                    showToast("Camera started! Smile for the photo!", 'success');
                 }
-                
-                // Try to get user-facing camera (mobile selfie camera)
-                const constraints = {
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: getCameraResolution() },
-                        height: { ideal: getCameraResolution() * 0.75 }
-                    },
-                    audio: false
-                };
-                
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                
-                currentStream = stream;
-                cameraPreview.srcObject = stream;
-                cameraPreview.style.display = 'block';
-                cameraPlaceholder.style.display = 'none';
-                capturePhotoBtn.disabled = false;
-                
-                // Change button text
-                startCameraBtn.innerHTML = '<i class="fas fa-stop-circle"></i> Stop Camera';
-                showToast("Camera started. Face the camera and tap 'Capture Photo'", 'success');
             } catch (error) {
-                console.error("Camera Error:", error);
-                showToast("Unable to access camera. Please check permissions.", 'error');
+                console.error("Camera error:", error);
+                hideLoading();
+                showToast("Camera access denied or unavailable", 'error');
                 
-                // For demo purposes
+                // Show demo camera view
                 cameraPlaceholder.innerHTML = `
-                    <i class="fas fa-user-circle" style="font-size: 3.5rem; color: #57cc99;"></i>
-                    <p>Camera access required for attendance</p>
+                    <i class="fas fa-user-circle" style="font-size: 4rem; color: #ff9a00;"></i>
+                    <p>Camera access required</p>
                     <p style="font-size: 0.8rem; margin-top: 10px;">Using demo mode</p>
                 `;
             }
         }
         
-        // Get camera resolution based on quality setting
-        function getCameraResolution() {
-            switch(appSettings.cameraQuality) {
-                case 'low': return 320;
-                case 'high': return 1280;
-                default: return 640; // medium
-            }
-        }
-        
-        // Stop camera
-        function stopCamera() {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-                cameraPreview.style.display = 'none';
-                cameraPlaceholder.style.display = 'flex';
-                startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
-                currentStream = null;
-                showToast("Camera stopped", 'info');
-            }
-        }
-        
-        // Capture photo with metadata
-        async function capturePhoto() {
+        // Capture photo
+        function capturePhoto() {
+            const employeeName = employeeNameInput.value.trim();
+            const employeeId = employeeIdInput.value.trim();
+            const department = departmentInput.value.trim();
+            
             // Validate inputs
-            const errors = validateInputs();
-            if (errors.length > 0) {
-                errors.forEach(error => showToast(error, 'warning'));
+            if (!employeeName || !employeeId || !department) {
+                showToast("Please fill all employee details", 'warning');
                 return;
             }
             
-            const employeeName = employeeNameInput.value.trim();
-            const panchayatValue = panchayatInput.value.trim();
-            
-            // Get current date and time
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            const timeStr = now.toLocaleTimeString('en-IN', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            const dateTime = `${dateStr} ${timeStr}`;
-            
-            // Get location info
-            let locationText = "Unknown Location";
-            
-            if (currentLocation) {
-                if (currentLocation.address) {
-                    locationText = currentLocation.address;
-                } else {
-                    const lat = currentLocation.latitude.toFixed(6);
-                    const lon = currentLocation.longitude.toFixed(6);
-                    locationText = `Coordinates: ${lat}, ${lon}`;
-                }
-            } else if (window.ipLocation) {
-                locationText = `${window.ipLocation.city}, ${window.ipLocation.region}, ${window.ipLocation.country}`;
+            if (!currentLocation) {
+                showToast("Waiting for GPS location...", 'warning');
+                return;
             }
             
-            // Get IP info
-            const ipText = currentIP || "Not available";
+            showLoading("Capturing photo...");
             
-            // Update metadata display
-            metaName.textContent = employeeName;
-            metaPanchayat.textContent = panchayatValue;
-            metaDateTime.textContent = dateTime;
-            metaLocation.textContent = locationText;
-            metaIP.textContent = ipText;
-            
-            // Capture photo
             if (currentStream) {
-                // Real camera capture
-                showLoading("Processing photo...");
+                // Capture from live camera
+                const context = photoCanvas.getContext('2d');
+                photoCanvas.width = cameraPreview.videoWidth;
+                photoCanvas.height = cameraPreview.videoHeight;
                 
-                try {
-                    const context = photoCanvas.getContext('2d');
-                    photoCanvas.width = cameraPreview.videoWidth;
-                    photoCanvas.height = cameraPreview.videoHeight;
-                    
-                    // Draw image flipped for selfie view
-                    context.translate(photoCanvas.width, 0);
-                    context.scale(-1, 1);
-                    context.drawImage(cameraPreview, 0, 0, photoCanvas.width, photoCanvas.height);
-                    
-                    // Reset transformation
-                    context.setTransform(1, 0, 0, 1, 0, 0);
-                    
-                    // Add metadata text to photo
-                    addMetadataToPhoto(context, photoCanvas.width, photoCanvas.height, {
-                        employeeName,
-                        panchayatValue,
-                        dateTime,
-                        locationText,
-                        ipText
-                    });
-                    
-                    // Convert to data URL and compress
-                    currentPhotoDataUrl = await compressImage(photoCanvas.toDataURL('image/jpeg', 0.9));
-                    
-                    // Show captured photo
-                    capturedPhoto.src = currentPhotoDataUrl;
-                    
-                    // Show captured section
-                    capturedSection.style.display = 'block';
-                    
-                    // Scroll to captured photo for better mobile view
-                    capturedSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    
-                    // Auto-save if enabled
-                    if (appSettings.autoSave) {
-                        setTimeout(() => savePhotoToGallery(), 1000);
-                    }
-                    
-                    showToast("Photo captured successfully!", 'success');
-                } catch (error) {
-                    showToast("Error processing photo", 'error');
-                } finally {
-                    hideLoading();
-                }
+                // Flip for selfie
+                context.translate(photoCanvas.width, 0);
+                context.scale(-1, 1);
+                context.drawImage(cameraPreview, 0, 0, photoCanvas.width, photoCanvas.height);
+                context.setTransform(1, 0, 0, 1, 0, 0);
+                
+                // Add metadata overlay
+                addPhotoMetadata(context, photoCanvas.width, photoCanvas.height, {
+                    employeeName,
+                    employeeId,
+                    department,
+                    location: currentLocation
+                });
+                
+                // Convert to data URL
+                currentPhotoDataUrl = photoCanvas.toDataURL('image/jpeg', 0.9);
             } else {
-                // Demo mode - create a placeholder image
-                showLoading("Creating demo photo...");
-                
-                setTimeout(() => {
-                    createDemoPhoto(employeeName, panchayatValue, dateTime, locationText, ipText);
-                    hideLoading();
-                    showToast("Demo photo created!", 'info');
-                }, 1000);
+                // Create demo photo
+                currentPhotoDataUrl = createDemoPhoto({
+                    employeeName,
+                    employeeId,
+                    department,
+                    location: currentLocation
+                });
             }
+            
+            // Display captured photo
+            capturedPhoto.src = currentPhotoDataUrl;
+            capturedSection.style.display = 'block';
+            
+            // Scroll to photo
+            setTimeout(() => {
+                capturedSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+            
+            hideLoading();
+            showToast("Photo captured successfully!", 'success');
         }
         
         // Add metadata to photo
-        function addMetadataToPhoto(context, width, height, metadata) {
-            const { employeeName, panchayatValue, dateTime, locationText, ipText } = metadata;
+        function addPhotoMetadata(context, width, height, data) {
+            const { employeeName, employeeId, department, location } = data;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-IN');
+            const timeStr = now.toLocaleTimeString('en-IN');
             
-            context.font = "bold 16px Arial";
-            context.fillStyle = "white";
-            context.strokeStyle = "black";
-            context.lineWidth = 3;
-            
-            // Draw semi-transparent background for text
+            // Draw semi-transparent overlay
             context.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            context.fillRect(0, 0, width, 140);
+            context.fillRect(0, 0, width, 120);
             
             // Draw text
-            context.fillStyle = "white";
-            context.strokeStyle = "black";
+            context.font = 'bold 16px Arial';
+            context.fillStyle = 'white';
+            context.strokeStyle = 'black';
             context.lineWidth = 2;
             
             const texts = [
                 `Employee: ${employeeName}`,
-                `Panchayat: ${panchayatValue}`,
-                `Time: ${dateTime}`,
-                `Location: ${locationText.substring(0, 35)}${locationText.length > 35 ? '...' : ''}`,
-                `IP: ${ipText}`
+                `ID: ${employeeId} | Dept: ${department}`,
+                `Date: ${dateStr} | Time: ${timeStr}`,
+                `Location: ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`,
+                `Address: ${location.address || 'Unknown'}`
             ];
             
             let yPos = 30;
             texts.forEach(text => {
-                context.strokeText(text, 15, yPos);
-                context.fillText(text, 15, yPos);
-                yPos += 25;
+                context.strokeText(text, 20, yPos);
+                context.fillText(text, 20, yPos);
+                yPos += 22;
             });
             
-            // Draw verification badge
-            if (isLocationVerified) {
-                context.fillStyle = "#28a745";
-                context.fillRect(15, yPos, 180, 25);
-                context.fillStyle = "white";
-                context.fillText("✓ Verified Location", 20, yPos + 18);
-            } else {
-                context.fillStyle = "#dc3545";
-                context.fillRect(15, yPos, 200, 25);
-                context.fillStyle = "white";
-                context.fillText("⚠ Location Not Verified", 20, yPos + 18);
-            }
+            // Draw verification stamp
+            context.fillStyle = '#00b09b';
+            context.fillRect(width - 200, 20, 180, 30);
+            context.fillStyle = 'white';
+            context.font = 'bold 18px Arial';
+            context.fillText('✓ Verified Attendance', width - 195, 42);
         }
         
         // Create demo photo
-        function createDemoPhoto(employeeName, panchayatValue, dateTime, locationText, ipText) {
+        function createDemoPhoto(data) {
+            const { employeeName, employeeId, department, location } = data;
             const canvas = document.createElement('canvas');
-            canvas.width = 640;
-            canvas.height = 480;
+            canvas.width = 800;
+            canvas.height = 600;
             const ctx = canvas.getContext('2d');
             
-            // Create gradient background
-            const gradient = ctx.createLinearGradient(0, 0, 640, 480);
-            gradient.addColorStop(0, '#1a5f7a');
-            gradient.addColorStop(1, '#57cc99');
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 800, 600);
+            gradient.addColorStop(0, '#0f3460');
+            gradient.addColorStop(1, '#1a1a2e');
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 640, 480);
+            ctx.fillRect(0, 0, 800, 600);
             
-            // Draw user icon
-            ctx.fillStyle = "white";
-            ctx.font = "120px Arial";
-            ctx.fillText("👤", 260, 220);
+            // User icon
+            ctx.fillStyle = '#ff9a00';
+            ctx.font = '120px Arial';
+            ctx.fillText('👤', 340, 250);
             
-            // Add metadata text with background
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 300, 640, 180);
+            // Metadata overlay
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(0, 400, 800, 200);
             
-            ctx.font = "20px Arial";
-            ctx.fillStyle = "white";
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 2;
+            // Metadata text
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(`Employee: ${employeeName}`, 40, 440);
+            ctx.font = '20px Arial';
+            ctx.fillText(`ID: ${employeeId} | Department: ${department}`, 40, 480);
+            ctx.fillText(`Location: ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`, 40, 520);
+            ctx.fillText(`Timestamp: ${new Date().toLocaleString('en-IN')}`, 40, 560);
             
-            const texts = [
-                `Employee: ${employeeName}`,
-                `Panchayat: ${panchayatValue}`,
-                `Time: ${dateTime}`,
-                `Location: ${locationText}`,
-                `IP: ${ipText}`
-            ];
+            // Demo watermark
+            ctx.fillStyle = 'rgba(255, 154, 0, 0.3)';
+            ctx.font = 'bold 60px Arial';
+            ctx.fillText('DEMO MODE', 200, 350);
             
-            let yPos = 330;
-            texts.forEach(text => {
-                ctx.strokeText(text, 20, yPos);
-                ctx.fillText(text, 20, yPos);
-                yPos += 30;
-            });
-            
-            // Add DEMO watermark
-            ctx.fillStyle = "rgba(0,0,0,0.3)";
-            ctx.font = "bold 60px Arial";
-            ctx.fillText("DEMO", 200, 400);
-            
-            currentPhotoDataUrl = canvas.toDataURL('image/jpeg');
-            capturedPhoto.src = currentPhotoDataUrl;
-            
-            // Show captured section
-            capturedSection.style.display = 'block';
-            
-            // Scroll to captured photo
-            capturedSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return canvas.toDataURL('image/jpeg');
         }
         
-        // Compress image
-        function compressImage(imageDataUrl, quality = 0.7) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Optimize size based on quality setting
-                    let maxWidth = 800;
-                    if (appSettings.cameraQuality === 'low') maxWidth = 400;
-                    if (appSettings.cameraQuality === 'high') maxWidth = 1200;
-                    
-                    const maxHeight = 800;
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    if (width > maxWidth) {
-                        height = (maxWidth / width) * height;
-                        width = maxWidth;
-                    }
-                    
-                    if (height > maxHeight) {
-                        width = (maxHeight / height) * width;
-                        height = maxHeight;
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    resolve(canvas.toDataURL('image/jpeg', quality));
-                };
-                img.src = imageDataUrl;
-            });
-        }
-        
-        // Save photo to mobile gallery
-        function savePhotoToGallery() {
-            if (!currentPhotoDataUrl) {
-                showToast("No photo available to save", 'warning');
-                return;
-            }
-            
-            // Create a temporary link element
-            const link = document.createElement('a');
-            link.href = currentPhotoDataUrl;
-            
-            // Generate filename with timestamp
-            const employeeName = employeeNameInput.value.trim().replace(/\s+/g, '_');
-            const panchayatValue = panchayatInput.value.trim().replace(/\s+/g, '_');
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const filename = `attendance_${employeeName}_${panchayatValue}_${timestamp}.jpg`;
-            
-            link.download = filename;
-            
-            // Trigger download
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast("Photo saved to device gallery!", 'success');
+        // Retake photo
+        function retakePhoto() {
+            capturedSection.style.display = 'none';
+            currentPhotoDataUrl = null;
+            showToast("Ready to take new photo", 'info');
         }
         
         // Submit attendance
         function submitAttendance() {
             const employeeName = employeeNameInput.value.trim();
-            const panchayatValue = panchayatInput.value.trim();
+            const employeeId = employeeIdInput.value.trim();
+            const department = departmentInput.value.trim();
             
-            // Validate inputs
-            const errors = validateInputs();
-            if (errors.length > 0) {
-                errors.forEach(error => showToast(error, 'warning'));
+            if (!employeeName || !employeeId || !department) {
+                showToast("Please fill all employee details", 'warning');
                 return;
             }
             
@@ -1696,254 +1572,145 @@
                 return;
             }
             
+            if (!currentLocation) {
+                showToast("Location not available", 'error');
+                return;
+            }
+            
             showLoading("Submitting attendance...");
             
             // Create attendance record
             const record = {
                 id: Date.now(),
-                employeeName: employeeName,
-                panchayat: panchayatValue,
+                employeeName,
+                employeeId,
+                department,
                 photo: currentPhotoDataUrl,
-                dateTime: metaDateTime.textContent,
-                location: metaLocation.textContent,
-                ip: metaIP.textContent,
-                verified: isLocationVerified,
-                timestamp: new Date().toISOString()
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+                address: currentLocation.address || "Unknown",
+                accuracy: currentLocation.accuracy,
+                timestamp: new Date().toISOString(),
+                date: new Date().toLocaleDateString('en-IN'),
+                time: new Date().toLocaleTimeString('en-IN')
             };
             
             // Add to records
             attendanceRecords.unshift(record);
             
-            // Save to localStorage (max 100 records)
-            if (attendanceRecords.length > 100) {
-                attendanceRecords = attendanceRecords.slice(0, 100);
+            // Save to localStorage (max 500 records)
+            if (attendanceRecords.length > 500) {
+                attendanceRecords = attendanceRecords.slice(0, 500);
             }
-            localStorage.setItem('secureAttendance', JSON.stringify(attendanceRecords));
-            
-            // Show success message
-            showToast(`Attendance recorded for ${employeeName}!`, 'success');
+            localStorage.setItem('smartAttendance', JSON.stringify(attendanceRecords));
             
             // Reset form
             capturedSection.style.display = 'none';
-            
-            // Update today's attendance display
-            updateTodayAttendance();
-            
-            // Clear photo data
             currentPhotoDataUrl = null;
             
-            // Reset camera if active
-            stopCamera();
+            // Stop camera
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                cameraPreview.style.display = 'none';
+                cameraPlaceholder.style.display = 'flex';
+                startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
+                capturePhotoBtn.disabled = true;
+                currentStream = null;
+            }
             
+            // Update stats and records
+            updateStats();
+            loadAttendanceRecords();
+            
+            // Show success
             hideLoading();
+            showToast(`Attendance recorded for ${employeeName}!`, 'success');
+            
+            // Switch to records tab
+            document.querySelector('[data-tab="records"]').click();
         }
         
-        // Validate inputs
-        function validateInputs() {
-            const name = employeeNameInput.value.trim();
-            const panchayat = panchayatInput.value.trim();
-            const errors = [];
+        // Load attendance records
+        function loadAttendanceRecords(filterDateValue = null) {
+            let filteredRecords = attendanceRecords;
             
-            if (name.length < 2) {
-                errors.push("Name must be at least 2 characters");
-                highlightError(employeeNameInput);
+            if (filterDateValue) {
+                const filterDate = new Date(filterDateValue).toDateString();
+                filteredRecords = attendanceRecords.filter(record => {
+                    return new Date(record.timestamp).toDateString() === filterDate;
+                });
             }
             
-            if (panchayat.length < 2) {
-                errors.push("Panchayat name must be at least 2 characters");
-                highlightError(panchayatInput);
-            }
+            recordsContainer.innerHTML = '';
             
-            if (name.length > 100) {
-                errors.push("Name is too long");
-                highlightError(employeeNameInput);
-            }
-            
-            return errors;
-        }
-        
-        // Validate name
-        function validateName() {
-            const name = employeeNameInput.value.trim();
-            if (name.length < 2) {
-                highlightError(employeeNameInput);
-                showToast("Name must be at least 2 characters", 'warning');
-            }
-        }
-        
-        // Validate panchayat
-        function validatePanchayat() {
-            const panchayat = panchayatInput.value.trim();
-            if (panchayat.length < 2) {
-                highlightError(panchayatInput);
-                showToast("Panchayat name must be at least 2 characters", 'warning');
-            }
-        }
-        
-        // Highlight error field
-        function highlightError(inputElement) {
-            inputElement.style.borderColor = '#ff7e5f';
-            inputElement.style.boxShadow = '0 0 0 3px rgba(255, 126, 95, 0.1)';
-            
-            setTimeout(() => {
-                inputElement.style.borderColor = '';
-                inputElement.style.boxShadow = '';
-            }, 3000);
-        }
-        
-        // Update today's attendance display
-        function updateTodayAttendance() {
-            const today = new Date().toDateString();
-            const todayAttendance = attendanceRecords.filter(record => {
-                return new Date(record.timestamp).toDateString() === today;
-            });
-            
-            const todayContainer = document.getElementById('todayAttendance');
-            
-            if (todayAttendance.length === 0) {
-                todayContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">No attendance marked today</p>';
+            if (filteredRecords.length === 0) {
+                recordsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <i class="fas fa-clipboard" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>No attendance records found</p>
+                    </div>
+                `;
                 return;
             }
             
-            let html = '<div style="max-height: 300px; overflow-y: auto; padding-right: 5px;">';
-            
-            todayAttendance.forEach(record => {
-                const time = new Date(record.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            filteredRecords.forEach(record => {
+                const recordCard = document.createElement('div');
+                recordCard.className = 'record-card';
                 
-                html += `
-                    <div style="display: flex; align-items: center; padding: 15px; background: #f8fafc; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid ${record.verified ? '#57cc99' : '#ff7e5f'}">
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; color: #1e293b;">${record.employeeName}</div>
-                            <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
-                                <i class="fas fa-flag" style="margin-right: 5px;"></i>${record.panchayat}
-                            </div>
+                recordCard.innerHTML = `
+                    <div class="record-header">
+                        <div class="record-name">${record.employeeName}</div>
+                        <div class="record-time">${record.time}</div>
+                    </div>
+                    <div class="record-details">
+                        <div class="record-detail">
+                            <span class="record-label">Employee ID</span>
+                            <span class="record-value">${record.employeeId}</span>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-weight: 600; color: #1e293b;">${time}</div>
-                            <div style="font-size: 0.75rem; color: ${record.verified ? '#57cc99' : '#ff7e5f'}; margin-top: 4px;">
-                                <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
-                            </div>
+                        <div class="record-detail">
+                            <span class="record-label">Department</span>
+                            <span class="record-value">${record.department}</span>
+                        </div>
+                        <div class="record-detail">
+                            <span class="record-label">Location</span>
+                            <span class="record-value">${record.address.substring(0, 30)}${record.address.length > 30 ? '...' : ''}</span>
+                        </div>
+                        <div class="record-detail">
+                            <span class="record-label">Accuracy</span>
+                            <span class="record-value">${Math.round(record.accuracy)} m</span>
                         </div>
                     </div>
                 `;
-            });
-            
-            html += '</div>';
-            
-            todayContainer.innerHTML = html;
-        }
-        
-        // Setup network monitoring
-        function setupNetworkMonitoring() {
-            function updateNetworkStatus() {
-                if (navigator.onLine) {
-                    networkStatus.textContent = '🟢 Online';
-                    networkStatus.style.background = '#57cc99';
-                    networkStatus.style.color = 'white';
-                } else {
-                    networkStatus.textContent = '🔴 Offline Mode';
-                    networkStatus.style.background = '#ff7e5f';
-                    networkStatus.style.color = 'white';
-                }
-                networkStatus.style.display = 'block';
-                setTimeout(() => {
-                    networkStatus.style.display = 'none';
-                }, 3000);
-            }
-            
-            window.addEventListener('online', updateNetworkStatus);
-            window.addEventListener('offline', updateNetworkStatus);
-            
-            // Initial check
-            updateNetworkStatus();
-        }
-        
-        // Setup auto backup
-        function setupAutoBackup() {
-            // Backup every 24 hours
-            setInterval(() => {
-                const backupData = {
-                    timestamp: new Date().toISOString(),
-                    records: attendanceRecords,
-                    appVersion: '1.0.0'
-                };
                 
-                localStorage.setItem('attendance_backup', JSON.stringify(backupData));
-                console.log('Auto-backup completed at:', new Date().toLocaleTimeString());
-            }, 24 * 60 * 60 * 1000);
-        }
-        
-        // Setup inactivity timer
-        function setupInactivityTimer() {
-            function resetInactivityTimer() {
-                clearTimeout(inactivityTimer);
-                inactivityTimer = setTimeout(() => {
-                    if (confirm('Session inactive for 15 minutes. Do you want to continue?')) {
-                        resetInactivityTimer();
-                    } else {
-                        // Clear session
-                        if (currentStream) {
-                            currentStream.getTracks().forEach(track => track.stop());
-                        }
-                        showToast('Session ended due to inactivity', 'warning');
-                    }
-                }, 15 * 60 * 1000);
-            }
-            
-            // Track user activity
-            ['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-                document.addEventListener(event, resetInactivityTimer);
-            });
-            
-            // Start timer
-            resetInactivityTimer();
-        }
-        
-        // Setup PWA install prompt
-        function setupPWAInstallPrompt() {
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                
-                const installBtn = document.createElement('button');
-                installBtn.id = 'installBtn';
-                installBtn.className = 'btn btn-success';
-                installBtn.innerHTML = '<i class="fas fa-download"></i> Install App';
-                
-                installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        if (outcome === 'accepted') {
-                            showToast('App installed successfully!', 'success');
-                            installBtn.style.display = 'none';
-                        }
-                        deferredPrompt = null;
-                    }
-                });
-                
-                document.getElementById('installBtnContainer').appendChild(installBtn);
-                installBtn.style.display = 'block';
+                recordsContainer.appendChild(recordCard);
             });
         }
         
-        // Export attendance data
-        function exportAttendanceData() {
+        // Filter records by date
+        function filterRecords() {
+            const dateValue = filterDate.value;
+            loadAttendanceRecords(dateValue);
+            showToast(`Filtered records for ${new Date(dateValue).toLocaleDateString('en-IN')}`, 'info');
+        }
+        
+        // Export records
+        function exportRecords() {
             if (attendanceRecords.length === 0) {
-                showToast("No attendance data to export", 'warning');
+                showToast("No records to export", 'warning');
                 return;
             }
             
-            const csvHeaders = ['ID', 'Employee Name', 'Panchayat', 'Date Time', 'Location', 'IP Address', 'Verified', 'Timestamp'];
+            const csvHeaders = ['Date', 'Time', 'Employee Name', 'Employee ID', 'Department', 'Latitude', 'Longitude', 'Address', 'Accuracy'];
             const csvRows = attendanceRecords.map(record => [
-                record.id,
+                record.date,
+                record.time,
                 `"${record.employeeName}"`,
-                `"${record.panchayat}"`,
-                `"${record.dateTime}"`,
-                `"${record.location}"`,
-                `"${record.ip}"`,
-                record.verified ? 'Yes' : 'No',
-                record.timestamp
+                `"${record.employeeId}"`,
+                `"${record.department}"`,
+                record.latitude,
+                record.longitude,
+                `"${record.address}"`,
+                record.accuracy
             ]);
             
             const csvContent = [
@@ -1956,110 +1723,45 @@
             const url = URL.createObjectURL(blob);
             
             link.setAttribute('href', url);
-            link.setAttribute('download', `attendance_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
+            link.setAttribute('download', `attendance_records_${new Date().toISOString().split('T')[0]}.csv`);
             
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            showToast("Attendance data exported successfully!", 'success');
+            showToast("Records exported successfully!", 'success');
         }
         
-        // Restore from backup
-        function restoreFromBackup() {
-            const backup = localStorage.getItem('attendance_backup');
-            if (backup) {
-                try {
-                    const backupData = JSON.parse(backup);
-                    if (confirm(`Restore backup from ${new Date(backupData.timestamp).toLocaleString()}?`)) {
-                        attendanceRecords = backupData.records;
-                        localStorage.setItem('secureAttendance', JSON.stringify(attendanceRecords));
-                        updateTodayAttendance();
-                        showToast("Backup restored successfully!", 'success');
-                    }
-                } catch (error) {
-                    showToast("Failed to restore backup", 'error');
-                }
-            } else {
-                showToast("No backup found", 'warning');
-            }
-        }
-        
-        // Load demo data
-        function loadDemoData() {
-            const demoRecords = [
-                {
-                    id: Date.now() - 3600000,
-                    employeeName: "Rahul Sharma",
-                    panchayat: "Noida Panchayat",
-                    photo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
-                    dateTime: new Date().toLocaleDateString('en-IN') + " 09:15:30",
-                    location: "Sector 62, Noida, Uttar Pradesh, India",
-                    ip: "192.168.1.105",
-                    verified: true,
-                    timestamp: new Date().toISOString().replace(/T.*/, 'T09:15:30')
-                },
-                {
-                    id: Date.now() - 7200000,
-                    employeeName: "Priya Singh",
-                    panchayat: "Greater Noida Panchayat",
-                    photo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
-                    dateTime: new Date().toLocaleDateString('en-IN') + " 09:05:22",
-                    location: "Sector 63, Noida, Uttar Pradesh, India",
-                    ip: "192.168.1.106",
-                    verified: true,
-                    timestamp: new Date().toISOString().replace(/T.*/, 'T09:05:22')
-                }
-            ];
+        // Update statistics
+        function updateStats() {
+            const today = new Date().toDateString();
+            const todayRecords = attendanceRecords.filter(record => 
+                new Date(record.timestamp).toDateString() === today
+            );
             
-            attendanceRecords = demoRecords;
-            localStorage.setItem('secureAttendance', JSON.stringify(attendanceRecords));
-            updateTodayAttendance();
+            todayCount.textContent = todayRecords.length;
+            totalCount.textContent = attendanceRecords.length;
         }
         
-        // Setup ripple effects for buttons
-        function setupRippleEffects() {
-            document.querySelectorAll('.btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // Remove any existing ripple
-                    const existingRipple = this.querySelector('.ripple');
-                    if (existingRipple) {
-                        existingRipple.remove();
-                    }
-                    
-                    // Create ripple element
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        border-radius: 50%;
-                        background: rgba(255, 255, 255, 0.7);
-                        transform: scale(0);
-                        animation: ripple-animation 0.6s linear;
-                        width: ${size}px;
-                        height: ${size}px;
-                        top: ${y}px;
-                        left: ${x}px;
-                        pointer-events: none;
-                    `;
-                    
-                    this.appendChild(ripple);
-                    
-                    // Remove ripple after animation
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-        }
-        
-        // Initialize when page loads
+        // Initialize app when page loads
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Handle offline/online status
+        window.addEventListener('online', () => {
+            showToast("Back online! GPS tracking resumed.", 'success');
+        });
+        
+        window.addEventListener('offline', () => {
+            showToast("You are offline. Some features may not work.", 'warning');
+        });
+        
+        // Prevent accidental page close
+        window.addEventListener('beforeunload', (e) => {
+            if (currentStream) {
+                e.preventDefault();
+                e.returnValue = 'Camera is still active. Are you sure you want to leave?';
+            }
+        });
     </script>
 </body>
 </html>

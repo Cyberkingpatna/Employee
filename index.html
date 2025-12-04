@@ -14,16 +14,6 @@
     <!-- Leaflet CSS for Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Apple PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Smart Attendance">
-    <meta name="theme-color" content="#0f3460">
-    <meta name="description" content="Professional Attendance System with GPS, Camera, and Live Map Tracking">
-    
     <style>
         /* ========== CSS RESET & BASE STYLES ========== */
         * {
@@ -1750,23 +1740,6 @@
                 background: rgba(255, 255, 255, 0.05);
             }
         }
-        
-        /* ========== PRINT STYLES ========== */
-        @media print {
-            .app-header, .sidebar, .fab-container, .action-btn, .btn {
-                display: none !important;
-            }
-            
-            .card {
-                box-shadow: none !important;
-                border: 1px solid #ccc !important;
-            }
-            
-            body {
-                background: white !important;
-                color: black !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1781,12 +1754,6 @@
     
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
-    
-    <!-- Modal Dialogs Container -->
-    <div id="modalContainer"></div>
-    
-    <!-- Help Tour Overlay -->
-    <div class="tour-overlay" id="tourOverlay"></div>
     
     <!-- Main App Container -->
     <div class="app-container">
@@ -2238,7 +2205,6 @@
                                 </div>
                                 
                                 <div class="analytics-charts" id="analyticsCharts">
-                                    <!-- Charts will be generated here -->
                                     <div class="empty-state">
                                         <i class="fas fa-chart-line"></i>
                                         <h3>Analytics Dashboard</h3>
@@ -2540,22 +2506,10 @@
     <!-- Chart.js for Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- HTML2Canvas for Photo Capture -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    
-    <!-- jsPDF for PDF Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
-    <!-- QR Code Scanner -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    
+    <!-- Simplified version without external dependencies -->
     <script>
         // ============================================
-        // SMART ATTENDANCE SYSTEM - MAIN APPLICATION
-        // ============================================
-        // Version: 3.0.0
-        // Author: Smart Attendance Pro
-        // Features: GPS, Camera, Map, Analytics, PWA
+        // SMART ATTENDANCE SYSTEM - SIMPLIFIED VERSION
         // ============================================
         
         'use strict';
@@ -2565,81 +2519,24 @@
             APP_NAME: 'Smart Attendance Pro',
             VERSION: '3.0.0',
             MAX_RECORDS: 5000,
-            GPS_ACCURACY_THRESHOLD: 50, // meters
-            CAMERA_QUALITY: 0.8,
-            AUTO_BACKUP_INTERVAL: 24 * 60 * 60 * 1000, // 24 hours
-            SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutes
-            DEMO_MODE: false,
-            API_ENDPOINTS: {
-                GEOCODING: 'https://nominatim.openstreetmap.org/reverse',
-                IP_LOCATION: 'https://ipapi.co/json/'
-            }
+            GPS_ACCURACY_THRESHOLD: 50,
+            CAMERA_QUALITY: 0.8
         };
         
         // Application State
         const APP_STATE = {
-            // Core State
             isLoading: true,
             isOnline: navigator.onLine,
-            isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
-            isFullscreen: false,
-            
-            // User State
-            currentUser: null,
-            userSettings: {},
-            permissions: {
-                camera: false,
-                location: false,
-                notifications: false
-            },
-            
-            // Data State
-            attendanceRecords: [],
-            employees: [],
-            departments: [],
-            recentActivity: [],
-            
-            // Device State
             currentLocation: null,
-            locationWatchId: null,
-            locationHistory: [],
-            batteryLevel: 100,
-            networkType: 'unknown',
-            
-            // Camera State
-            cameraStream: null,
-            cameraActive: false,
-            currentCamera: 'user',
-            flashEnabled: false,
+            attendanceRecords: [],
             capturedPhoto: null,
-            
-            // Map State
-            mainMap: null,
-            liveMap: null,
-            userMarker: null,
-            trackingInterval: null,
-            
-            // UI State
             activeTab: 'attendance',
             selectedRecords: new Set(),
-            filters: {},
-            searchQuery: '',
-            
-            // Analytics State
-            analyticsData: {},
-            charts: {},
-            
-            // Settings State
             settings: {
                 voiceGuide: true,
-                autoSave: true,
                 gpsAccuracy: 50,
                 cameraQuality: 'medium',
-                flashMode: 'auto',
-                frontCamera: true,
-                autoBackup: true,
-                cloudSync: false,
-                maxRecords: 5000
+                frontCamera: true
             }
         };
         
@@ -2658,21 +2555,16 @@
             DOM.helpBtn = document.getElementById('helpBtn');
             DOM.themeToggle = document.getElementById('themeToggle');
             DOM.notificationsBtn = document.getElementById('notificationsBtn');
-            DOM.notificationCount = document.getElementById('notificationCount');
             
             // Tab Elements
             DOM.tabBtns = document.querySelectorAll('.tab-btn');
             DOM.tabPanes = document.querySelectorAll('.tab-pane');
-            DOM.attendanceBadge = document.getElementById('attendanceBadge');
-            DOM.recordsBadge = document.getElementById('recordsBadge');
             
             // Attendance Form Elements
             DOM.employeeName = document.getElementById('employeeName');
             DOM.employeeId = document.getElementById('employeeId');
             DOM.department = document.getElementById('department');
             DOM.designation = document.getElementById('designation');
-            DOM.nameAutocomplete = document.getElementById('nameAutocomplete');
-            DOM.scanIdBtn = document.getElementById('scanIdBtn');
             
             // GPS Elements
             DOM.gpsStatus = document.getElementById('gpsStatus');
@@ -2694,7 +2586,6 @@
             DOM.capturedPhoto = document.getElementById('capturedPhoto');
             DOM.retakePhotoBtn = document.getElementById('retakePhotoBtn');
             DOM.submitAttendanceBtn = document.getElementById('submitAttendanceBtn');
-            DOM.editPhotoBtn = document.getElementById('editPhotoBtn');
             
             // Photo Metadata Elements
             DOM.metaName = document.getElementById('metaName');
@@ -2713,365 +2604,63 @@
             DOM.clearFilterBtn = document.getElementById('clearFilterBtn');
             DOM.recordsContainer = document.getElementById('recordsContainer');
             DOM.exportCsvBtn = document.getElementById('exportCsvBtn');
-            DOM.exportPdfBtn = document.getElementById('exportPdfBtn');
             DOM.deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-            DOM.syncRecordsBtn = document.getElementById('syncRecordsBtn');
-            
-            // Map Elements
-            DOM.liveMap = document.getElementById('liveMap');
-            DOM.liveLat = document.getElementById('liveLat');
-            DOM.liveLon = document.getElementById('liveLon');
-            DOM.liveSpeed = document.getElementById('liveSpeed');
-            DOM.liveHeading = document.getElementById('liveHeading');
-            DOM.liveAltitude = document.getElementById('liveAltitude');
-            DOM.liveSatellites = document.getElementById('liveSatellites');
-            DOM.liveTrackingBtn = document.getElementById('liveTrackingBtn');
-            DOM.showHeatmapBtn = document.getElementById('showHeatmapBtn');
-            DOM.startLiveTrackingBtn = document.getElementById('startLiveTrackingBtn');
-            
-            // Analytics Elements
-            DOM.analyticsPeriod = document.getElementById('analyticsPeriod');
-            DOM.analyticsCharts = document.getElementById('analyticsCharts');
-            
-            // Settings Elements
-            DOM.voiceGuideToggle = document.getElementById('voiceGuideToggle');
-            DOM.autoSaveToggle = document.getElementById('autoSaveToggle');
-            DOM.gpsAccuracy = document.getElementById('gpsAccuracy');
-            DOM.cameraQuality = document.getElementById('cameraQuality');
-            DOM.flashMode = document.getElementById('flashMode');
-            DOM.frontCameraToggle = document.getElementById('frontCameraToggle');
-            DOM.autoBackupToggle = document.getElementById('autoBackupToggle');
-            DOM.cloudSyncToggle = document.getElementById('cloudSyncToggle');
-            DOM.maxRecords = document.getElementById('maxRecords');
-            DOM.backupDataBtn = document.getElementById('backupDataBtn');
-            DOM.restoreDataBtn = document.getElementById('restoreDataBtn');
-            DOM.clearDataBtn = document.getElementById('clearDataBtn');
             
             // Sidebar Elements
             DOM.statToday = document.getElementById('statToday');
             DOM.statTotal = document.getElementById('statTotal');
             DOM.statMonth = document.getElementById('statMonth');
             DOM.statAccuracy = document.getElementById('statAccuracy');
-            DOM.quickMarkBtn = document.getElementById('quickMarkBtn');
-            DOM.viewTodayBtn = document.getElementById('viewTodayBtn');
-            DOM.exportDataBtn = document.getElementById('exportDataBtn');
-            DOM.syncNowBtn = document.getElementById('syncNowBtn');
-            DOM.recentActivity = document.getElementById('recentActivity');
-            DOM.statusGps = document.getElementById('statusGps');
-            DOM.statusCamera = document.getElementById('statusCamera');
-            DOM.statusStorage = document.getElementById('statusStorage');
-            DOM.statusBattery = document.getElementById('statusBattery');
-            
-            // FAB Elements
-            DOM.mainFab = document.getElementById('mainFab');
-            DOM.helpFab = document.getElementById('helpFab');
-            DOM.emergencyFab = document.getElementById('emergencyFab');
             
             // Toast Container
             DOM.toastContainer = document.getElementById('toastContainer');
-            
-            // Modal Container
-            DOM.modalContainer = document.getElementById('modalContainer');
-            
-            // Tour Overlay
-            DOM.tourOverlay = document.getElementById('tourOverlay');
         }
         
         // Utility Functions
         const Utils = {
-            // Debounce function for performance
-            debounce(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            },
-            
-            // Throttle function for performance
-            throttle(func, limit) {
-                let inThrottle;
-                return function() {
-                    const args = arguments;
-                    const context = this;
-                    if (!inThrottle) {
-                        func.apply(context, args);
-                        inThrottle = true;
-                        setTimeout(() => inThrottle = false, limit);
-                    }
-                };
-            },
-            
-            // Format date
             formatDate(date, format = 'full') {
                 const d = new Date(date);
-                const options = {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                };
-                
                 if (format === 'date') {
                     return d.toLocaleDateString('en-IN');
                 } else if (format === 'time') {
                     return d.toLocaleTimeString('en-IN');
                 } else {
-                    return d.toLocaleString('en-IN', options);
+                    return d.toLocaleString('en-IN');
                 }
             },
             
-            // Generate random ID
             generateId() {
                 return Date.now().toString(36) + Math.random().toString(36).substr(2);
-            },
-            
-            // Validate email
-            validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            },
-            
-            // Validate phone
-            validatePhone(phone) {
-                const re = /^[0-9]{10}$/;
-                return re.test(phone);
-            },
-            
-            // Calculate distance between coordinates (in meters)
-            calculateDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371e3; // Earth's radius in meters
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δφ = (lat2 - lat1) * Math.PI / 180;
-                const Δλ = (lon2 - lon1) * Math.PI / 180;
-                
-                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                          Math.cos(φ1) * Math.cos(φ2) *
-                          Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                
-                return R * c;
-            },
-            
-            // Format file size
-            formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            },
-            
-            // Deep clone object
-            deepClone(obj) {
-                return JSON.parse(JSON.stringify(obj));
-            },
-            
-            // Sleep function
-            sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-        };
-        
-        // Storage Manager
-        const Storage = {
-            // Save data to localStorage
-            save(key, data) {
-                try {
-                    localStorage.setItem(`smart_attendance_${key}`, JSON.stringify(data));
-                    return true;
-                } catch (error) {
-                    console.error('Storage save error:', error);
-                    this.showStorageError();
-                    return false;
-                }
-            },
-            
-            // Load data from localStorage
-            load(key) {
-                try {
-                    const data = localStorage.getItem(`smart_attendance_${key}`);
-                    return data ? JSON.parse(data) : null;
-                } catch (error) {
-                    console.error('Storage load error:', error);
-                    return null;
-                }
-            },
-            
-            // Remove data from localStorage
-            remove(key) {
-                try {
-                    localStorage.removeItem(`smart_attendance_${key}`);
-                    return true;
-                } catch (error) {
-                    console.error('Storage remove error:', error);
-                    return false;
-                }
-            },
-            
-            // Clear all app data
-            clearAll() {
-                try {
-                    const keys = Object.keys(localStorage);
-                    keys.forEach(key => {
-                        if (key.startsWith('smart_attendance_')) {
-                            localStorage.removeItem(key);
-                        }
-                    });
-                    return true;
-                } catch (error) {
-                    console.error('Storage clear error:', error);
-                    return false;
-                }
-            },
-            
-            // Get storage usage
-            getUsage() {
-                try {
-                    let total = 0;
-                    const keys = Object.keys(localStorage);
-                    keys.forEach(key => {
-                        if (key.startsWith('smart_attendance_')) {
-                            total += localStorage.getItem(key).length;
-                        }
-                    });
-                    return total;
-                } catch (error) {
-                    console.error('Storage usage error:', error);
-                    return 0;
-                }
-            },
-            
-            // Show storage error message
-            showStorageError() {
-                Utils.showToast('Storage error! Data may not be saved.', 'error');
-            },
-            
-            // Backup data
-            async backup() {
-                try {
-                    const backupData = {
-                        timestamp: new Date().toISOString(),
-                        version: CONFIG.VERSION,
-                        attendanceRecords: APP_STATE.attendanceRecords,
-                        employees: APP_STATE.employees,
-                        departments: APP_STATE.departments,
-                        settings: APP_STATE.settings
-                    };
-                    
-                    const backupKey = `backup_${Date.now()}`;
-                    this.save(backupKey, backupData);
-                    
-                    // Keep only last 5 backups
-                    const backups = this.getBackups();
-                    if (backups.length > 5) {
-                        backups.slice(5).forEach(backup => {
-                            this.remove(backup.key);
-                        });
-                    }
-                    
-                    Utils.showToast('Backup created successfully!', 'success');
-                    return backupKey;
-                } catch (error) {
-                    console.error('Backup error:', error);
-                    Utils.showToast('Backup failed!', 'error');
-                    return null;
-                }
-            },
-            
-            // Get all backups
-            getBackups() {
-                try {
-                    const backups = [];
-                    const keys = Object.keys(localStorage);
-                    
-                    keys.forEach(key => {
-                        if (key.startsWith('smart_attendance_backup_')) {
-                            const data = this.load(key.replace('smart_attendance_', ''));
-                            if (data) {
-                                backups.push({
-                                    key: key.replace('smart_attendance_', ''),
-                                    timestamp: data.timestamp,
-                                    size: JSON.stringify(data).length
-                                });
-                            }
-                        }
-                    });
-                    
-                    return backups.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                } catch (error) {
-                    console.error('Get backups error:', error);
-                    return [];
-                }
-            },
-            
-            // Restore from backup
-            async restore(backupKey) {
-                try {
-                    const backupData = this.load(backupKey);
-                    if (!backupData) {
-                        throw new Error('Backup not found');
-                    }
-                    
-                    // Validate backup version
-                    if (backupData.version !== CONFIG.VERSION) {
-                        if (!confirm(`Backup version (${backupData.version}) differs from current version (${CONFIG.VERSION}). Continue anyway?`)) {
-                            return false;
-                        }
-                    }
-                    
-                    // Restore data
-                    APP_STATE.attendanceRecords = backupData.attendanceRecords || [];
-                    APP_STATE.employees = backupData.employees || [];
-                    APP_STATE.departments = backupData.departments || [];
-                    APP_STATE.settings = { ...APP_STATE.settings, ...backupData.settings };
-                    
-                    // Save restored data
-                    this.save('attendance_records', APP_STATE.attendanceRecords);
-                    this.save('employees', APP_STATE.employees);
-                    this.save('departments', APP_STATE.departments);
-                    this.save('settings', APP_STATE.settings);
-                    
-                    Utils.showToast('Backup restored successfully!', 'success');
-                    return true;
-                } catch (error) {
-                    console.error('Restore error:', error);
-                    Utils.showToast('Restore failed!', 'error');
-                    return false;
-                }
             }
         };
         
         // Toast Manager
         const Toast = {
-            // Show toast notification
-            show(message, type = 'info', duration = 5000) {
+            show(message, type = 'info', duration = 3000) {
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
+                
+                const icons = {
+                    success: 'check-circle',
+                    error: 'exclamation-circle',
+                    warning: 'exclamation-triangle',
+                    info: 'info-circle'
+                };
+                
                 toast.innerHTML = `
                     <div class="toast-icon">
-                        <i class="fas fa-${this.getIcon(type)}"></i>
+                        <i class="fas fa-${icons[type] || 'info-circle'}"></i>
                     </div>
                     <div class="toast-content">
-                        <div class="toast-title">${this.getTitle(type)}</div>
+                        <div class="toast-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
                         <div class="toast-message">${message}</div>
                     </div>
                 `;
                 
                 DOM.toastContainer.appendChild(toast);
                 
-                // Show toast
                 setTimeout(() => toast.classList.add('show'), 10);
                 
-                // Auto remove
                 setTimeout(() => {
                     toast.classList.remove('show');
                     setTimeout(() => {
@@ -3084,249 +2673,52 @@
                 return toast;
             },
             
-            // Get icon based on type
-            getIcon(type) {
-                switch(type) {
-                    case 'success': return 'check-circle';
-                    case 'error': return 'exclamation-circle';
-                    case 'warning': return 'exclamation-triangle';
-                    case 'info': return 'info-circle';
-                    default: return 'info-circle';
-                }
-            },
-            
-            // Get title based on type
-            getTitle(type) {
-                switch(type) {
-                    case 'success': return 'Success';
-                    case 'error': return 'Error';
-                    case 'warning': return 'Warning';
-                    case 'info': return 'Information';
-                    default: return 'Notification';
-                }
-            },
-            
-            // Show success toast
-            success(message, duration = 5000) {
+            success(message, duration = 3000) {
                 return this.show(message, 'success', duration);
             },
             
-            // Show error toast
-            error(message, duration = 5000) {
+            error(message, duration = 3000) {
                 return this.show(message, 'error', duration);
             },
             
-            // Show warning toast
-            warning(message, duration = 5000) {
+            warning(message, duration = 3000) {
                 return this.show(message, 'warning', duration);
             },
             
-            // Show info toast
-            info(message, duration = 5000) {
+            info(message, duration = 3000) {
                 return this.show(message, 'info', duration);
             }
         };
         
-        // Modal Manager
-        const Modal = {
-            // Show modal
-            show(title, content, buttons = [], options = {}) {
-                const modalId = `modal_${Utils.generateId()}`;
-                const modal = document.createElement('div');
-                modal.className = 'modal-overlay';
-                modal.id = modalId;
-                modal.innerHTML = `
-                    <div class="modal">
-                        <div class="modal-header">
-                            <h3 class="modal-title">${title}</h3>
-                            <button class="modal-close" onclick="Modal.close('${modalId}')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            ${content}
-                        </div>
-                        ${buttons.length > 0 ? `
-                            <div class="modal-footer">
-                                ${buttons.map(btn => `
-                                    <button class="btn ${btn.class || 'btn-primary'}" 
-                                            onclick="${btn.onclick}">
-                                        ${btn.icon ? `<i class="fas fa-${btn.icon}"></i>` : ''}
-                                        ${btn.text}
-                                    </button>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-                
-                DOM.modalContainer.appendChild(modal);
-                
-                // Show modal
-                setTimeout(() => modal.classList.add('show'), 10);
-                
-                // Handle escape key
-                const handleEscape = (e) => {
-                    if (e.key === 'Escape') {
-                        this.close(modalId);
-                    }
-                };
-                
-                modal.dataset.escapeHandler = handleEscape;
-                document.addEventListener('keydown', handleEscape);
-                
-                return modalId;
-            },
-            
-            // Close modal
-            close(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.classList.remove('show');
-                    setTimeout(() => {
-                        if (modal.parentNode) {
-                            const escapeHandler = modal.dataset.escapeHandler;
-                            if (escapeHandler) {
-                                document.removeEventListener('keydown', escapeHandler);
-                            }
-                            modal.parentNode.removeChild(modal);
-                        }
-                    }, 300);
-                }
-            },
-            
-            // Show confirmation modal
-            confirm(title, message, onConfirm, onCancel = null) {
-                return this.show(
-                    title,
-                    `<p>${message}</p>`,
-                    [
-                        {
-                            text: 'Cancel',
-                            class: 'btn-outline-accent',
-                            onclick: `Modal.close('${this.currentModalId}'); ${onCancel ? `(${onCancel})()` : ''}`
-                        },
-                        {
-                            text: 'Confirm',
-                            class: 'btn-danger',
-                            icon: 'check',
-                            onclick: `Modal.close('${this.currentModalId}'); (${onConfirm})()`
-                        }
-                    ]
-                );
-            },
-            
-            // Show alert modal
-            alert(title, message) {
-                return this.show(
-                    title,
-                    `<p>${message}</p>`,
-                    [
-                        {
-                            text: 'OK',
-                            class: 'btn-accent',
-                            onclick: `Modal.close('${this.currentModalId}')`
-                        }
-                    ]
-                );
-            }
-        };
-        
-        // Voice Guide Manager
-        const VoiceGuide = {
-            enabled: true,
-            voice: null,
-            volume: 1,
-            rate: 0.9,
-            pitch: 1,
-            
-            // Initialize voice guide
-            init() {
-                if ('speechSynthesis' in window) {
-                    this.voice = window.speechSynthesis;
-                    this.enabled = Storage.load('voice_guide_enabled') !== false;
-                    
-                    // Set default voice
-                    this.voice.onvoiceschanged = () => {
-                        const voices = this.voice.getVoices();
-                        // Prefer English voices
-                        const englishVoice = voices.find(v => v.lang.startsWith('en'));
-                        if (englishVoice) {
-                            this.defaultVoice = englishVoice;
-                        }
-                    };
-                    
+        // Storage Manager
+        const Storage = {
+            save(key, data) {
+                try {
+                    localStorage.setItem(`smart_attendance_${key}`, JSON.stringify(data));
                     return true;
-                }
-                return false;
-            },
-            
-            // Speak text
-            speak(text) {
-                if (!this.enabled || !this.voice) return;
-                
-                // Cancel any ongoing speech
-                this.voice.cancel();
-                
-                // Create utterance
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.volume = this.volume;
-                utterance.rate = this.rate;
-                utterance.pitch = this.pitch;
-                
-                // Use default voice if available
-                if (this.defaultVoice) {
-                    utterance.voice = this.defaultVoice;
-                }
-                
-                this.voice.speak(utterance);
-            },
-            
-            // Toggle voice guide
-            toggle() {
-                this.enabled = !this.enabled;
-                Storage.save('voice_guide_enabled', this.enabled);
-                
-                if (this.enabled) {
-                    this.speak('Voice guide enabled');
-                    Toast.success('Voice guide enabled');
-                } else {
-                    Toast.info('Voice guide disabled');
-                }
-                
-                this.updateUI();
-            },
-            
-            // Update UI based on voice guide state
-            updateUI() {
-                if (DOM.voiceGuideBtn) {
-                    if (this.enabled) {
-                        DOM.voiceGuideBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                        DOM.voiceGuideBtn.classList.add('active');
-                    } else {
-                        DOM.voiceGuideBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                        DOM.voiceGuideBtn.classList.remove('active');
-                    }
+                } catch (error) {
+                    console.error('Storage save error:', error);
+                    return false;
                 }
             },
             
-            // Guide for specific actions
-            guide(action) {
-                if (!this.enabled) return;
-                
-                const messages = {
-                    welcome: "Welcome to Smart Attendance System. Please fill your details and mark attendance.",
-                    camera_started: "Camera started. Please position your face in the frame.",
-                    photo_captured: "Photo captured successfully. You can retake or submit.",
-                    location_acquired: "Location acquired. Your attendance will be marked at this location.",
-                    attendance_submitted: "Attendance submitted successfully.",
-                    gps_lost: "GPS signal lost. Please move to an open area.",
-                    offline_mode: "You are offline. Working in offline mode.",
-                    online_mode: "Back online. Synchronizing data."
-                };
-                
-                if (messages[action]) {
-                    this.speak(messages[action]);
+            load(key) {
+                try {
+                    const data = localStorage.getItem(`smart_attendance_${key}`);
+                    return data ? JSON.parse(data) : null;
+                } catch (error) {
+                    console.error('Storage load error:', error);
+                    return null;
+                }
+            },
+            
+            remove(key) {
+                try {
+                    localStorage.removeItem(`smart_attendance_${key}`);
+                    return true;
+                } catch (error) {
+                    console.error('Storage remove error:', error);
+                    return false;
                 }
             }
         };
@@ -3334,33 +2726,24 @@
         // GPS Manager
         const GPSManager = {
             currentPosition: null,
-            watchId: null,
-            isTracking: false,
-            history: [],
-            maxHistory: 100,
             
-            // Initialize GPS
-            async init() {
-                return new Promise((resolve, reject) => {
+            init() {
+                return new Promise((resolve) => {
                     if (!navigator.geolocation) {
                         DOM.gpsStatus.innerHTML = '<i class="fas fa-times-circle"></i> Not Supported';
                         DOM.gpsStatus.style.color = 'var(--danger-color)';
-                        reject(new Error('GPS not supported'));
+                        resolve(null);
                         return;
                     }
                     
-                    // Request permission and get position
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             this.handlePosition(position);
                             resolve(position);
-                            
-                            // Start watching position
-                            this.startWatching();
                         },
                         (error) => {
                             this.handleError(error);
-                            reject(error);
+                            resolve(null);
                         },
                         {
                             enableHighAccuracy: true,
@@ -3371,85 +2754,28 @@
                 });
             },
             
-            // Start watching position
-            startWatching() {
-                if (this.watchId) return;
-                
-                this.watchId = navigator.geolocation.watchPosition(
-                    (position) => this.handlePosition(position),
-                    (error) => this.handleError(error),
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 5000,
-                        maximumAge: 0
-                    }
-                );
-                
-                this.isTracking = true;
-                this.updateUI();
-            },
-            
-            // Stop watching position
-            stopWatching() {
-                if (this.watchId) {
-                    navigator.geolocation.clearWatch(this.watchId);
-                    this.watchId = null;
-                    this.isTracking = false;
-                    this.updateUI();
-                }
-            },
-            
-            // Handle new position
             handlePosition(position) {
                 this.currentPosition = position;
-                this.history.push({
-                    timestamp: new Date().toISOString(),
-                    coords: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        accuracy: position.coords.accuracy,
-                        altitude: position.coords.altitude,
-                        heading: position.coords.heading,
-                        speed: position.coords.speed
-                    }
-                });
-                
-                // Keep only recent history
-                if (this.history.length > this.maxHistory) {
-                    this.history = this.history.slice(-this.maxHistory);
-                }
-                
-                // Update app state
                 APP_STATE.currentLocation = {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                     accuracy: position.coords.accuracy,
-                    altitude: position.coords.altitude,
-                    heading: position.coords.heading,
-                    speed: position.coords.speed,
                     timestamp: new Date().toISOString()
                 };
                 
-                // Update UI
-                this.updateUI();
+                DOM.gpsStatus.innerHTML = '<i class="fas fa-check-circle"></i> Active';
+                DOM.gpsStatus.style.color = 'var(--success-color)';
+                DOM.coordinates.textContent = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                DOM.accuracy.textContent = `${Math.round(position.coords.accuracy)} meters`;
+                DOM.address.textContent = 'Location acquired';
                 
-                // Update maps
-                if (APP_STATE.mainMap) {
-                    this.updateMainMap();
+                // Initialize map if available
+                if (window.L && DOM.map) {
+                    this.initMap();
                 }
-                
-                if (APP_STATE.liveMap) {
-                    this.updateLiveMap();
-                }
-                
-                // Get address
-                this.getAddress(position.coords.latitude, position.coords.longitude);
             },
             
-            // Handle GPS error
             handleError(error) {
-                console.error('GPS Error:', error);
-                
                 let message = 'Unknown Error';
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
@@ -3465,169 +2791,50 @@
                 
                 DOM.gpsStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
                 DOM.gpsStatus.style.color = 'var(--warning-color)';
+                DOM.coordinates.textContent = 'Not available';
+                DOM.address.textContent = 'Enable GPS and refresh';
                 
-                // Try to get IP-based location
-                this.getIPLocation();
+                // Use demo location for testing
+                APP_STATE.currentLocation = {
+                    latitude: 28.6139,
+                    longitude: 77.2090,
+                    accuracy: 50,
+                    address: 'Demo Location (New Delhi)',
+                    timestamp: new Date().toISOString()
+                };
             },
             
-            // Get address from coordinates
-            async getAddress(lat, lon) {
-                try {
-                    const response = await fetch(
-                        `${CONFIG.API_ENDPOINTS.GEOCODING}?format=json&lat=${lat}&lon=${lon}&zoom=18`
-                    );
-                    
-                    if (!response.ok) throw new Error('Geocoding failed');
-                    
-                    const data = await response.json();
-                    
-                    if (data && data.display_name) {
-                        DOM.address.textContent = data.display_name;
-                        
-                        if (APP_STATE.currentLocation) {
-                            APP_STATE.currentLocation.address = data.display_name;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Geocoding error:', error);
-                    DOM.address.textContent = 'Address not available';
-                }
-            },
-            
-            // Get IP-based location
-            async getIPLocation() {
-                try {
-                    const response = await fetch(CONFIG.API_ENDPOINTS.IP_LOCATION);
-                    const data = await response.json();
-                    
-                    if (data) {
-                        DOM.coordinates.textContent = `${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}`;
-                        DOM.address.textContent = `${data.city}, ${data.region}, ${data.country_name}`;
-                        DOM.accuracy.textContent = '5000 meters (IP-based)';
-                        
-                        APP_STATE.currentLocation = {
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            accuracy: 5000,
-                            address: `${data.city}, ${data.region}, ${data.country_name}`,
-                            source: 'ip'
-                        };
-                    }
-                } catch (error) {
-                    console.error('IP location error:', error);
-                }
-            },
-            
-            // Update UI with current position
-            updateUI() {
-                if (!this.currentPosition) return;
+            initMap() {
+                if (!this.currentPosition || !window.L) return;
                 
-                const coords = this.currentPosition.coords;
+                const map = L.map('map').setView(
+                    [this.currentPosition.coords.latitude, this.currentPosition.coords.longitude], 
+                    16
+                );
                 
-                DOM.gpsStatus.innerHTML = '<i class="fas fa-check-circle"></i> Active';
-                DOM.gpsStatus.style.color = 'var(--success-color)';
-                DOM.coordinates.textContent = `${coords.latitude.toFixed(6)}, ${coords.longitude.toFixed(6)}`;
-                DOM.accuracy.textContent = `${Math.round(coords.accuracy)} meters`;
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
                 
-                // Update live map display
-                if (DOM.liveLat) DOM.liveLat.textContent = coords.latitude.toFixed(6);
-                if (DOM.liveLon) DOM.liveLon.textContent = coords.longitude.toFixed(6);
-                if (DOM.liveSpeed) DOM.liveSpeed.textContent = coords.speed ? `${(coords.speed * 3.6).toFixed(1)} km/h` : '0 km/h';
-                if (DOM.liveHeading) DOM.liveHeading.textContent = coords.heading ? `${Math.round(coords.heading)}°` : '-';
-                if (DOM.liveAltitude) DOM.liveAltitude.textContent = coords.altitude ? `${Math.round(coords.altitude)} m` : '-';
-                if (DOM.liveSatellites) DOM.liveSatellites.textContent = '-';
+                const marker = L.marker([
+                    this.currentPosition.coords.latitude, 
+                    this.currentPosition.coords.longitude
+                ]).addTo(map);
                 
-                // Update status in sidebar
-                if (DOM.statusGps) {
-                    DOM.statusGps.innerHTML = '<i class="fas fa-circle"></i> Active';
-                    DOM.statusGps.className = 'status-value status-active';
-                }
-            },
-            
-            // Update main map
-            updateMainMap() {
-                if (!APP_STATE.mainMap || !this.currentPosition) return;
-                
-                const lat = this.currentPosition.coords.latitude;
-                const lon = this.currentPosition.coords.longitude;
-                
-                // Clear existing markers
-                APP_STATE.mainMap.eachLayer((layer) => {
-                    if (layer instanceof L.Marker) {
-                        APP_STATE.mainMap.removeLayer(layer);
-                    }
-                });
-                
-                // Set view to current location
-                APP_STATE.mainMap.setView([lat, lon], 16);
-                
-                // Add marker
-                const marker = L.marker([lat, lon]).addTo(APP_STATE.mainMap);
                 marker.bindPopup('<b>Your Current Location</b><br>Attendance will be marked here').openPopup();
                 
-                // Add accuracy circle
-                L.circle([lat, lon], {
+                L.circle([
+                    this.currentPosition.coords.latitude, 
+                    this.currentPosition.coords.longitude
+                ], {
                     color: 'var(--accent-color)',
                     fillColor: 'var(--accent-color)',
                     fillOpacity: 0.1,
                     radius: this.currentPosition.coords.accuracy
-                }).addTo(APP_STATE.mainMap);
+                }).addTo(map);
             },
             
-            // Update live map
-            updateLiveMap() {
-                if (!APP_STATE.liveMap || !this.currentPosition) return;
-                
-                const lat = this.currentPosition.coords.latitude;
-                const lon = this.currentPosition.coords.longitude;
-                const heading = this.currentPosition.coords.heading || 0;
-                
-                // Remove existing marker
-                if (APP_STATE.userMarker) {
-                    APP_STATE.liveMap.removeLayer(APP_STATE.userMarker);
-                }
-                
-                // Create custom icon with direction
-                const icon = L.divIcon({
-                    className: 'user-marker',
-                    html: `<div style="transform: rotate(${heading}deg);">
-                             <i class="fas fa-location-arrow" style="font-size: 24px; color: var(--danger-color);"></i>
-                           </div>`,
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15]
-                });
-                
-                // Add marker
-                APP_STATE.userMarker = L.marker([lat, lon], { icon: icon }).addTo(APP_STATE.liveMap);
-                
-                // Center map on user
-                APP_STATE.liveMap.setView([lat, lon], 16);
-                
-                // Add accuracy circle
-                L.circle([lat, lon], {
-                    color: 'var(--danger-color)',
-                    fillColor: 'var(--danger-color)',
-                    fillOpacity: 0.1,
-                    radius: this.currentPosition.coords.accuracy
-                }).addTo(APP_STATE.liveMap);
-            },
-            
-            // Get current position
-            getCurrentPosition() {
-                return new Promise((resolve, reject) => {
-                    if (this.currentPosition) {
-                        resolve(this.currentPosition);
-                    } else {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 0
-                        });
-                    }
-                });
-            },
-            
-            // Check if location is within accuracy threshold
             isLocationAccurate() {
                 if (!this.currentPosition) return false;
                 return this.currentPosition.coords.accuracy <= APP_STATE.settings.gpsAccuracy;
@@ -3639,65 +2846,32 @@
             stream: null,
             isActive: false,
             currentCamera: 'user',
-            photoCanvas: null,
-            photoContext: null,
             
-            // Initialize camera
-            async init() {
-                this.photoCanvas = document.createElement('canvas');
-                this.photoContext = this.photoCanvas.getContext('2d');
-                
-                // Check camera permissions
-                try {
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                    
-                    if (videoDevices.length === 0) {
-                        throw new Error('No camera found');
-                    }
-                    
-                    return true;
-                } catch (error) {
-                    console.error('Camera initialization error:', error);
-                    this.showCameraError(error);
-                    return false;
-                }
-            },
-            
-            // Start camera
             async start(cameraType = 'user') {
                 try {
-                    // Stop existing stream
                     await this.stop();
                     
-                    // Get camera constraints based on settings
-                    const constraints = this.getCameraConstraints(cameraType);
+                    const constraints = {
+                        video: {
+                            facingMode: cameraType,
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    };
                     
-                    // Request camera access
                     this.stream = await navigator.mediaDevices.getUserMedia(constraints);
                     
-                    // Set video source
                     DOM.cameraPreview.srcObject = this.stream;
                     DOM.cameraPreview.style.display = 'block';
                     DOM.cameraPlaceholder.style.display = 'none';
                     
-                    // Enable capture button
                     DOM.capturePhotoBtn.disabled = false;
                     
-                    // Update UI
                     this.isActive = true;
                     this.currentCamera = cameraType;
-                    this.updateUI();
-                    
-                    // Update status
-                    if (DOM.statusCamera) {
-                        DOM.statusCamera.innerHTML = '<i class="fas fa-circle"></i> Active';
-                        DOM.statusCamera.className = 'status-value status-active';
-                    }
                     
                     Toast.success('Camera started');
-                    VoiceGuide.guide('camera_started');
-                    
                     return true;
                 } catch (error) {
                     console.error('Camera start error:', error);
@@ -3706,7 +2880,6 @@
                 }
             },
             
-            // Stop camera
             async stop() {
                 if (this.stream) {
                     this.stream.getTracks().forEach(track => track.stop());
@@ -3717,62 +2890,66 @@
                 DOM.cameraPreview.style.display = 'none';
                 DOM.cameraPlaceholder.style.display = 'flex';
                 DOM.capturePhotoBtn.disabled = true;
-                
-                this.updateUI();
-                
-                if (DOM.statusCamera) {
-                    DOM.statusCamera.innerHTML = '<i class="fas fa-circle"></i> Ready';
-                    DOM.statusCamera.className = 'status-value status-inactive';
-                }
             },
             
-            // Switch camera
             async switchCamera() {
                 const newCamera = this.currentCamera === 'user' ? 'environment' : 'user';
                 return this.start(newCamera);
             },
             
-            // Capture photo
-            async capture() {
+            capture() {
                 if (!this.stream || !this.isActive) {
                     Toast.error('Camera not active');
                     return null;
                 }
                 
                 try {
-                    // Set canvas dimensions to match video
+                    const canvas = document.createElement('canvas');
                     const video = DOM.cameraPreview;
-                    this.photoCanvas.width = video.videoWidth;
-                    this.photoCanvas.height = video.videoHeight;
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
                     
-                    // Draw video frame to canvas
-                    this.photoContext.save();
+                    const ctx = canvas.getContext('2d');
+                    ctx.save();
                     
                     if (this.currentCamera === 'user') {
-                        // Flip horizontally for front camera
-                        this.photoContext.translate(this.photoCanvas.width, 0);
-                        this.photoContext.scale(-1, 1);
+                        ctx.translate(canvas.width, 0);
+                        ctx.scale(-1, 1);
                     }
                     
-                    this.photoContext.drawImage(video, 0, 0, this.photoCanvas.width, this.photoCanvas.height);
-                    this.photoContext.restore();
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    ctx.restore();
                     
-                    // Add metadata overlay
-                    this.addMetadataOverlay();
+                    // Add metadata
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                    ctx.fillRect(0, 0, canvas.width, 120);
                     
-                    // Convert to data URL
-                    const quality = this.getQualityValue(APP_STATE.settings.cameraQuality);
-                    const photoDataUrl = this.photoCanvas.toDataURL('image/jpeg', quality);
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillStyle = 'white';
+                    ctx.textBaseline = 'top';
                     
-                    // Show preview
+                    const metadata = [
+                        `Employee: ${DOM.employeeName.value || 'Unknown'}`,
+                        `ID: ${DOM.employeeId.value || 'Unknown'} | Department: ${DOM.department.value || 'Unknown'}`,
+                        `Time: ${new Date().toLocaleString('en-IN')}`,
+                        `Location: ${APP_STATE.currentLocation ? 
+                            `${APP_STATE.currentLocation.latitude.toFixed(6)}, ${APP_STATE.currentLocation.longitude.toFixed(6)}` : 
+                            'Unknown'}`,
+                        `Verified: Smart Attendance System`
+                    ];
+                    
+                    let y = 20;
+                    metadata.forEach(text => {
+                        ctx.fillText(text, 20, y);
+                        y += 25;
+                    });
+                    
+                    const photoDataUrl = canvas.toDataURL('image/jpeg', 0.8);
                     this.showPreview(photoDataUrl);
                     
-                    // Save to app state
                     APP_STATE.capturedPhoto = photoDataUrl;
                     
                     Toast.success('Photo captured');
-                    VoiceGuide.guide('photo_captured');
-                    
                     return photoDataUrl;
                 } catch (error) {
                     console.error('Photo capture error:', error);
@@ -3781,72 +2958,10 @@
                 }
             },
             
-            // Add metadata overlay to photo
-            addMetadataOverlay() {
-                const ctx = this.photoContext;
-                const width = this.photoCanvas.width;
-                const height = this.photoCanvas.height;
-                
-                // Get metadata
-                const name = DOM.employeeName.value || 'Unknown';
-                const id = DOM.employeeId.value || 'Unknown';
-                const department = DOM.department.value || 'Unknown';
-                const time = new Date().toLocaleString('en-IN');
-                const location = APP_STATE.currentLocation ? 
-                    `${APP_STATE.currentLocation.latitude.toFixed(6)}, ${APP_STATE.currentLocation.longitude.toFixed(6)}` : 
-                    'Unknown';
-                
-                // Draw semi-transparent overlay
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                ctx.fillRect(0, 0, width, 120);
-                
-                // Set text styles
-                ctx.font = 'bold 16px Arial';
-                ctx.fillStyle = 'white';
-                ctx.strokeStyle = 'black';
-                ctx.lineWidth = 2;
-                ctx.textBaseline = 'top';
-                
-                // Draw metadata text
-                const metadata = [
-                    `Employee: ${name}`,
-                    `ID: ${id} | Department: ${department}`,
-                    `Time: ${time}`,
-                    `Location: ${location}`,
-                    `Verified: Smart Attendance System`
-                ];
-                
-                let y = 20;
-                metadata.forEach(text => {
-                    // Draw text shadow
-                    ctx.strokeText(text, 20, y);
-                    // Draw text
-                    ctx.fillText(text, 20, y);
-                    y += 25;
-                });
-                
-                // Draw verification badge
-                ctx.fillStyle = 'rgba(0, 176, 155, 0.8)';
-                ctx.fillRect(width - 200, 20, 180, 30);
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 18px Arial';
-                ctx.fillText('✓ Verified Attendance', width - 195, 32);
-            },
-            
-            // Show photo preview
             showPreview(photoDataUrl) {
                 DOM.capturedPhoto.src = photoDataUrl;
                 DOM.photoPreview.style.display = 'block';
                 
-                // Update metadata display
-                this.updateMetadataDisplay();
-                
-                // Scroll to preview
-                DOM.photoPreview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            },
-            
-            // Update metadata display
-            updateMetadataDisplay() {
                 DOM.metaName.textContent = DOM.employeeName.value || '-';
                 DOM.metaId.textContent = DOM.employeeId.value || '-';
                 DOM.metaDepartment.textContent = DOM.department.value || '-';
@@ -3855,7 +2970,6 @@
                     `${APP_STATE.currentLocation.latitude.toFixed(6)}, ${APP_STATE.currentLocation.longitude.toFixed(6)}` : 
                     '-';
                 
-                // Update verification status
                 const isAccurate = GPSManager.isLocationAccurate();
                 const verificationBadge = DOM.metaVerification;
                 
@@ -3866,132 +2980,63 @@
                     verificationBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Low Accuracy';
                     verificationBadge.className = 'verification-badge error';
                 }
-            },
-            
-            // Get camera constraints
-            getCameraConstraints(cameraType) {
-                const quality = APP_STATE.settings.cameraQuality;
                 
-                let videoConstraints = {
-                    facingMode: cameraType,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                };
-                
-                // Adjust based on quality setting
-                if (quality === 'low') {
-                    videoConstraints = {
-                        facingMode: cameraType,
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    };
-                } else if (quality === 'high') {
-                    videoConstraints = {
-                        facingMode: cameraType,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    };
-                }
-                
-                return {
-                    video: videoConstraints,
-                    audio: false
-                };
+                DOM.photoPreview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             },
             
-            // Get quality value for JPEG compression
-            getQualityValue(quality) {
-                switch(quality) {
-                    case 'low': return 0.6;
-                    case 'medium': return 0.8;
-                    case 'high': return 0.95;
-                    default: return 0.8;
-                }
-            },
-            
-            // Update UI
-            updateUI() {
-                if (DOM.startCameraBtn) {
-                    if (this.isActive) {
-                        DOM.startCameraBtn.innerHTML = '<i class="fas fa-stop-circle"></i> Stop Camera';
-                        DOM.startCameraBtn.className = 'btn btn-danger';
-                    } else {
-                        DOM.startCameraBtn.innerHTML = '<i class="fas fa-video"></i> Start Camera';
-                        DOM.startCameraBtn.className = 'btn btn-accent';
-                    }
-                }
-            },
-            
-            // Show camera error
             showCameraError(error) {
                 let message = 'Camera error occurred';
                 
                 if (error.name === 'NotAllowedError') {
-                    message = 'Camera access denied. Please allow camera access in browser settings.';
+                    message = 'Camera access denied. Please allow camera access.';
                 } else if (error.name === 'NotFoundError') {
                     message = 'No camera found on this device.';
-                } else if (error.name === 'NotReadableError') {
-                    message = 'Camera is in use by another application.';
                 }
                 
                 Toast.error(message);
                 
-                // Update placeholder
                 DOM.cameraPlaceholder.innerHTML = `
                     <i class="fas fa-video-slash" style="font-size: 4rem; margin-bottom: 20px;"></i>
                     <p>${message}</p>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">Using demo mode</p>
                 `;
             }
         };
         
         // Attendance Manager
         const AttendanceManager = {
-            // Submit attendance
             async submit() {
                 try {
-                    // Validate inputs
                     if (!this.validateForm()) {
                         return false;
                     }
                     
-                    // Check location accuracy
-                    if (!GPSManager.isLocationAccurate()) {
-                        const proceed = confirm('Location accuracy is low. Do you want to submit anyway?');
-                        if (!proceed) {
-                            return false;
-                        }
-                    }
-                    
-                    // Check if photo is captured
                     if (!APP_STATE.capturedPhoto) {
                         Toast.error('Please capture a photo first');
                         return false;
                     }
                     
-                    // Create attendance record
-                    const record = this.createRecord();
+                    const record = {
+                        id: Utils.generateId(),
+                        employeeName: DOM.employeeName.value.trim(),
+                        employeeId: DOM.employeeId.value.trim(),
+                        department: DOM.department.value.trim(),
+                        designation: DOM.designation.value.trim(),
+                        photo: APP_STATE.capturedPhoto,
+                        location: APP_STATE.currentLocation,
+                        timestamp: new Date().toISOString(),
+                        date: new Date().toLocaleDateString('en-IN'),
+                        time: new Date().toLocaleTimeString('en-IN'),
+                        verified: GPSManager.isLocationAccurate()
+                    };
                     
-                    // Add to records
                     APP_STATE.attendanceRecords.unshift(record);
-                    
-                    // Save to storage
                     Storage.save('attendance_records', APP_STATE.attendanceRecords);
                     
-                    // Reset form
                     this.resetForm();
-                    
-                    // Update UI
                     this.updateStats();
-                    this.updateBadges();
+                    this.displayRecords();
                     
-                    // Show success message
                     Toast.success(`Attendance recorded for ${record.employeeName}`);
-                    VoiceGuide.guide('attendance_submitted');
-                    
-                    // Add to recent activity
-                    this.addRecentActivity(record);
-                    
                     return true;
                 } catch (error) {
                     console.error('Attendance submission error:', error);
@@ -4000,7 +3045,6 @@
                 }
             },
             
-            // Validate form inputs
             validateForm() {
                 const name = DOM.employeeName.value.trim();
                 const id = DOM.employeeId.value.trim();
@@ -4009,7 +3053,6 @@
                 let isValid = true;
                 let errors = [];
                 
-                // Validate name
                 if (!name) {
                     errors.push('Employee name is required');
                     DOM.employeeName.classList.add('error');
@@ -4018,7 +3061,6 @@
                     DOM.employeeName.classList.remove('error');
                 }
                 
-                // Validate ID
                 if (!id) {
                     errors.push('Employee ID is required');
                     DOM.employeeId.classList.add('error');
@@ -4027,7 +3069,6 @@
                     DOM.employeeId.classList.remove('error');
                 }
                 
-                // Validate department
                 if (!department) {
                     errors.push('Department is required');
                     DOM.department.classList.add('error');
@@ -4036,7 +3077,6 @@
                     DOM.department.classList.remove('error');
                 }
                 
-                // Show errors if any
                 if (errors.length > 0) {
                     Toast.error(errors.join('<br>'));
                 }
@@ -4044,54 +3084,15 @@
                 return isValid;
             },
             
-            // Create attendance record
-            createRecord() {
-                return {
-                    id: Utils.generateId(),
-                    employeeName: DOM.employeeName.value.trim(),
-                    employeeId: DOM.employeeId.value.trim(),
-                    department: DOM.department.value.trim(),
-                    designation: DOM.designation.value.trim(),
-                    photo: APP_STATE.capturedPhoto,
-                    location: APP_STATE.currentLocation ? {
-                        latitude: APP_STATE.currentLocation.latitude,
-                        longitude: APP_STATE.currentLocation.longitude,
-                        accuracy: APP_STATE.currentLocation.accuracy,
-                        address: APP_STATE.currentLocation.address
-                    } : null,
-                    timestamp: new Date().toISOString(),
-                    date: new Date().toLocaleDateString('en-IN'),
-                    time: new Date().toLocaleTimeString('en-IN'),
-                    verified: GPSManager.isLocationAccurate(),
-                    source: 'web_app',
-                    version: CONFIG.VERSION
-                };
-            },
-            
-            // Reset form
             resetForm() {
-                // Hide photo preview
                 DOM.photoPreview.style.display = 'none';
-                
-                // Clear captured photo
                 APP_STATE.capturedPhoto = null;
-                
-                // Stop camera
                 CameraManager.stop();
-                
-                // Keep form values for quick marking
-                // Optionally clear form:
-                // DOM.employeeName.value = '';
-                // DOM.employeeId.value = '';
-                // DOM.department.value = '';
-                // DOM.designation.value = '';
             },
             
-            // Load records
             loadRecords(filters = {}) {
                 let records = APP_STATE.attendanceRecords;
                 
-                // Apply filters
                 if (filters.dateFrom) {
                     const fromDate = new Date(filters.dateFrom);
                     records = records.filter(record => new Date(record.timestamp) >= fromDate);
@@ -4110,19 +3111,15 @@
                     const searchTerm = filters.search.toLowerCase();
                     records = records.filter(record => 
                         record.employeeName.toLowerCase().includes(searchTerm) ||
-                        record.employeeId.toLowerCase().includes(searchTerm) ||
-                        record.department.toLowerCase().includes(searchTerm)
+                        record.employeeId.toLowerCase().includes(searchTerm)
                     );
                 }
                 
-                // Display records
                 this.displayRecords(records);
-                
                 return records;
             },
             
-            // Display records in UI
-            displayRecords(records) {
+            displayRecords(records = APP_STATE.attendanceRecords) {
                 const container = DOM.recordsContainer;
                 
                 if (records.length === 0) {
@@ -4130,7 +3127,7 @@
                         <div class="empty-state">
                             <i class="fas fa-clipboard"></i>
                             <h3>No Records Found</h3>
-                            <p>Try changing your filters</p>
+                            <p>Start marking attendance to see records here</p>
                         </div>
                     `;
                     return;
@@ -4138,11 +3135,10 @@
                 
                 let html = '';
                 records.forEach(record => {
-                    const isSelected = APP_STATE.selectedRecords.has(record.id);
                     const initials = record.employeeName.split(' ').map(n => n[0]).join('').toUpperCase();
                     
                     html += `
-                        <div class="record-card ${isSelected ? 'selected' : ''}" data-id="${record.id}">
+                        <div class="record-card" data-id="${record.id}">
                             <div class="record-header">
                                 <div class="record-employee">
                                     <div class="record-avatar">
@@ -4167,7 +3163,7 @@
                                 </div>
                                 <div class="record-detail">
                                     <span class="record-label">Location</span>
-                                    <span class="record-value">${record.location ? record.location.address || 'Unknown' : 'Unknown'}</span>
+                                    <span class="record-value">${record.location ? 'Acquired' : 'Unknown'}</span>
                                 </div>
                                 <div class="record-detail">
                                     <span class="record-label">Accuracy</span>
@@ -4183,153 +3179,22 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="record-actions">
-                                <button class="action-btn" onclick="AttendanceManager.viewRecord('${record.id}')" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="action-btn" onclick="AttendanceManager.deleteRecord('${record.id}')" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
                         </div>
                     `;
                 });
                 
                 container.innerHTML = html;
-                
-                // Add click handlers for selection
-                container.querySelectorAll('.record-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        if (!e.target.closest('.action-btn')) {
-                            const recordId = card.dataset.id;
-                            this.toggleRecordSelection(recordId);
-                        }
-                    });
-                });
             },
             
-            // Toggle record selection
-            toggleRecordSelection(recordId) {
-                if (APP_STATE.selectedRecords.has(recordId)) {
-                    APP_STATE.selectedRecords.delete(recordId);
-                } else {
-                    APP_STATE.selectedRecords.add(recordId);
-                }
-                
-                // Update UI
-                const card = document.querySelector(`.record-card[data-id="${recordId}"]`);
-                if (card) {
-                    card.classList.toggle('selected');
-                }
-            },
-            
-            // Delete record
-            deleteRecord(recordId) {
-                Modal.confirm(
-                    'Delete Record',
-                    'Are you sure you want to delete this attendance record? This action cannot be undone.',
-                    () => {
-                        APP_STATE.attendanceRecords = APP_STATE.attendanceRecords.filter(r => r.id !== recordId);
-                        Storage.save('attendance_records', APP_STATE.attendanceRecords);
-                        
-                        APP_STATE.selectedRecords.delete(recordId);
-                        
-                        // Reload records
-                        this.loadRecords(APP_STATE.filters);
-                        
-                        // Update stats
-                        this.updateStats();
-                        this.updateBadges();
-                        
-                        Toast.success('Record deleted');
-                    }
-                );
-            },
-            
-            // View record details
-            viewRecord(recordId) {
-                const record = APP_STATE.attendanceRecords.find(r => r.id === recordId);
-                if (!record) return;
-                
-                Modal.show(
-                    `Attendance Details - ${record.employeeName}`,
-                    `
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent-gradient); 
-                                     display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
-                                    ${record.employeeName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                                </div>
-                                <div>
-                                    <h4 style="margin: 0 0 5px 0;">${record.employeeName}</h4>
-                                    <p style="margin: 0; color: var(--text-secondary);">
-                                        ${record.employeeId} | ${record.department}
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                <div>
-                                    <small style="color: var(--text-secondary);">Date</small>
-                                    <p style="margin: 5px 0; font-weight: 500;">${record.date}</p>
-                                </div>
-                                <div>
-                                    <small style="color: var(--text-secondary);">Time</small>
-                                    <p style="margin: 5px 0; font-weight: 500;">${record.time}</p>
-                                </div>
-                                <div>
-                                    <small style="color: var(--text-secondary);">Location Accuracy</small>
-                                    <p style="margin: 5px 0; font-weight: 500;">${record.location ? Math.round(record.location.accuracy) + ' m' : 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <small style="color: var(--text-secondary);">Verification</small>
-                                    <p style="margin: 5px 0;">
-                                        <span class="verification-badge ${record.verified ? '' : 'error'}">
-                                            <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
-                                            ${record.verified ? 'Verified' : 'Low Accuracy'}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            ${record.location && record.location.address ? `
-                                <div>
-                                    <small style="color: var(--text-secondary);">Address</small>
-                                    <p style="margin: 5px 0; font-weight: 500;">${record.location.address}</p>
-                                </div>
-                            ` : ''}
-                            
-                            <div>
-                                <small style="color: var(--text-secondary);">Photo</small>
-                                <div style="margin-top: 10px;">
-                                    <img src="${record.photo}" alt="Attendance Photo" 
-                                         style="width: 100%; border-radius: var(--border-radius-md);">
-                                </div>
-                            </div>
-                        </div>
-                    `,
-                    [
-                        {
-                            text: 'Close',
-                            class: 'btn-outline-accent',
-                            onclick: `Modal.close('${Modal.currentModalId}')`
-                        }
-                    ]
-                );
-            },
-            
-            // Export records as CSV
-            exportCSV(records = null) {
-                const data = records || APP_STATE.attendanceRecords;
+            exportCSV() {
+                const data = APP_STATE.attendanceRecords;
                 
                 if (data.length === 0) {
                     Toast.error('No records to export');
                     return;
                 }
                 
-                const headers = ['Date', 'Time', 'Employee Name', 'Employee ID', 'Department', 
-                               'Latitude', 'Longitude', 'Accuracy', 'Address', 'Verified'];
-                
+                const headers = ['Date', 'Time', 'Employee Name', 'Employee ID', 'Department', 'Verified'];
                 const csvRows = [
                     headers.join(','),
                     ...data.map(record => [
@@ -4338,10 +3203,6 @@
                         `"${record.employeeName}"`,
                         `"${record.employeeId}"`,
                         `"${record.department}"`,
-                        record.location ? record.location.latitude : '',
-                        record.location ? record.location.longitude : '',
-                        record.location ? record.location.accuracy : '',
-                        `"${record.location ? record.location.address || '' : ''}"`,
                         record.verified ? 'Yes' : 'No'
                     ].join(','))
                 ];
@@ -4362,58 +3223,6 @@
                 Toast.success('Data exported as CSV');
             },
             
-            // Export records as PDF
-            async exportPDF(records = null) {
-                const data = records || APP_STATE.attendanceRecords;
-                
-                if (data.length === 0) {
-                    Toast.error('No records to export');
-                    return;
-                }
-                
-                try {
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF();
-                    
-                    // Add title
-                    doc.setFontSize(20);
-                    doc.text('Attendance Records', 20, 20);
-                    
-                    // Add date
-                    doc.setFontSize(12);
-                    doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 20, 30);
-                    
-                    // Create table
-                    const headers = [['Date', 'Time', 'Name', 'ID', 'Department', 'Verified']];
-                    const tableData = data.map(record => [
-                        record.date,
-                        record.time,
-                        record.employeeName.substring(0, 20),
-                        record.employeeId,
-                        record.department.substring(0, 15),
-                        record.verified ? 'Yes' : 'No'
-                    ]);
-                    
-                    doc.autoTable({
-                        head: headers,
-                        body: tableData,
-                        startY: 40,
-                        theme: 'grid',
-                        headStyles: { fillColor: [15, 52, 96] },
-                        alternateRowStyles: { fillColor: [240, 240, 240] }
-                    });
-                    
-                    // Save PDF
-                    doc.save(`attendance_${new Date().toISOString().split('T')[0]}.pdf`);
-                    
-                    Toast.success('Data exported as PDF');
-                } catch (error) {
-                    console.error('PDF export error:', error);
-                    Toast.error('Failed to export PDF');
-                }
-            },
-            
-            // Update statistics
             updateStats() {
                 const today = new Date().toLocaleDateString('en-IN');
                 const todayRecords = APP_STATE.attendanceRecords.filter(r => r.date === today);
@@ -4424,7 +3233,6 @@
                 DOM.statTotal.textContent = APP_STATE.attendanceRecords.length;
                 DOM.statMonth.textContent = thisMonthRecords.length;
                 
-                // Calculate average accuracy
                 const validRecords = APP_STATE.attendanceRecords.filter(r => r.location && r.location.accuracy);
                 if (validRecords.length > 0) {
                     const avgAccuracy = Math.round(validRecords.reduce((sum, r) => sum + r.location.accuracy, 0) / validRecords.length);
@@ -4432,439 +3240,11 @@
                 } else {
                     DOM.statAccuracy.textContent = '0m';
                 }
-            },
-            
-            // Update badges
-            updateBadges() {
-                const today = new Date().toLocaleDateString('en-IN');
-                const todayRecords = APP_STATE.attendanceRecords.filter(r => r.date === today);
-                
-                DOM.attendanceBadge.textContent = todayRecords.length;
-                DOM.recordsBadge.textContent = APP_STATE.attendanceRecords.length;
-            },
-            
-            // Add recent activity
-            addRecentActivity(record) {
-                const activity = {
-                    id: Utils.generateId(),
-                    type: 'attendance',
-                    message: `Attendance marked for ${record.employeeName}`,
-                    timestamp: new Date().toISOString(),
-                    icon: 'fa-user-check',
-                    color: 'var(--success-color)'
-                };
-                
-                APP_STATE.recentActivity.unshift(activity);
-                
-                // Keep only last 5 activities
-                if (APP_STATE.recentActivity.length > 5) {
-                    APP_STATE.recentActivity = APP_STATE.recentActivity.slice(0, 5);
-                }
-                
-                // Update UI
-                this.updateRecentActivity();
-            },
-            
-            // Update recent activity display
-            updateRecentActivity() {
-                const container = DOM.recentActivity;
-                
-                if (APP_STATE.recentActivity.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state" style="padding: 20px 0;">
-                            <i class="fas fa-history"></i>
-                            <p>No recent activity</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let html = '';
-                APP_STATE.recentActivity.forEach(activity => {
-                    const time = Utils.formatDate(activity.timestamp, 'time');
-                    
-                    html += `
-                        <div class="activity-item" style="display: flex; align-items: center; gap: 10px; padding: 10px; 
-                              border-bottom: 1px solid var(--border-color);">
-                            <div style="width: 30px; height: 30px; border-radius: 50%; background: ${activity.color}; 
-                                 display: flex; align-items: center; justify-content: center; color: white;">
-                                <i class="fas ${activity.icon}"></i>
-                            </div>
-                            <div style="flex: 1;">
-                                <div style="font-size: 0.9rem;">${activity.message}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-secondary);">${time}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                container.innerHTML = html;
-            }
-        };
-        
-        // Map Manager
-        const MapManager = {
-            // Initialize main map
-            initMainMap() {
-                if (!DOM.map) return;
-                
-                // Create map centered on India by default
-                APP_STATE.mainMap = L.map('map').setView([20.5937, 78.9629], 5);
-                
-                // Add OpenStreetMap tiles
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors',
-                    maxZoom: 19
-                }).addTo(APP_STATE.mainMap);
-                
-                // Add scale
-                L.control.scale().addTo(APP_STATE.mainMap);
-                
-                // Update with current location
-                if (APP_STATE.currentLocation) {
-                    GPSManager.updateMainMap();
-                }
-            },
-            
-            // Initialize live map
-            initLiveMap() {
-                if (!DOM.liveMap) return;
-                
-                // Create map centered on India by default
-                APP_STATE.liveMap = L.map('liveMap').setView([20.5937, 78.9629], 5);
-                
-                // Add OpenStreetMap tiles
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors',
-                    maxZoom: 19
-                }).addTo(APP_STATE.liveMap);
-                
-                // Add scale
-                L.control.scale().addTo(APP_STATE.liveMap);
-                
-                // Add fullscreen control
-                APP_STATE.liveMap.addControl(new L.Control.Fullscreen());
-                
-                // Update with current location
-                if (APP_STATE.currentLocation) {
-                    GPSManager.updateLiveMap();
-                }
-            },
-            
-            // Start live tracking
-            startLiveTracking() {
-                if (APP_STATE.trackingInterval) {
-                    clearInterval(APP_STATE.trackingInterval);
-                }
-                
-                APP_STATE.trackingInterval = setInterval(() => {
-                    if (APP_STATE.currentLocation && APP_STATE.liveMap) {
-                        GPSManager.updateLiveMap();
-                    }
-                }, 3000); // Update every 3 seconds
-                
-                DOM.startLiveTrackingBtn.innerHTML = '<i class="fas fa-stop-circle"></i> Stop Live Tracking';
-                DOM.startLiveTrackingBtn.classList.remove('btn-accent');
-                DOM.startLiveTrackingBtn.classList.add('btn-danger');
-                
-                Toast.success('Live tracking started');
-            },
-            
-            // Stop live tracking
-            stopLiveTracking() {
-                if (APP_STATE.trackingInterval) {
-                    clearInterval(APP_STATE.trackingInterval);
-                    APP_STATE.trackingInterval = null;
-                }
-                
-                DOM.startLiveTrackingBtn.innerHTML = '<i class="fas fa-play-circle"></i> Start Live Tracking';
-                DOM.startLiveTrackingBtn.classList.remove('btn-danger');
-                DOM.startLiveTrackingBtn.classList.add('btn-accent');
-                
-                Toast.info('Live tracking stopped');
-            },
-            
-            // Toggle live tracking
-            toggleLiveTracking() {
-                if (APP_STATE.trackingInterval) {
-                    this.stopLiveTracking();
-                } else {
-                    this.startLiveTracking();
-                }
-            }
-        };
-        
-        // Analytics Manager
-        const AnalyticsManager = {
-            // Initialize analytics
-            init() {
-                this.updateAnalytics();
-            },
-            
-            // Update analytics
-            updateAnalytics() {
-                const period = DOM.analyticsPeriod.value;
-                let filteredRecords = [];
-                
-                // Filter records based on period
-                const now = new Date();
-                switch(period) {
-                    case 'week':
-                        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                        filteredRecords = APP_STATE.attendanceRecords.filter(r => new Date(r.timestamp) >= weekAgo);
-                        break;
-                    case 'month':
-                        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-                        filteredRecords = APP_STATE.attendanceRecords.filter(r => new Date(r.timestamp) >= monthAgo);
-                        break;
-                    case 'quarter':
-                        const quarterAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-                        filteredRecords = APP_STATE.attendanceRecords.filter(r => new Date(r.timestamp) >= quarterAgo);
-                        break;
-                    case 'year':
-                        const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-                        filteredRecords = APP_STATE.attendanceRecords.filter(r => new Date(r.timestamp) >= yearAgo);
-                        break;
-                    default:
-                        filteredRecords = APP_STATE.attendanceRecords;
-                }
-                
-                // Group by department
-                const deptData = {};
-                filteredRecords.forEach(record => {
-                    if (!deptData[record.department]) {
-                        deptData[record.department] = 0;
-                    }
-                    deptData[record.department]++;
-                });
-                
-                // Group by date
-                const dateData = {};
-                filteredRecords.forEach(record => {
-                    const date = record.date;
-                    if (!dateData[date]) {
-                        dateData[date] = 0;
-                    }
-                    dateData[date]++;
-                });
-                
-                // Update charts
-                this.createDepartmentChart(deptData);
-                this.createDailyChart(dateData);
-            },
-            
-            // Create department chart
-            createDepartmentChart(deptData) {
-                const canvas = document.createElement('canvas');
-                canvas.id = 'deptChart';
-                canvas.width = 400;
-                canvas.height = 300;
-                
-                // Clear existing chart
-                const existingChart = APP_STATE.charts.deptChart;
-                if (existingChart) {
-                    existingChart.destroy();
-                }
-                
-                // Prepare data
-                const labels = Object.keys(deptData);
-                const data = Object.values(deptData);
-                const colors = this.generateColors(labels.length);
-                
-                // Create chart
-                const ctx = canvas.getContext('2d');
-                APP_STATE.charts.deptChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: colors,
-                            borderColor: 'white',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'right',
-                            },
-                            title: {
-                                display: true,
-                                text: 'Attendance by Department'
-                            }
-                        }
-                    }
-                });
-                
-                // Add to container
-                DOM.analyticsCharts.innerHTML = '';
-                DOM.analyticsCharts.appendChild(canvas);
-            },
-            
-            // Create daily chart
-            createDailyChart(dateData) {
-                const canvas = document.createElement('canvas');
-                canvas.id = 'dailyChart';
-                canvas.width = 400;
-                canvas.height = 300;
-                
-                // Clear existing chart
-                const existingChart = APP_STATE.charts.dailyChart;
-                if (existingChart) {
-                    existingChart.destroy();
-                }
-                
-                // Sort dates
-                const sortedDates = Object.keys(dateData).sort();
-                const sortedData = sortedDates.map(date => dateData[date]);
-                
-                // Create chart
-                const ctx = canvas.getContext('2d');
-                APP_STATE.charts.dailyChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: sortedDates,
-                        datasets: [{
-                            label: 'Daily Attendance',
-                            data: sortedData,
-                            backgroundColor: 'rgba(255, 154, 0, 0.2)',
-                            borderColor: 'rgba(255, 154, 0, 1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Daily Attendance Trend'
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Number of Records'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Date'
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                // Add to container
-                DOM.analyticsCharts.appendChild(canvas);
-            },
-            
-            // Generate colors for charts
-            generateColors(count) {
-                const colors = [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
-                ];
-                
-                return colors.slice(0, count);
-            }
-        };
-        
-        // Settings Manager
-        const SettingsManager = {
-            // Load settings
-            loadSettings() {
-                const savedSettings = Storage.load('settings');
-                if (savedSettings) {
-                    APP_STATE.settings = { ...APP_STATE.settings, ...savedSettings };
-                }
-                
-                // Update UI
-                this.updateSettingsUI();
-            },
-            
-            // Save settings
-            saveSettings() {
-                Storage.save('settings', APP_STATE.settings);
-                Toast.success('Settings saved');
-            },
-            
-            // Update settings UI
-            updateSettingsUI() {
-                // Voice guide
-                DOM.voiceGuideToggle.checked = APP_STATE.settings.voiceGuide;
-                
-                // Auto save
-                DOM.autoSaveToggle.checked = APP_STATE.settings.autoSave;
-                
-                // GPS accuracy
-                DOM.gpsAccuracy.value = APP_STATE.settings.gpsAccuracy;
-                
-                // Camera quality
-                DOM.cameraQuality.value = APP_STATE.settings.cameraQuality;
-                
-                // Flash mode
-                DOM.flashMode.value = APP_STATE.settings.flashMode;
-                
-                // Front camera
-                DOM.frontCameraToggle.checked = APP_STATE.settings.frontCamera;
-                
-                // Auto backup
-                DOM.autoBackupToggle.checked = APP_STATE.settings.autoBackup;
-                
-                // Cloud sync
-                DOM.cloudSyncToggle.checked = APP_STATE.settings.cloudSync;
-                
-                // Max records
-                DOM.maxRecords.value = APP_STATE.settings.maxRecords;
-            },
-            
-            // Apply settings from UI
-            applySettings() {
-                // Voice guide
-                APP_STATE.settings.voiceGuide = DOM.voiceGuideToggle.checked;
-                VoiceGuide.enabled = APP_STATE.settings.voiceGuide;
-                VoiceGuide.updateUI();
-                
-                // Auto save
-                APP_STATE.settings.autoSave = DOM.autoSaveToggle.checked;
-                
-                // GPS accuracy
-                APP_STATE.settings.gpsAccuracy = parseInt(DOM.gpsAccuracy.value);
-                
-                // Camera quality
-                APP_STATE.settings.cameraQuality = DOM.cameraQuality.value;
-                
-                // Flash mode
-                APP_STATE.settings.flashMode = DOM.flashMode.value;
-                
-                // Front camera
-                APP_STATE.settings.frontCamera = DOM.frontCameraToggle.checked;
-                
-                // Auto backup
-                APP_STATE.settings.autoBackup = DOM.autoBackupToggle.checked;
-                
-                // Cloud sync
-                APP_STATE.settings.cloudSync = DOM.cloudSyncToggle.checked;
-                
-                // Max records
-                APP_STATE.settings.maxRecords = DOM.maxRecords.value;
-                
-                // Save settings
-                this.saveSettings();
             }
         };
         
         // Event Handlers
         const EventHandlers = {
-            // Initialize all event handlers
             init() {
                 // Tab switching
                 DOM.tabBtns.forEach(btn => {
@@ -4876,12 +3256,32 @@
                 
                 // Voice guide toggle
                 DOM.voiceGuideBtn.addEventListener('click', () => {
-                    VoiceGuide.toggle();
+                    APP_STATE.settings.voiceGuide = !APP_STATE.settings.voiceGuide;
+                    Storage.save('settings', APP_STATE.settings);
+                    
+                    if (APP_STATE.settings.voiceGuide) {
+                        DOM.voiceGuideBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        DOM.voiceGuideBtn.classList.add('active');
+                        Toast.success('Voice guide enabled');
+                    } else {
+                        DOM.voiceGuideBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                        DOM.voiceGuideBtn.classList.remove('active');
+                        Toast.info('Voice guide disabled');
+                    }
                 });
                 
                 // Theme toggle
                 DOM.themeToggle.addEventListener('click', () => {
-                    this.toggleTheme();
+                    document.body.classList.toggle('dark-theme');
+                    const isDark = document.body.classList.contains('dark-theme');
+                    
+                    if (isDark) {
+                        DOM.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    } else {
+                        DOM.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    }
+                    
+                    Toast.info(`Theme switched to ${isDark ? 'dark' : 'light'} mode`);
                 });
                 
                 // Help button
@@ -4923,14 +3323,14 @@
                 
                 // Records filter
                 DOM.applyFilterBtn.addEventListener('click', () => {
-                    APP_STATE.filters = {
+                    const filters = {
                         dateFrom: DOM.dateFrom.value,
                         dateTo: DOM.dateTo.value,
                         department: DOM.filterDepartment.value,
                         search: DOM.searchRecords.value
                     };
                     
-                    AttendanceManager.loadRecords(APP_STATE.filters);
+                    AttendanceManager.loadRecords(filters);
                 });
                 
                 DOM.clearFilterBtn.addEventListener('click', () => {
@@ -4939,8 +3339,7 @@
                     DOM.filterDepartment.value = '';
                     DOM.searchRecords.value = '';
                     
-                    APP_STATE.filters = {};
-                    AttendanceManager.loadRecords();
+                    AttendanceManager.displayRecords();
                 });
                 
                 // Export buttons
@@ -4948,145 +3347,51 @@
                     AttendanceManager.exportCSV();
                 });
                 
-                DOM.exportPdfBtn.addEventListener('click', () => {
-                    AttendanceManager.exportPDF();
-                });
-                
                 DOM.deleteSelectedBtn.addEventListener('click', () => {
-                    this.deleteSelectedRecords();
-                });
-                
-                // Map controls
-                DOM.startLiveTrackingBtn.addEventListener('click', () => {
-                    MapManager.toggleLiveTracking();
-                });
-                
-                // Analytics period change
-                DOM.analyticsPeriod.addEventListener('change', () => {
-                    AnalyticsManager.updateAnalytics();
-                });
-                
-                // Settings controls
-                DOM.voiceGuideToggle.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.autoSaveToggle.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.gpsAccuracy.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.cameraQuality.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.flashMode.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.frontCameraToggle.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.autoBackupToggle.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.cloudSyncToggle.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                DOM.maxRecords.addEventListener('change', () => {
-                    SettingsManager.applySettings();
-                });
-                
-                // Backup buttons
-                DOM.backupDataBtn.addEventListener('click', () => {
-                    Storage.backup();
-                });
-                
-                DOM.restoreDataBtn.addEventListener('click', () => {
-                    this.showRestoreDialog();
-                });
-                
-                DOM.clearDataBtn.addEventListener('click', () => {
-                    this.confirmClearData();
+                    if (confirm('Delete all records? This action cannot be undone.')) {
+                        APP_STATE.attendanceRecords = [];
+                        Storage.save('attendance_records', []);
+                        AttendanceManager.displayRecords();
+                        AttendanceManager.updateStats();
+                        Toast.success('All records deleted');
+                    }
                 });
                 
                 // Quick action buttons
-                DOM.quickMarkBtn.addEventListener('click', () => {
+                document.getElementById('quickMarkBtn').addEventListener('click', () => {
                     this.switchTab('attendance');
-                    VoiceGuide.guide('welcome');
                 });
                 
-                DOM.viewTodayBtn.addEventListener('click', () => {
+                document.getElementById('viewTodayBtn').addEventListener('click', () => {
                     this.switchTab('records');
                     DOM.dateFrom.value = new Date().toISOString().split('T')[0];
                     DOM.dateTo.value = new Date().toISOString().split('T')[0];
                     DOM.applyFilterBtn.click();
                 });
                 
-                DOM.exportDataBtn.addEventListener('click', () => {
+                document.getElementById('exportDataBtn').addEventListener('click', () => {
                     AttendanceManager.exportCSV();
                 });
                 
-                DOM.syncNowBtn.addEventListener('click', () => {
-                    Toast.info('Syncing data...');
-                    // Simulate sync
-                    setTimeout(() => {
-                        Toast.success('Data synced successfully');
-                    }, 2000);
-                });
-                
                 // FAB buttons
-                DOM.mainFab.addEventListener('click', () => {
-                    this.showQuickActions();
+                document.getElementById('mainFab').addEventListener('click', () => {
+                    this.switchTab('attendance');
                 });
                 
-                DOM.helpFab.addEventListener('click', () => {
+                document.getElementById('helpFab').addEventListener('click', () => {
                     this.showHelp();
                 });
                 
-                DOM.emergencyFab.addEventListener('click', () => {
-                    this.showEmergencyOptions();
-                });
-                
-                // Employee name autocomplete
-                DOM.employeeName.addEventListener('input', Utils.debounce(() => {
-                    this.handleNameAutocomplete();
-                }, 300));
-                
-                // Scan ID button
-                DOM.scanIdBtn.addEventListener('click', () => {
-                    this.showQRScanner();
-                });
-                
-                // Sync records button
-                DOM.syncRecordsBtn.addEventListener('click', () => {
-                    Toast.info('Syncing records...');
-                    // Simulate sync
-                    setTimeout(() => {
-                        Toast.success('Records synced successfully');
-                    }, 2000);
-                });
-                
-                // Live tracking button
-                DOM.liveTrackingBtn.addEventListener('click', () => {
-                    MapManager.toggleLiveTracking();
-                });
-                
-                // Heatmap button
-                DOM.showHeatmapBtn.addEventListener('click', () => {
-                    Toast.info('Heatmap feature coming soon!');
+                // Settings controls
+                document.getElementById('clearDataBtn').addEventListener('click', () => {
+                    if (confirm('Clear all data including settings? This cannot be undone.')) {
+                        localStorage.clear();
+                        location.reload();
+                    }
                 });
             },
             
-            // Switch tab
             switchTab(tabName) {
-                // Update active tab button
                 DOM.tabBtns.forEach(btn => {
                     if (btn.dataset.tab === tabName) {
                         btn.classList.add('active');
@@ -5095,22 +3400,9 @@
                     }
                 });
                 
-                // Update active tab pane
                 DOM.tabPanes.forEach(pane => {
                     if (pane.id === `${tabName}Tab`) {
                         pane.classList.add('active');
-                        
-                        // Initialize specific tab content
-                        switch(tabName) {
-                            case 'map':
-                                if (!APP_STATE.liveMap) {
-                                    MapManager.initLiveMap();
-                                }
-                                break;
-                            case 'analytics':
-                                AnalyticsManager.updateAnalytics();
-                                break;
-                        }
                     } else {
                         pane.classList.remove('active');
                     }
@@ -5119,370 +3411,8 @@
                 APP_STATE.activeTab = tabName;
             },
             
-            // Toggle theme
-            toggleTheme() {
-                APP_STATE.isDarkMode = !APP_STATE.isDarkMode;
-                
-                if (APP_STATE.isDarkMode) {
-                    document.body.classList.add('dark-mode');
-                    DOM.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    DOM.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                }
-                
-                Toast.info(`Theme switched to ${APP_STATE.isDarkMode ? 'dark' : 'light'} mode`);
-            },
-            
-            // Show help
             showHelp() {
-                Modal.show(
-                    'Help & Tutorial',
-                    `
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
-                            <div>
-                                <h4>How to Mark Attendance:</h4>
-                                <ol style="margin-left: 20px;">
-                                    <li>Fill in employee details (Name, ID, Department)</li>
-                                    <li>Wait for GPS location to be acquired</li>
-                                    <li>Start camera and capture photo</li>
-                                    <li>Review photo and metadata</li>
-                                    <li>Submit attendance</li>
-                                </ol>
-                            </div>
-                            
-                            <div>
-                                <h4>Features:</h4>
-                                <ul style="margin-left: 20px;">
-                                    <li><strong>GPS Verification:</strong> Ensures attendance is marked from authorized locations</li>
-                                    <li><strong>Photo Capture:</strong> Takes timestamped, geotagged photos</li>
-                                    <li><strong>Live Tracking:</strong> Real-time GPS tracking on map</li>
-                                    <li><strong>Analytics:</strong> Visual reports and statistics</li>
-                                    <li><strong>Export Data:</strong> Export records as CSV or PDF</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h4>Tips:</h4>
-                                <ul style="margin-left: 20px;">
-                                    <li>Ensure GPS is enabled for accurate location</li>
-                                    <li>Use good lighting for clear photos</li>
-                                    <li>Regularly backup your data</li>
-                                    <li>Export records periodically</li>
-                                </ul>
-                            </div>
-                        </div>
-                    `,
-                    [
-                        {
-                            text: 'Close',
-                            class: 'btn-accent',
-                            onclick: `Modal.close('${Modal.currentModalId}')`
-                        }
-                    ]
-                );
-            },
-            
-            // Delete selected records
-            deleteSelectedRecords() {
-                if (APP_STATE.selectedRecords.size === 0) {
-                    Toast.error('No records selected');
-                    return;
-                }
-                
-                Modal.confirm(
-                    'Delete Selected Records',
-                    `Are you sure you want to delete ${APP_STATE.selectedRecords.size} selected record(s)? This action cannot be undone.`,
-                    () => {
-                        APP_STATE.attendanceRecords = APP_STATE.attendanceRecords.filter(
-                            r => !APP_STATE.selectedRecords.has(r.id)
-                        );
-                        
-                        Storage.save('attendance_records', APP_STATE.attendanceRecords);
-                        APP_STATE.selectedRecords.clear();
-                        
-                        AttendanceManager.loadRecords(APP_STATE.filters);
-                        AttendanceManager.updateStats();
-                        AttendanceManager.updateBadges();
-                        
-                        Toast.success(`${APP_STATE.selectedRecords.size} records deleted`);
-                    }
-                );
-            },
-            
-            // Show restore dialog
-            showRestoreDialog() {
-                const backups = Storage.getBackups();
-                
-                if (backups.length === 0) {
-                    Toast.error('No backups found');
-                    return;
-                }
-                
-                let backupList = '';
-                backups.forEach(backup => {
-                    const date = new Date(backup.timestamp).toLocaleString('en-IN');
-                    backupList += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; 
-                             padding: 10px; border-bottom: 1px solid var(--border-color);">
-                            <div>
-                                <div style="font-weight: 500;">${date}</div>
-                                <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                    ${Utils.formatFileSize(backup.size)}
-                                </div>
-                            </div>
-                            <button class="btn btn-sm btn-accent" onclick="Storage.restore('${backup.key}')">
-                                Restore
-                            </button>
-                        </div>
-                    `;
-                });
-                
-                Modal.show(
-                    'Restore Backup',
-                    `
-                        <p>Select a backup to restore:</p>
-                        <div style="max-height: 300px; overflow-y: auto;">
-                            ${backupList}
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">
-                            Note: Restoring will replace current data with backup data.
-                        </p>
-                    `,
-                    [
-                        {
-                            text: 'Close',
-                            class: 'btn-outline-accent',
-                            onclick: `Modal.close('${Modal.currentModalId}')`
-                        }
-                    ]
-                );
-            },
-            
-            // Confirm clear data
-            confirmClearData() {
-                Modal.confirm(
-                    'Clear All Data',
-                    'Are you sure you want to clear all attendance records? This action cannot be undone.',
-                    () => {
-                        Storage.clearAll();
-                        APP_STATE.attendanceRecords = [];
-                        APP_STATE.selectedRecords.clear();
-                        
-                        AttendanceManager.loadRecords();
-                        AttendanceManager.updateStats();
-                        AttendanceManager.updateBadges();
-                        
-                        Toast.success('All data cleared');
-                    }
-                );
-            },
-            
-            // Show quick actions
-            showQuickActions() {
-                Modal.show(
-                    'Quick Actions',
-                    `
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <button class="btn btn-accent" onclick="EventHandlers.switchTab('attendance'); Modal.close('${Modal.currentModalId}')">
-                                <i class="fas fa-camera"></i> Mark Attendance
-                            </button>
-                            <button class="btn btn-success" onclick="EventHandlers.switchTab('records'); Modal.close('${Modal.currentModalId}')">
-                                <i class="fas fa-history"></i> View Records
-                            </button>
-                            <button class="btn btn-primary" onclick="AttendanceManager.exportCSV(); Modal.close('${Modal.currentModalId}')">
-                                <i class="fas fa-download"></i> Export Data
-                            </button>
-                            <button class="btn btn-danger" onclick="Storage.backup(); Modal.close('${Modal.currentModalId}')">
-                                <i class="fas fa-save"></i> Backup Now
-                            </button>
-                        </div>
-                    `,
-                    [
-                        {
-                            text: 'Close',
-                            class: 'btn-outline-accent',
-                            onclick: `Modal.close('${Modal.currentModalId}')`
-                        }
-                    ]
-                );
-            },
-            
-            // Show emergency options
-            showEmergencyOptions() {
-                Modal.show(
-                    'Emergency Options',
-                    `
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <button class="btn btn-danger" onclick="EventHandlers.sendEmergencyAlert()">
-                                <i class="fas fa-exclamation-triangle"></i> Send Emergency Alert
-                            </button>
-                            <button class="btn btn-warning" onclick="EventHandlers.exportEmergencyData()">
-                                <i class="fas fa-file-export"></i> Export All Data Now
-                            </button>
-                            <button class="btn btn-info" onclick="EventHandlers.showCurrentLocation()">
-                                <i class="fas fa-map-marker-alt"></i> Show Current Location
-                            </button>
-                            <button class="btn btn-secondary" onclick="EventHandlers.contactSupport()">
-                                <i class="fas fa-phone-alt"></i> Contact Support
-                            </button>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 20px;">
-                            Use these options in emergency situations only.
-                        </p>
-                    `,
-                    [
-                        {
-                            text: 'Close',
-                            class: 'btn-outline-accent',
-                            onclick: `Modal.close('${Modal.currentModalId}')`
-                        }
-                    ]
-                );
-            },
-            
-            // Handle name autocomplete
-            handleNameAutocomplete() {
-                const query = DOM.employeeName.value.toLowerCase();
-                if (query.length < 2) {
-                    DOM.nameAutocomplete.innerHTML = '';
-                    return;
-                }
-                
-                // Sample employee data for autocomplete
-                const employees = [
-                    { name: 'Rajesh Kumar', id: 'EMP001', department: 'Panchayat Development' },
-                    { name: 'Priya Sharma', id: 'EMP002', department: 'Health Services' },
-                    { name: 'Amit Patel', id: 'EMP003', department: 'Education' },
-                    { name: 'Sneha Singh', id: 'EMP004', department: 'Administration' },
-                    { name: 'Vikram Yadav', id: 'EMP005', department: 'Field Operations' },
-                    { name: 'Anjali Gupta', id: 'EMP006', department: 'Panchayat Development' },
-                    { name: 'Rahul Verma', id: 'EMP007', department: 'Health Services' },
-                    { name: 'Meena Choudhary', id: 'EMP008', department: 'Education' }
-                ];
-                
-                const matches = employees.filter(emp => 
-                    emp.name.toLowerCase().includes(query) || 
-                    emp.id.toLowerCase().includes(query)
-                );
-                
-                if (matches.length === 0) {
-                    DOM.nameAutocomplete.innerHTML = '<div class="autocomplete-item">No matches found</div>';
-                    return;
-                }
-                
-                let html = '';
-                matches.forEach(emp => {
-                    const initials = emp.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                    
-                    html += `
-                        <div class="autocomplete-item" onclick="EventHandlers.selectEmployee('${emp.name}', '${emp.id}', '${emp.department}')">
-                            <div class="employee-avatar">
-                                ${initials.substring(0, 2)}
-                            </div>
-                            <div class="employee-info">
-                                <div class="employee-name">${emp.name}</div>
-                                <div class="employee-id">${emp.id} | ${emp.department}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                DOM.nameAutocomplete.innerHTML = html;
-            },
-            
-            // Select employee from autocomplete
-            selectEmployee(name, id, department) {
-                DOM.employeeName.value = name;
-                DOM.employeeId.value = id;
-                DOM.department.value = department;
-                DOM.nameAutocomplete.innerHTML = '';
-            },
-            
-            // Show QR scanner
-            showQRScanner() {
-                Modal.show(
-                    'Scan Employee ID',
-                    `
-                        <div id="qr-reader" style="width: 100%;"></div>
-                        <div id="qr-reader-results" style="margin-top: 20px;"></div>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">
-                            Point camera at employee ID QR code
-                        </p>
-                    `,
-                    [
-                        {
-                            text: 'Close',
-                            class: 'btn-outline-accent',
-                            onclick: `Modal.close('${Modal.currentModalId}')`
-                        }
-                    ]
-                );
-                
-                // Initialize QR scanner
-                setTimeout(() => {
-                    const html5QrCode = new Html5Qrcode("qr-reader");
-                    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                        // Parse QR code data (assuming format: "name|id|department")
-                        const parts = decodedText.split('|');
-                        if (parts.length >= 3) {
-                            DOM.employeeName.value = parts[0];
-                            DOM.employeeId.value = parts[1];
-                            DOM.department.value = parts[2];
-                            
-                            html5QrCode.stop().then(() => {
-                                document.getElementById('qr-reader-results').innerHTML = 
-                                    `<div class="alert alert-success">Employee ID scanned successfully!</div>`;
-                                    
-                                setTimeout(() => {
-                                    Modal.close(Modal.currentModalId);
-                                }, 1000);
-                            });
-                        }
-                    };
-                    
-                    const config = { fps: 10, qrbox: 250 };
-                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-                }, 100);
-            },
-            
-            // Emergency functions
-            sendEmergencyAlert() {
-                if (APP_STATE.currentLocation) {
-                    const location = `${APP_STATE.currentLocation.latitude}, ${APP_STATE.currentLocation.longitude}`;
-                    const message = `EMERGENCY ALERT! Location: ${location}. Time: ${new Date().toLocaleString('en-IN')}`;
-                    
-                    Toast.error(message);
-                    console.log('Emergency Alert:', message);
-                } else {
-                    Toast.error('Unable to send alert. Location not available.');
-                }
-            },
-            
-            exportEmergencyData() {
-                AttendanceManager.exportCSV();
-                AttendanceManager.exportPDF();
-            },
-            
-            showCurrentLocation() {
-                if (APP_STATE.currentLocation) {
-                    const location = `${APP_STATE.currentLocation.latitude}, ${APP_STATE.currentLocation.longitude}`;
-                    const address = APP_STATE.currentLocation.address || 'Address not available';
-                    
-                    Modal.alert(
-                        'Current Location',
-                        `Coordinates: ${location}<br>Address: ${address}<br>Accuracy: ${Math.round(APP_STATE.currentLocation.accuracy)} meters`
-                    );
-                } else {
-                    Toast.error('Location not available');
-                }
-            },
-            
-            contactSupport() {
-                Modal.alert(
-                    'Contact Support',
-                    'Emergency Contact: +91-9876543210<br>Email: support@smartattendance.com<br>Office: District Panchayat Office, Main Road'
-                );
+                alert(`Smart Attendance System Help:\n\n1. Fill employee details\n2. Wait for GPS location\n3. Start camera and capture photo\n4. Review and submit attendance\n\nNote: This is a demo version. For full features, deploy with a server.`);
             }
         };
         
@@ -5494,178 +3424,65 @@
             
             async init() {
                 try {
-                    // Update loading progress
                     this.updateLoadingProgress(10, 'Initializing DOM...');
-                    
-                    // Initialize DOM references
                     initDOMReferences();
                     
-                    this.updateLoadingProgress(20, 'Loading settings...');
+                    this.updateLoadingProgress(30, 'Loading settings...');
+                    const savedSettings = Storage.load('settings');
+                    if (savedSettings) {
+                        APP_STATE.settings = { ...APP_STATE.settings, ...savedSettings };
+                    }
                     
-                    // Load settings
-                    SettingsManager.loadSettings();
+                    this.updateLoadingProgress(50, 'Loading data...');
+                    const savedRecords = Storage.load('attendance_records');
+                    if (savedRecords) {
+                        APP_STATE.attendanceRecords = savedRecords;
+                    }
                     
-                    this.updateLoadingProgress(30, 'Initializing voice guide...');
+                    this.updateLoadingProgress(70, 'Initializing GPS...');
+                    await GPSManager.init();
                     
-                    // Initialize voice guide
-                    VoiceGuide.init();
-                    VoiceGuide.updateUI();
-                    
-                    this.updateLoadingProgress(40, 'Loading data...');
-                    
-                    // Load data from storage
-                    this.loadData();
-                    
-                    this.updateLoadingProgress(50, 'Initializing GPS...');
-                    
-                    // Initialize GPS
-                    await GPSManager.init().catch(error => {
-                        console.warn('GPS initialization warning:', error.message);
-                    });
-                    
-                    this.updateLoadingProgress(60, 'Initializing camera...');
-                    
-                    // Initialize camera
-                    await CameraManager.init().catch(error => {
-                        console.warn('Camera initialization warning:', error.message);
-                    });
-                    
-                    this.updateLoadingProgress(70, 'Initializing maps...');
-                    
-                    // Initialize maps
-                    MapManager.initMainMap();
-                    
-                    this.updateLoadingProgress(80, 'Initializing analytics...');
-                    
-                    // Initialize analytics
-                    AnalyticsManager.init();
-                    
-                    this.updateLoadingProgress(90, 'Setting up event handlers...');
-                    
-                    // Initialize event handlers
+                    this.updateLoadingProgress(80, 'Setting up event handlers...');
                     EventHandlers.init();
                     
-                    this.updateLoadingProgress(95, 'Finalizing setup...');
-                    
-                    // Update UI
+                    this.updateLoadingProgress(90, 'Finalizing setup...');
                     AttendanceManager.updateStats();
-                    AttendanceManager.updateBadges();
-                    AttendanceManager.updateRecentActivity();
+                    AttendanceManager.displayRecords();
                     
-                    // Set up online/offline detection
-                    window.addEventListener('online', () => {
-                        APP_STATE.isOnline = true;
-                        Toast.success('Back online. Syncing data...');
-                        VoiceGuide.guide('online_mode');
-                    });
-                    
-                    window.addEventListener('offline', () => {
-                        APP_STATE.isOnline = false;
-                        Toast.warning('You are offline. Working in offline mode.');
-                        VoiceGuide.guide('offline_mode');
-                    });
-                    
-                    // Set up battery status monitoring
-                    if ('getBattery' in navigator) {
-                        navigator.getBattery().then(battery => {
-                            this.updateBatteryStatus(battery);
-                            
-                            battery.addEventListener('levelchange', () => {
-                                this.updateBatteryStatus(battery);
-                            });
-                        });
+                    // Set initial theme button
+                    if (APP_STATE.settings.voiceGuide) {
+                        DOM.voiceGuideBtn.classList.add('active');
                     }
                     
                     this.updateLoadingProgress(100, 'Ready!');
                     
-                    // Hide loading screen after delay
                     setTimeout(() => {
                         DOM.loadingOverlay.classList.add('hidden');
                         APP_STATE.isLoading = false;
-                        
-                        // Welcome message
                         Toast.success('Smart Attendance System Ready!');
-                        VoiceGuide.guide('welcome');
                     }, 1000);
                     
                 } catch (error) {
-                    console.error('Application initialization error:', error);
-                    DOM.loadingText.textContent = 'Initialization failed. Please refresh the page.';
+                    console.error('Initialization error:', error);
+                    DOM.loadingText.textContent = 'Error initializing. Please refresh.';
                     Toast.error('Failed to initialize application');
                 }
             }
             
-            // Update loading progress
             updateLoadingProgress(percent, message) {
-                DOM.loadingProgress.style.width = `${percent}%`;
-                DOM.loadingText.textContent = message;
-            }
-            
-            // Load data from storage
-            loadData() {
-                // Load attendance records
-                const savedRecords = Storage.load('attendance_records');
-                if (savedRecords) {
-                    APP_STATE.attendanceRecords = savedRecords;
+                if (DOM.loadingProgress) {
+                    DOM.loadingProgress.style.width = `${percent}%`;
                 }
-                
-                // Load departments
-                const savedDepts = Storage.load('departments');
-                if (savedDepts) {
-                    APP_STATE.departments = savedDepts;
-                }
-                
-                // Load employees
-                const savedEmps = Storage.load('employees');
-                if (savedEmps) {
-                    APP_STATE.employees = savedEmps;
-                }
-                
-                // Load recent activity
-                const savedActivity = Storage.load('recent_activity');
-                if (savedActivity) {
-                    APP_STATE.recentActivity = savedActivity;
-                }
-            }
-            
-            // Update battery status
-            updateBatteryStatus(battery) {
-                const level = Math.round(battery.level * 100);
-                DOM.statusBattery.innerHTML = `<i class="fas fa-circle"></i> ${level}%`;
-                
-                if (level < 20) {
-                    DOM.statusBattery.className = 'status-value status-warning';
-                } else {
-                    DOM.statusBattery.className = 'status-value status-active';
+                if (DOM.loadingText) {
+                    DOM.loadingText.textContent = message;
                 }
             }
         }
         
-        // Start the application when DOM is loaded
+        // Start the application
         document.addEventListener('DOMContentLoaded', () => {
-            window.app = new SmartAttendanceApp();
+            new SmartAttendanceApp();
         });
-        
-        // Make important functions available globally
-        window.Utils = Utils;
-        window.Toast = Toast;
-        window.Modal = Modal;
-        window.VoiceGuide = VoiceGuide;
-        window.GPSManager = GPSManager;
-        window.CameraManager = CameraManager;
-        window.AttendanceManager = AttendanceManager;
-        window.MapManager = MapManager;
-        window.AnalyticsManager = AnalyticsManager;
-        window.SettingsManager = SettingsManager;
-        window.Storage = Storage;
-        window.EventHandlers = EventHandlers;
-        
-        // Show toast globally
-        window.showToast = Toast.show;
-        window.showSuccessToast = Toast.success;
-        window.showErrorToast = Toast.error;
-        window.showWarningToast = Toast.warning;
-        window.showInfoToast = Toast.info;
     </script>
 </body>
 </html>

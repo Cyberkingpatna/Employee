@@ -16,24 +16,30 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
     
     <style>
-        /* ========== ROOT VARIABLES ========== */
+        /* ========== NEW DARK & PURPLE THEME ========== */
         :root {
-            --primary: #1e3a8a;
-            --primary-dark: #1e40af;
-            --primary-light: #3b82f6;
+            --primary: #0f172a;
+            --primary-dark: #1e1b4b;
+            --primary-light: #3b0764;
             --secondary: #10b981;
             --accent: #8b5cf6;
+            --accent-light: #a78bfa;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --dark: #1f2937;
+            --success: #10b981;
+            --dark: #0f172a;
             --light: #f8fafc;
-            --gray: #6b7280;
-            --gray-light: #e5e7eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --transition: all 0.3s ease;
+            --gray: #94a3b8;
+            --gray-light: #334155;
+            --card-bg: rgba(30, 27, 75, 0.7);
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
         
         /* ========== RESET & BASE ========== */
@@ -49,8 +55,9 @@
         
         body {
             font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            color: var(--dark);
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #3b0764 100%);
+            background-attachment: fixed;
+            color: #e2e8f0;
             min-height: 100vh;
             line-height: 1.6;
         }
@@ -76,7 +83,7 @@
             height: 80px;
             border: 5px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top-color: white;
+            border-top-color: var(--accent-light);
             animation: spin 1s ease-in-out infinite;
             margin-bottom: 30px;
         }
@@ -113,9 +120,12 @@
             to { opacity: 1; }
         }
         
-        /* ========== HEADER ========== */
+        /* ========== GLASS MORPHISM HEADER ========== */
         .app-header {
-            background: white;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius);
             padding: 20px 30px;
             margin-bottom: 30px;
@@ -125,7 +135,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 20px;
-            border-left: 5px solid var(--secondary);
+            border-left: 5px solid var(--accent);
             animation: slideDown 0.4s ease;
         }
         
@@ -143,20 +153,31 @@
         .logo {
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 2rem;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 10px 35px rgba(139, 92, 246, 0.7); }
+            100% { box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
         }
         
         .brand-text h1 {
             font-size: 1.8rem;
-            color: var(--primary-dark);
+            color: white;
             margin-bottom: 5px;
+            background: linear-gradient(135deg, #e2e8f0 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .brand-text p {
@@ -165,15 +186,16 @@
         }
         
         .ai-badge {
-            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
         }
         
         /* ========== DASHBOARD LAYOUT ========== */
@@ -195,9 +217,12 @@
             }
         }
         
-        /* ========== SIDEBAR ========== */
+        /* ========== GLASS SIDEBAR ========== */
         .sidebar {
-            background: white;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             padding: 25px;
@@ -216,7 +241,7 @@
         .user-avatar {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             border-radius: 50%;
             margin: 0 auto 15px;
             display: flex;
@@ -229,12 +254,13 @@
         }
         
         .user-info h3 {
-            color: var(--primary-dark);
+            color: white;
             margin-bottom: 5px;
+            font-size: 1.2rem;
         }
         
         .user-role {
-            color: var(--secondary);
+            color: var(--accent-light);
             font-weight: 500;
             font-size: 0.9rem;
         }
@@ -253,22 +279,39 @@
             align-items: center;
             gap: 15px;
             padding: 15px 20px;
-            color: var(--dark);
+            color: var(--gray);
             text-decoration: none;
             border-radius: var(--radius-sm);
             transition: var(--transition);
             font-weight: 500;
             cursor: pointer;
+            border: 1px solid transparent;
         }
         
         .nav-link:hover {
-            background: var(--gray-light);
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-light);
+            border-color: var(--glass-border);
+            transform: translateX(5px);
         }
         
         .nav-link.active {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-            color: white;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(167, 139, 250, 0.1) 100%);
+            color: var(--accent-light);
+            border: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
+            position: relative;
+        }
+        
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
         }
         
         .nav-icon {
@@ -277,10 +320,11 @@
         }
         
         .quick-stats {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f7ff 100%);
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.5) 0%, rgba(59, 7, 100, 0.3) 100%);
             border-radius: var(--radius);
             padding: 20px;
             margin-top: 20px;
+            border: 1px solid var(--glass-border);
         }
         
         .stat-item {
@@ -288,7 +332,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
         }
         
         .stat-item:last-child {
@@ -302,7 +346,7 @@
         
         .stat-value {
             font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--accent-light);
             font-size: 1.1rem;
         }
         
@@ -313,26 +357,40 @@
             gap: 30px;
         }
         
-        /* ========== WELCOME BANNER ========== */
+        /* ========== ENHANCED WELCOME BANNER ========== */
         .welcome-banner {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(167, 139, 250, 0.8) 100%);
             border-radius: var(--radius);
-            padding: 30px;
+            padding: 35px;
             color: white;
             box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         
         .welcome-text h2 {
             font-size: 1.8rem;
             margin-bottom: 10px;
+            position: relative;
         }
         
         .welcome-text p {
             opacity: 0.9;
             max-width: 600px;
+            position: relative;
         }
         
-        /* ========== CARDS GRID ========== */
+        /* ========== GLASS CARDS ========== */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -340,17 +398,21 @@
         }
         
         .card {
-            background: white;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius);
             padding: 25px;
             box-shadow: var(--shadow);
             transition: var(--transition);
-            border-top: 4px solid var(--primary-light);
+            border-top: 4px solid var(--accent);
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-lg);
+            border-color: var(--accent-light);
         }
         
         .card-header {
@@ -362,7 +424,7 @@
         
         .card-title {
             font-size: 1.2rem;
-            color: var(--primary-dark);
+            color: white;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -377,22 +439,23 @@
             justify-content: center;
             font-size: 1.2rem;
             color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .icon-blue {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
         }
         
         .icon-green {
-            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--secondary) 0%, #34d399 100%);
         }
         
         .icon-purple {
-            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
         }
         
         .icon-orange {
-            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);
         }
         
         /* ========== FORM ELEMENTS ========== */
@@ -403,24 +466,26 @@
         .form-label {
             display: block;
             margin-bottom: 8px;
-            color: var(--dark);
+            color: white;
             font-weight: 500;
         }
         
         .form-control {
             width: 100%;
             padding: 14px 20px;
+            background: rgba(15, 23, 42, 0.5);
             border: 2px solid var(--gray-light);
             border-radius: var(--radius-sm);
             font-size: 16px;
             transition: var(--transition);
-            background: white;
+            color: white;
         }
         
         .form-control:focus {
             outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            background: rgba(15, 23, 42, 0.8);
         }
         
         .select-wrapper {
@@ -449,28 +514,59 @@
             justify-content: center;
             gap: 10px;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             color: white;
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
         }
         
         .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
             transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6);
         }
         
         .btn-success {
-            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--secondary) 0%, #34d399 100%);
             color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
         }
         
         .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            background: linear-gradient(135deg, #34d399 0%, var(--secondary) 100%);
             transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #f87171 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #f87171 0%, var(--danger) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.6);
         }
         
         .btn-block {
@@ -497,11 +593,12 @@
         }
         
         .camera-box {
-            background: #1a1a1a;
+            background: #0f172a;
             border-radius: var(--radius);
             overflow: hidden;
             height: 350px;
             position: relative;
+            border: 2px solid var(--glass-border);
         }
         
         .camera-placeholder {
@@ -511,12 +608,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #999;
+            color: var(--gray);
         }
         
         .camera-placeholder i {
             font-size: 3rem;
             margin-bottom: 15px;
+            color: var(--accent);
         }
         
         #videoElement {
@@ -533,21 +631,24 @@
             transform: translate(-50%, -50%);
             width: 200px;
             height: 200px;
-            border: 3px solid rgba(59, 130, 246, 0.7);
+            border: 3px solid var(--accent);
             border-radius: 50%;
             pointer-events: none;
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
         }
         
         /* ========== RECORDS TABLE ========== */
         .table-container {
-            background: white;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
         }
         
         .table-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             color: white;
             padding: 20px;
             display: flex;
@@ -568,8 +669,8 @@
         .table th {
             padding: 15px 20px;
             text-align: left;
-            background: #f8fafc;
-            color: var(--dark);
+            background: rgba(15, 23, 42, 0.5);
+            color: white;
             font-weight: 600;
             border-bottom: 2px solid var(--gray-light);
         }
@@ -577,10 +678,11 @@
         .table td {
             padding: 15px 20px;
             border-bottom: 1px solid var(--gray-light);
+            color: var(--gray);
         }
         
         .table tr:hover {
-            background: #f8fafc;
+            background: rgba(139, 92, 246, 0.1);
         }
         
         .status-badge {
@@ -591,21 +693,25 @@
         }
         
         .status-present {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(16, 185, 129, 0.2);
             color: var(--secondary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
         
         .status-absent {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.2);
             color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
         
         /* ========== ANALYTICS CHART ========== */
         .chart-container {
-            background: white;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
             border-radius: var(--radius);
             padding: 25px;
             box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
         }
         
         .chart-placeholder {
@@ -620,7 +726,7 @@
         .chart-placeholder i {
             font-size: 3rem;
             margin-bottom: 15px;
-            color: var(--primary-light);
+            color: var(--accent);
         }
         
         /* ========== NOTIFICATIONS ========== */
@@ -628,7 +734,8 @@
             position: fixed;
             top: 30px;
             right: 30px;
-            background: white;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
             border-radius: var(--radius);
             padding: 20px;
             box-shadow: var(--shadow-lg);
@@ -639,7 +746,8 @@
             transform: translateX(150%);
             transition: transform 0.3s ease;
             z-index: 1000;
-            border-left: 4px solid var(--primary-light);
+            border-left: 4px solid var(--accent);
+            border: 1px solid var(--glass-border);
         }
         
         .notification.show {
@@ -657,18 +765,18 @@
         }
         
         .notification-success .notification-icon {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(16, 185, 129, 0.2);
             color: var(--secondary);
         }
         
         .notification-error .notification-icon {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.2);
             color: var(--danger);
         }
         
         .notification-info .notification-icon {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary-light);
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent);
         }
         
         /* ========== MODAL ========== */
@@ -678,7 +786,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -686,7 +794,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
         }
         
         .modal-overlay.active {
@@ -695,7 +803,8 @@
         }
         
         .modal {
-            background: white;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
             border-radius: var(--radius);
             width: 90%;
             max-width: 500px;
@@ -703,6 +812,8 @@
             overflow-y: auto;
             transform: translateY(-20px);
             transition: transform 0.3s ease;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
         }
         
         .modal-overlay.active .modal {
@@ -715,6 +826,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(167, 139, 250, 0.1) 100%);
         }
         
         .modal-body {
@@ -748,7 +860,7 @@
         
         .footer-brand {
             font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--accent-light);
             font-size: 1.1rem;
         }
         
@@ -800,6 +912,24 @@
                 box-shadow: none !important;
             }
         }
+        
+        /* ========== SCROLLBAR STYLING ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--primary-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
     </style>
 </head>
 <body>
@@ -822,13 +952,13 @@
         <header class="app-header">
             <div class="brand-section">
                 <div class="logo">
-                    <i class="fas fa-landmark"></i>
+                    <i class="fas fa-robot"></i>
                 </div>
                 <div class="brand-text">
                     <h1>पंचायती राज विभाग, शेखपुरा</h1>
                     <p>
                         <span class="ai-badge">
-                            <i class="fas fa-robot"></i> AI स्मार्ट अटेंडेंस सिस्टम
+                            <i class="fas fa-brain"></i> AI स्मार्ट अटेंडेंस सिस्टम
                         </span>
                     </p>
                 </div>
@@ -914,7 +1044,7 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">कुल कर्मचारी</span>
-                        <span class="stat-value" id="sidebarTotalEmployees">56</span>
+                        <span class="stat-value" id="sidebarTotalEmployees">14</span>
                     </div>
                 </div>
             </aside>
@@ -949,8 +1079,11 @@
                                 <button class="btn btn-success" onclick="showTodayRecords()">
                                     <i class="fas fa-calendar-day"></i> आज का लॉग देखें
                                 </button>
-                                <button class="btn" style="background: var(--gray-light);" onclick="exportData()">
+                                <button class="btn" style="background: rgba(255,255,255,0.1); color: white;" onclick="exportData()">
                                     <i class="fas fa-download"></i> डाटा डाउनलोड करें
+                                </button>
+                                <button class="btn btn-danger" onclick="markBulkAttendance()">
+                                    <i class="fas fa-users"></i> सभी की अटेंडेंस
                                 </button>
                             </div>
                         </div>
@@ -972,11 +1105,11 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--gray-light);">
                                     <span>अनुपस्थित</span>
-                                    <strong id="todayAbsent">0</strong>
+                                    <strong id="todayAbsent">14</strong>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; padding: 15px 0;">
                                     <span>औसत समय</span>
-                                    <strong id="avgTime">9:15 AM</strong>
+                                    <strong id="avgTime">N/A</strong>
                                 </div>
                             </div>
                         </div>
@@ -995,30 +1128,62 @@
                                 <div style="margin-bottom: 15px;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                                         <span>पंचायती राज विभाग</span>
-                                        <span>85%</span>
-                                    </div>
-                                    <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
-                                        <div style="width: 85%; height: 100%; background: var(--secondary);"></div>
-                                    </div>
-                                </div>
-                                <div style="margin-bottom: 15px;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                        <span>वित्त विभाग</span>
-                                        <span>78%</span>
-                                    </div>
-                                    <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
-                                        <div style="width: 78%; height: 100%; background: var(--primary);"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                        <span>स्वास्थ्य विभाग</span>
                                         <span>92%</span>
                                     </div>
                                     <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
                                         <div style="width: 92%; height: 100%; background: var(--accent);"></div>
                                     </div>
                                 </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>वित्त विभाग</span>
+                                        <span>88%</span>
+                                    </div>
+                                    <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 88%; height: 100%; background: var(--accent-light);"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>स्वास्थ्य विभाग</span>
+                                        <span>95%</span>
+                                    </div>
+                                    <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 95%; height: 100%; background: var(--secondary);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Attendance Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <div class="card-icon icon-orange">
+                                        <i class="fas fa-user-clock"></i>
+                                    </div>
+                                    त्वरित अटेंडेंस
+                                </h3>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+                                <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="quickAttendance(1)">
+                                    अमरेंद्र
+                                </button>
+                                <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="quickAttendance(2)">
+                                    सुलोक
+                                </button>
+                                <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="quickAttendance(3)">
+                                    धीरज
+                                </button>
+                                <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="quickAttendance(4)">
+                                    दीपक
+                                </button>
+                                <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="quickAttendance(5)">
+                                    संगीता
+                                </button>
+                                <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="quickAttendance(6)">
+                                    प्रतिमा
+                                </button>
                             </div>
                         </div>
                         
@@ -1026,22 +1191,22 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    <div class="card-icon icon-orange">
+                                    <div class="card-icon icon-blue">
                                         <i class="fas fa-brain"></i>
                                     </div>
                                     AI सुझाव
                                 </h3>
                             </div>
                             <div style="margin-top: 20px;">
-                                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 15px;">
-                                    <p style="margin: 0; color: var(--dark); font-size: 0.9rem;">
+                                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 15px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <p style="margin: 0; color: white; font-size: 0.9rem;">
                                         <i class="fas fa-lightbulb" style="color: var(--secondary); margin-right: 8px;"></i>
                                         आज पंचायती राज विभाग की उपस्थिति उत्कृष्ट है।
                                     </p>
                                 </div>
-                                <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: var(--radius-sm);">
-                                    <p style="margin: 0; color: var(--dark); font-size: 0.9rem;">
-                                        <i class="fas fa-clock" style="color: var(--primary-light); margin-right: 8px;"></i>
+                                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: var(--radius-sm); border: 1px solid rgba(139, 92, 246, 0.2);">
+                                    <p style="margin: 0; color: white; font-size: 0.9rem;">
+                                        <i class="fas fa-clock" style="color: var(--accent-light); margin-right: 8px;"></i>
                                         सुबह 10:30-11:00 बजे सबसे अधिक अटेंडेंस दर्ज की जाती है।
                                     </p>
                                 </div>
@@ -1055,7 +1220,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <i class="fas fa-camera" style="color: var(--primary-light);"></i>
+                                <i class="fas fa-camera" style="color: var(--accent-light);"></i>
                                 नई अटेंडेंस दर्ज करें
                             </h3>
                         </div>
@@ -1076,12 +1241,12 @@
                                             <option value="6">PRATIMA KUMARI</option>
                                             <option value="7">JULI KUMARI</option>
                                             <option value="8">SHIREEN TARRANUM</option>
-                                             <option value="9">AVINASH KUMAR</option>
-                                             <option value="10">RAJVARDHAN SHARMA</option>
-                                             <option value="11">CHANDAN KUMAR</option>
-                                             <option value="12">JACKY KUMAR</option>
-                                             <option value="13">DEEPAK KUMAR</option>
-                                             <option value="14">BEAUTY KUMARI</option>
+                                            <option value="9">AVINASH KUMAR</option>
+                                            <option value="10">RAJVARDHAN SHARMA</option>
+                                            <option value="11">CHANDAN KUMAR</option>
+                                            <option value="12">JACKY KUMAR</option>
+                                            <option value="13">DEEPAK KUMAR</option>
+                                            <option value="14">BEAUTY KUMARI</option>
                                         </select>
                                         <i class="fas fa-chevron-down"></i>
                                     </div>
@@ -1135,7 +1300,7 @@
                             <button class="btn btn-success btn-block" onclick="markAttendance()" id="submitBtn" disabled>
                                 <i class="fas fa-check-circle"></i> अटेंडेंस दर्ज करें
                             </button>
-                            <button class="btn" style="background: var(--gray-light);" onclick="showSection('dashboard')">
+                            <button class="btn" style="background: rgba(255,255,255,0.1); color: white;" onclick="showSection('dashboard')">
                                 <i class="fas fa-times"></i> रद्द करें
                             </button>
                         </div>
@@ -1154,7 +1319,7 @@
                                 <button class="btn btn-success" style="padding: 8px 15px;" onclick="filterRecords()">
                                     <i class="fas fa-filter"></i>
                                 </button>
-                                <button class="btn" style="padding: 8px 15px; background: var(--gray-light);" onclick="resetFilter()">
+                                <button class="btn" style="padding: 8px 15px; background: rgba(255,255,255,0.1); color: white;" onclick="resetFilter()">
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
@@ -1183,7 +1348,7 @@
                         <button class="btn btn-primary" onclick="exportRecords()">
                             <i class="fas fa-file-export"></i> CSV एक्सपोर्ट करें
                         </button>
-                        <button class="btn" style="background: var(--gray-light);" onclick="printRecords()">
+                        <button class="btn" style="background: rgba(255,255,255,0.1); color: white;" onclick="printRecords()">
                             <i class="fas fa-print"></i> प्रिंट करें
                         </button>
                         <button class="btn btn-danger" onclick="clearAllRecords()" style="margin-left: auto;">
@@ -1198,7 +1363,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    <i class="fas fa-chart-bar" style="color: var(--primary-light);"></i>
+                                    <i class="fas fa-chart-bar" style="color: var(--accent-light);"></i>
                                     मासिक अटेंडेंस ट्रेंड
                                 </h3>
                             </div>
@@ -1212,7 +1377,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    <i class="fas fa-chart-pie" style="color: var(--accent);"></i>
+                                    <i class="fas fa-chart-pie" style="color: var(--accent-light);"></i>
                                     विभागवार विश्लेषण
                                 </h3>
                             </div>
@@ -1233,31 +1398,31 @@
                         <div style="padding: 20px;">
                             <div style="display: grid; gap: 15px;">
                                 <div style="display: flex; gap: 15px; align-items: flex-start;">
-                                    <div style="background: rgba(16, 185, 129, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <div style="background: rgba(16, 185, 129, 0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.3);">
                                         <i class="fas fa-calendar-check" style="color: var(--secondary);"></i>
                                     </div>
                                     <div>
-                                        <h4 style="margin-bottom: 5px; color: var(--dark);">उच्च उपस्थिति दर</h4>
+                                        <h4 style="margin-bottom: 5px; color: white;">उच्च उपस्थिति दर</h4>
                                         <p style="color: var(--gray); margin: 0;">पंचायती राज विभाग में 92% उपस्थिति दर है, जो अन्य विभागों से अधिक है।</p>
                                     </div>
                                 </div>
                                 
                                 <div style="display: flex; gap: 15px; align-items: flex-start;">
-                                    <div style="background: rgba(239, 68, 68, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <div style="background: rgba(239, 68, 68, 0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(239, 68, 68, 0.3);">
                                         <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
                                     </div>
                                     <div>
-                                        <h4 style="margin-bottom: 5px; color: var(--dark);">सुधार की आवश्यकता</h4>
+                                        <h4 style="margin-bottom: 5px; color: white;">सुधार की आवश्यकता</h4>
                                         <p style="color: var(--gray); margin: 0;">शुक्रवार को पंचायती राज विभाग में उपस्थिति दर 70% है, जो सप्ताह की सबसे कम है।</p>
                                     </div>
                                 </div>
                                 
                                 <div style="display: flex; gap: 15px; align-items: flex-start;">
-                                    <div style="background: rgba(59, 130, 246, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-bullseye" style="color: var(--primary-light);"></i>
+                                    <div style="background: rgba(139, 92, 246, 0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(139, 92, 246, 0.3);">
+                                        <i class="fas fa-bullseye" style="color: var(--accent);"></i>
                                     </div>
                                     <div>
-                                        <h4 style="margin-bottom: 5px; color: var(--dark);">लक्ष्य हासिल</h4>
+                                        <h4 style="margin-bottom: 5px; color: white;">लक्ष्य हासिल</h4>
                                         <p style="color: var(--gray); margin: 0;">इस महीने 95% समग्र उपस्थिति दर का लक्ष्य हासिल किया गया है।</p>
                                     </div>
                                 </div>
@@ -1271,7 +1436,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <i class="fas fa-users" style="color: var(--primary-light);"></i>
+                                <i class="fas fa-users" style="color: var(--accent-light);"></i>
                                 कर्मचारी प्रबंधन
                             </h3>
                             <button class="btn btn-primary" onclick="showAddEmployeeModal()">
@@ -1305,14 +1470,14 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <i class="fas fa-file-alt" style="color: var(--primary-light);"></i>
+                                <i class="fas fa-file-alt" style="color: var(--accent-light);"></i>
                                 रिपोर्ट्स
                             </h3>
                         </div>
                         <div style="padding: 20px;">
                             <div class="cards-grid">
                                 <div class="card">
-                                    <h4 style="margin-bottom: 15px;">दैनिक रिपोर्ट</h4>
+                                    <h4 style="margin-bottom: 15px; color: white;">दैनिक रिपोर्ट</h4>
                                     <p style="color: var(--gray); margin-bottom: 15px;">आज की विस्तृत अटेंडेंस रिपोर्ट</p>
                                     <button class="btn btn-primary" onclick="generateDailyReport()">
                                         <i class="fas fa-download"></i> डाउनलोड करें
@@ -1320,7 +1485,7 @@
                                 </div>
                                 
                                 <div class="card">
-                                    <h4 style="margin-bottom: 15px;">मासिक रिपोर्ट</h4>
+                                    <h4 style="margin-bottom: 15px; color: white;">मासिक रिपोर्ट</h4>
                                     <p style="color: var(--gray); margin-bottom: 15px;">इस महीने की अटेंडेंस रिपोर्ट</p>
                                     <button class="btn btn-primary" onclick="generateMonthlyReport()">
                                         <i class="fas fa-download"></i> डाउनलोड करें
@@ -1328,7 +1493,7 @@
                                 </div>
                                 
                                 <div class="card">
-                                    <h4 style="margin-bottom: 15px;">विभागवार रिपोर्ट</h4>
+                                    <h4 style="margin-bottom: 15px; color: white;">विभागवार रिपोर्ट</h4>
                                     <p style="color: var(--gray); margin-bottom: 15px;">प्रत्येक विभाग की विस्तृत रिपोर्ट</p>
                                     <button class="btn btn-primary" onclick="generateDepartmentReport()">
                                         <i class="fas fa-download"></i> डाउनलोड करें
@@ -1344,7 +1509,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <i class="fas fa-cog" style="color: var(--primary-light);"></i>
+                                <i class="fas fa-cog" style="color: var(--accent-light);"></i>
                                 सेटिंग्स
                             </h3>
                         </div>
@@ -1440,7 +1605,7 @@
                     
                     // Update UI
                     updateStats();
-                    showNotification('सिस्टम तैयार है!', 'success');
+                    showNotification('AI अटेंडेंस सिस्टम तैयार है!', 'success');
                     
                     // Initialize sample data if empty
                     if (attendanceRecords.length === 0) {
@@ -1485,15 +1650,15 @@
                 { id: 3, name: 'DHIRAJ KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '8765432109' },
                 { id: 4, name: 'DEEPAK KUMAR SINGH', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '7654321098' },
                 { id: 5, name: 'SANGEETA KUMARI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '6543210987' },
-                { id: 6, name: 'PRATIMA KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '5432109876' },
+                { id: 6, name: 'PRATIMA KUMARI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '5432109876' },
                 { id: 7, name: 'JULI KUMARI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '4321098765' },
-                { id: 8, name: 'SHIREEN TARRANUM', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
-                { id: 9, name: 'AVINASH KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
-                { id: 10, name: 'RAJVARDHAN SHARMA', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
-                { id: 11, name: 'CHANDAN KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
-                { id: 12, name: 'JACKY KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
-                { id: 13, name: 'DEEPAK KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
-                { id: 14, name: 'BEAUTY KUMRI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 8, name: 'SHIREEN TARRANUM', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' },
+                { id: 9, name: 'AVINASH KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987653' },
+                { id: 10, name: 'RAJVARDHAN SHARMA', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987652' },
+                { id: 11, name: 'CHANDAN KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987651' },
+                { id: 12, name: 'JACKY KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987650' },
+                { id: 13, name: 'DEEPAK KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987649' },
+                { id: 14, name: 'BEAUTY KUMARI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987648' }
             ];
             
             // Sample attendance records
@@ -1537,7 +1702,7 @@
                 {
                     id: 4,
                     employeeId: 4,
-                    name: 'DEEPAK KUMAR',
+                    name: 'DEEPAK KUMAR SINGH',
                     department: 'पंचायती राज विभाग',
                     designation: 'DATA ENTRY OPERATOR',
                     time: '09:45 AM',
@@ -1602,7 +1767,7 @@
             }
             
             // Scroll to top
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
         // ========== GREETING ==========
@@ -1659,7 +1824,7 @@
                 
                 // Show demo mode
                 document.getElementById('cameraPlaceholder').innerHTML = `
-                    <i class="fas fa-user-circle" style="font-size: 3rem;"></i>
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: var(--accent);"></i>
                     <p>कैमरा उपलब्ध नहीं</p>
                     <p style="font-size: 0.9rem; margin-top: 10px;">डेमो मोड सक्रिय</p>
                 `;
@@ -1763,6 +1928,85 @@
             showSection('records');
         }
         
+        // ========== QUICK ATTENDANCE ==========
+        function quickAttendance(employeeId) {
+            const employee = employees.find(emp => emp.id == employeeId);
+            if (!employee) {
+                showNotification('कर्मचारी नहीं मिला', 'error');
+                return;
+            }
+            
+            // Auto-fill the form
+            document.getElementById('employeeSelect').value = employee.id;
+            document.getElementById('departmentSelect').value = employee.department;
+            document.getElementById('designationInput').value = employee.designation;
+            
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
+            
+            // Switch to attendance section
+            showSection('attendance');
+            
+            // Focus on comment field
+            setTimeout(() => {
+                document.getElementById('commentInput').focus();
+            }, 100);
+        }
+        
+        // ========== BULK ATTENDANCE ==========
+        function markBulkAttendance() {
+            if (employees.length === 0) {
+                showNotification('कोई कर्मचारी नहीं है', 'error');
+                return;
+            }
+            
+            if (!confirm(`${employees.length} कर्मचारियों के लिए एक साथ अटेंडेंस दर्ज करें?`)) {
+                return;
+            }
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString('hi-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            const date = now.toISOString().split('T')[0];
+            
+            let count = 0;
+            employees.forEach(employee => {
+                // Check if attendance already marked for today
+                const alreadyMarked = attendanceRecords.some(record => 
+                    record.employeeId === employee.id && record.date === date
+                );
+                
+                if (!alreadyMarked) {
+                    const newRecord = {
+                        id: Date.now() + count,
+                        employeeId: employee.id,
+                        name: employee.name,
+                        department: employee.department,
+                        designation: employee.designation,
+                        time: time,
+                        date: date,
+                        status: 'present',
+                        comment: 'बल्क अटेंडेंस'
+                    };
+                    
+                    attendanceRecords.unshift(newRecord);
+                    count++;
+                }
+            });
+            
+            if (count > 0) {
+                saveData();
+                updateStats();
+                updateRecordsTable();
+                showNotification(`${count} कर्मचारियों की अटेंडेंस दर्ज हो गई`, 'success');
+            } else {
+                showNotification('सभी कर्मचारियों की अटेंडेंस पहले ही दर्ज है', 'info');
+            }
+        }
+        
         function resetAttendanceForm() {
             document.getElementById('employeeSelect').value = '';
             document.getElementById('departmentSelect').value = '';
@@ -1804,12 +2048,12 @@
                         <td>${index + 1}</td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); 
+                                <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
                                      border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
                                     ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                                 </div>
                                 <div>
-                                    <div style="font-weight: 500;">${record.name}</div>
+                                    <div style="font-weight: 500; color: white;">${record.name}</div>
                                     <div style="font-size: 0.85rem; color: var(--gray);">${record.designation}</div>
                                 </div>
                             </div>
@@ -1822,11 +2066,11 @@
                             </span>
                         </td>
                         <td>
-                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="viewRecord(${record.id})">
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="viewRecord(${record.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1);" onclick="deleteRecord(${record.id})">
-                                <i class="fas fa-trash" style="color: var(--danger);"></i>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.2); color: var(--danger);" onclick="deleteRecord(${record.id})">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -1871,7 +2115,7 @@
                 const modalContent = `
                     <div class="modal">
                         <div class="modal-header">
-                            <h3 style="margin: 0; color: var(--primary-dark);">
+                            <h3 style="margin: 0; color: white;">
                                 <i class="fas fa-eye"></i> रिकॉर्ड विवरण
                             </h3>
                             <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
@@ -1881,12 +2125,12 @@
                         <div class="modal-body">
                             <div style="display: grid; gap: 20px;">
                                 <div style="display: flex; gap: 15px; align-items: center;">
-                                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); 
+                                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
                                          border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">
                                         ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                                     </div>
                                     <div>
-                                        <h4 style="margin: 0 0 5px 0; color: var(--primary-dark);">${record.name}</h4>
+                                        <h4 style="margin: 0 0 5px 0; color: white;">${record.name}</h4>
                                         <p style="margin: 0; color: var(--gray);">${record.department} • ${record.designation}</p>
                                     </div>
                                 </div>
@@ -1894,11 +2138,11 @@
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                     <div>
                                         <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">तारीख</label>
-                                        <div style="font-weight: 500; color: var(--dark);">${record.date}</div>
+                                        <div style="font-weight: 500; color: white;">${record.date}</div>
                                     </div>
                                     <div>
                                         <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">समय</label>
-                                        <div style="font-weight: 500; color: var(--dark);">${record.time}</div>
+                                        <div style="font-weight: 500; color: white;">${record.time}</div>
                                     </div>
                                     <div>
                                         <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">स्थिति</label>
@@ -1908,14 +2152,14 @@
                                     </div>
                                     <div>
                                         <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">दर्ज किया गया</label>
-                                        <div style="font-weight: 500; color: var(--dark);">आज</div>
+                                        <div style="font-weight: 500; color: white;">आज</div>
                                     </div>
                                 </div>
                                 
                                 ${record.comment ? `
                                     <div>
                                         <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">टिप्पणी</label>
-                                        <div style="background: #f8fafc; padding: 15px; border-radius: var(--radius-sm);">
+                                        <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: var(--radius-sm); color: white; border: 1px solid var(--glass-border);">
                                             ${record.comment}
                                         </div>
                                     </div>
@@ -1951,16 +2195,16 @@
                 html += `
                     <tr>
                         <td>${employee.id}</td>
-                        <td>${employee.name}</td>
+                        <td style="color: white;">${employee.name}</td>
                         <td>${employee.department}</td>
                         <td>${employee.designation}</td>
                         <td>${employee.contact}</td>
                         <td>
-                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="editEmployee(${employee.id})">
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(139, 92, 246, 0.2); color: var(--accent-light);" onclick="editEmployee(${employee.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1);" onclick="deleteEmployee(${employee.id})">
-                                <i class="fas fa-trash" style="color: var(--danger);"></i>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.2); color: var(--danger);" onclick="deleteEmployee(${employee.id})">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -1975,7 +2219,7 @@
             const modalContent = `
                 <div class="modal">
                     <div class="modal-header">
-                        <h3 style="margin: 0; color: var(--primary-dark);">
+                        <h3 style="margin: 0; color: white;">
                             <i class="fas fa-user-plus"></i> नया कर्मचारी जोड़ें
                         </h3>
                         <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
@@ -2235,7 +2479,7 @@
             const modalContent = `
                 <div class="modal">
                     <div class="modal-header">
-                        <h3 style="margin: 0; color: var(--primary-dark);">
+                        <h3 style="margin: 0; color: white;">
                             <i class="fas fa-question-circle"></i> मदद
                         </h3>
                         <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
@@ -2245,7 +2489,7 @@
                     <div class="modal-body">
                         <div style="display: grid; gap: 20px;">
                             <div>
-                                <h4 style="margin-bottom: 10px; color: var(--primary-dark);">सिस्टम उपयोग विधि</h4>
+                                <h4 style="margin-bottom: 10px; color: white;">सिस्टम उपयोग विधि</h4>
                                 <ol style="margin-left: 20px; color: var(--gray); line-height: 2;">
                                     <li><strong>अटेंडेंस दर्ज करें:</strong> कर्मचारी चुनें, कैमरा शुरू करें, फोटो लें और सबमिट करें</li>
                                     <li><strong>रिकॉर्ड देखें:</strong> सभी अटेंडेंस रिकॉर्ड्स देखें और फिल्टर करें</li>
@@ -2257,9 +2501,9 @@
                             </div>
                             
                             <div>
-                                <h4 style="margin-bottom: 10px; color: var(--primary-dark);">संपर्क</h4>
+                                <h4 style="margin-bottom: 10px; color: white;">संपर्क</h4>
                                 <p style="color: var(--gray); margin: 0;">
-                                    <i class="fas fa-user" style="color: var(--primary-light); margin-right: 8px;"></i>
+                                    <i class="fas fa-user" style="color: var(--accent-light); margin-right: 8px;"></i>
                                     विकसित: <strong>Mr. Aman Kumar, Data Entry Operator</strong>
                                 </p>
                                 <p style="color: var(--gray); margin: 10px 0 0 0;">
@@ -2295,7 +2539,7 @@
                     <i class="fas fa-${icon}"></i>
                 </div>
                 <div>
-                    <div style="font-weight: 500; margin-bottom: 5px;">
+                    <div style="font-weight: 500; margin-bottom: 5px; color: white;">
                         ${type === 'success' ? 'सफलता' : type === 'error' ? 'त्रुटि' : 'सूचना'}
                     </div>
                     <div style="font-size: 0.9rem; color: var(--gray);">${message}</div>

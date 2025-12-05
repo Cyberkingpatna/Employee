@@ -657,6 +657,47 @@
             box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.3);
         }
         
+        /* ========== LOCATION INFO DISPLAY ========== */
+        .location-info-box {
+            background: rgba(30, 90, 168, 0.1);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(30, 90, 168, 0.2);
+            display: none;
+        }
+        
+        .location-info-box.active {
+            display: block;
+        }
+        
+        .location-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .location-info-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .location-label {
+            color: var(--primary);
+            font-weight: 500;
+            min-width: 120px;
+        }
+        
+        .location-value {
+            color: var(--gray);
+            flex: 1;
+            word-break: break-word;
+        }
+        
         /* ========== RECORDS TABLE ========== */
         .table-container {
             background: var(--card-bg);
@@ -1185,7 +1226,7 @@
                             </div>
                         </div>
                         
-                        <!-- Department Stats Card - UPDATED (वित्त विभाग and स्वास्थ्य विभाग removed) -->
+                        <!-- Department Stats Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
@@ -1205,8 +1246,6 @@
                                         <div style="width: 92%; height: 100%; background: var(--accent);"></div>
                                     </div>
                                 </div>
-                                <!-- वित्त विभाग removed -->
-                                <!-- स्वास्थ्य विभाग removed -->
                             </div>
                         </div>
                         
@@ -1327,6 +1366,26 @@
                                     <label class="form-label">टिप्पणी (वैकल्पिक)</label>
                                     <textarea class="form-control" id="commentInput" rows="3" placeholder="कोई टिप्पणी डालें"></textarea>
                                 </div>
+                                
+                                <!-- Location Information Display -->
+                                <div class="location-info-box" id="locationInfoBox">
+                                    <div class="location-info-row">
+                                        <span class="location-label">स्थान निर्देशांक:</span>
+                                        <span class="location-value" id="locationCoords">प्राप्त किया जा रहा है...</span>
+                                    </div>
+                                    <div class="location-info-row">
+                                        <span class="location-label">पूरा पता:</span>
+                                        <span class="location-value" id="locationAddress">प्राप्त किया जा रहा है...</span>
+                                    </div>
+                                    <div class="location-info-row">
+                                        <span class="location-label">IP पता:</span>
+                                        <span class="location-value" id="ipAddress">प्राप्त किया जा रहा है...</span>
+                                    </div>
+                                    <div class="location-info-row">
+                                        <span class="location-label">फोटो समय:</span>
+                                        <span class="location-value" id="photoTime">अभी तक नहीं ली गई</span>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Camera Section -->
@@ -1347,6 +1406,12 @@
                                     </button>
                                     <button class="btn btn-success" onclick="capturePhoto()" id="captureBtn" disabled>
                                         <i class="fas fa-camera-retro"></i> फोटो लें
+                                    </button>
+                                </div>
+                                
+                                <div style="margin-top: 15px;">
+                                    <button class="btn btn-block" style="background: rgba(30, 90, 168, 0.1); color: var(--accent);" onclick="getCurrentLocation()" id="locationBtn">
+                                        <i class="fas fa-map-marker-alt"></i> स्थान प्राप्त करें
                                     </button>
                                 </div>
                             </div>
@@ -1449,7 +1514,7 @@
                         <div class="card-header">
                             <h3 class="card-title">
                                 <i class="fas fa-lightbulb" style="color: var(--warning);"></i>
-                                AI इनसाइट्स - UPDATED (वित्त विभाग and स्वास्थ्य विभाग references removed)
+                                AI इनसाइट्स
                             </h3>
                         </div>
                         <div style="padding: 20px;">
@@ -1621,7 +1686,7 @@
         <footer class="app-footer">
             <div class="footer-content">
                 <div class="footer-brand">पंचायती राज विभाग, बिहार सरकार</div>
-                <div>AI स्मार्ट अटेंडेंस सिस्टम v2.1</div>
+                <div>AI स्मार्ट अटेंडेंस सिस्टम v3.0</div>
                 <div>Developed by <span class="developer">Mr. Aman Kumar, Data Entry Operator</span> © <span id="currentYear">2024</span></div>
                 <div style="font-size: 0.9rem; color: var(--gray);">शेखपुरा जिला, बिहार</div>
             </div>
@@ -1634,6 +1699,10 @@
         let videoStream = null;
         let currentSection = 'dashboard';
         let employees = [];
+        let currentLocation = null;
+        let currentIP = null;
+        let capturedPhoto = null;
+        let currentPhotoTime = null;
         
         // ========== INITIALIZATION ==========
         window.addEventListener('DOMContentLoaded', function() {
@@ -1645,6 +1714,12 @@
             // Set today's date in filter
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('recordDate').value = today;
+            
+            // Get IP address on load
+            getIPAddress();
+            
+            // Get location permission on load
+            requestLocationPermission();
             
             // Simulate loading
             setTimeout(() => {
@@ -1669,6 +1744,10 @@
                     if (attendanceRecords.length === 0) {
                         initializeSampleData();
                     }
+                    
+                    // Show location info box
+                    document.getElementById('locationInfoBox').classList.add('active');
+                    
                 }, 500);
             }, 1500);
             
@@ -1697,6 +1776,136 @@
             window.addEventListener('beforeunload', function() {
                 saveData();
             });
+        }
+        
+        // ========== LOCATION & IP FUNCTIONS ==========
+        function requestLocationPermission() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        
+                        // Update location display
+                        document.getElementById('locationCoords').textContent = 
+                            `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+                        
+                        // Get address from coordinates
+                        getAddressFromCoords(currentLocation.latitude, currentLocation.longitude);
+                        
+                        showNotification('स्थान सफलतापूर्वक प्राप्त हो गया', 'success');
+                    },
+                    function(error) {
+                        console.error("Geolocation error:", error);
+                        document.getElementById('locationCoords').textContent = 'अनुमति अस्वीकृत';
+                        document.getElementById('locationAddress').textContent = 'स्थान उपलब्ध नहीं';
+                        
+                        // Try to get location from IP as fallback
+                        getLocationFromIP();
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                document.getElementById('locationCoords').textContent = 'जीपीएस सपोर्ट नहीं';
+                getLocationFromIP();
+            }
+        }
+        
+        function getCurrentLocation() {
+            const btn = document.getElementById('locationBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> स्थान प्राप्त कर रहा है...';
+            btn.disabled = true;
+            
+            requestLocationPermission();
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> स्थान प्राप्त करें';
+                btn.disabled = false;
+            }, 2000);
+        }
+        
+        async function getAddressFromCoords(lat, lon) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`
+                );
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.display_name) {
+                        const address = data.display_name;
+                        document.getElementById('locationAddress').textContent = address;
+                        return address;
+                    }
+                }
+            } catch (error) {
+                console.error("Address fetch error:", error);
+                document.getElementById('locationAddress').textContent = 'पता प्राप्त नहीं किया जा सका';
+            }
+            
+            return "पता उपलब्ध नहीं";
+        }
+        
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentIP = data.ip;
+                    document.getElementById('ipAddress').textContent = currentIP;
+                    
+                    // Get location from IP
+                    getLocationFromIP();
+                }
+            } catch (error) {
+                console.error("IP fetch error:", error);
+                // Fallback to a simpler method
+                try {
+                    const response = await fetch('https://api.db-ip.com/v2/free/self');
+                    if (response.ok) {
+                        const data = await response.json();
+                        currentIP = data.ipAddress;
+                        document.getElementById('ipAddress').textContent = currentIP;
+                    }
+                } catch (error2) {
+                    document.getElementById('ipAddress').textContent = 'IP प्राप्त नहीं';
+                }
+            }
+        }
+        
+        async function getLocationFromIP() {
+            if (!currentIP) return;
+            
+            try {
+                const response = await fetch(`https://ipapi.co/${currentIP}/json/`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // If we don't have GPS location, use IP-based location
+                    if (!currentLocation && data.latitude && data.longitude) {
+                        currentLocation = {
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                            accuracy: 5000 // Less accurate than GPS
+                        };
+                        
+                        document.getElementById('locationCoords').textContent = 
+                            `${data.latitude}, ${data.longitude}`;
+                        
+                        const address = `${data.city}, ${data.region}, ${data.country_name}`;
+                        document.getElementById('locationAddress').textContent = address;
+                    }
+                }
+            } catch (error) {
+                console.error("IP location error:", error);
+            }
         }
         
         // ========== SAMPLE DATA ==========
@@ -1733,7 +1942,12 @@
                     time: '09:15 AM',
                     date: today,
                     status: 'present',
-                    comment: 'समय पर उपस्थित'
+                    comment: 'समय पर उपस्थित',
+                    photoTime: '09:15 AM',
+                    location: '25.5941, 85.1376',
+                    address: 'पटना, बिहार',
+                    ipAddress: '192.168.1.1',
+                    photoData: null
                 },
                 {
                     id: 2,
@@ -1744,29 +1958,12 @@
                     time: '09:30 AM',
                     date: today,
                     status: 'present',
-                    comment: ''
-                },
-                {
-                    id: 3,
-                    employeeId: 3,
-                    name: 'DHIRAJ KUMAR',
-                    department: 'पंचायती राज विभाग',
-                    designation: 'DATA ENTRY OPERATOR',
-                    time: '10:00 AM',
-                    date: today,
-                    status: 'present',
-                    comment: 'विलंब से आए'
-                },
-                {
-                    id: 4,
-                    employeeId: 4,
-                    name: 'DEEPAK KUMAR SINGH',
-                    department: 'पंचायती राज विभाग',
-                    designation: 'DATA ENTRY OPERATOR',
-                    time: '09:45 AM',
-                    date: yesterday,
-                    status: 'present',
-                    comment: ''
+                    comment: '',
+                    photoTime: '09:30 AM',
+                    location: '25.5941, 85.1376',
+                    address: 'पटना, बिहार',
+                    ipAddress: '192.168.1.2',
+                    photoData: null
                 }
             ];
             
@@ -1904,641 +2101,343 @@
             
             // Reset button
             const btn = document.getElementById('startCameraBtn');
-                btn.innerHTML = '<i class="fas fa-video"></i> कैमरा शुरू करें';
-                btn.onclick = startCamera;
+            btn.innerHTML = '<i class="fas fa-video"></i> कैमरा शुरू करें';
+            btn.onclick = startCamera;
+        }
+        
+        async function capturePhoto() {
+            const video = document.getElementById('videoElement');
+            const photoTime = new Date().toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'});
+            currentPhotoTime = photoTime;
+            document.getElementById('photoTime').textContent = photoTime;
+            
+            if (video.style.display === 'block' && videoStream) {
+                // Real camera capture
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Add watermark
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, canvas.width, 40);
+                
+                ctx.font = '16px Inter, Noto Sans Devanagari, sans-serif';
+                ctx.fillStyle = 'white';
+                ctx.fillText('पंचायती राज विभाग, बिहार | ' + new Date().toLocaleString('hi-IN'), 10, 25);
+                
+                // Convert to data URL
+                capturedPhoto = canvas.toDataURL('image/jpeg', 0.7);
+                
+                // Save photo to device
+                await savePhotoToDevice(canvas);
+                
+                showNotification('फोटो कैप्चर हो गई और सेव हो गई।', 'success');
+            } else {
+                // Demo mode - simulate capture
+                showNotification('डेमो मोड: फोटो कैप्चर सिमुलेट किया गया।', 'info');
+                capturedPhoto = 'demo_photo_data';
             }
             
-            function capturePhoto() {
-                const video = document.getElementById('videoElement');
-                
-                if (video.style.display === 'block' && videoStream) {
-                    // Real camera capture
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
+        }
+        
+        async function savePhotoToDevice(canvas) {
+            try {
+                // For modern browsers with File System Access API
+                if ('showSaveFilePicker' in window) {
+                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.7));
                     
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const opts = {
+                        suggestedName: `पंचायत_अटेंडेंस_${Date.now()}.jpg`,
+                        types: [{
+                            description: 'JPEG Image',
+                            accept: {'image/jpeg': ['.jpg']},
+                        }],
+                    };
                     
-                    // Add watermark
-                    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                    ctx.fillRect(0, 0, canvas.width, 40);
+                    const fileHandle = await window.showSaveFilePicker(opts);
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
                     
-                    ctx.font = '16px Inter, Noto Sans Devanagari, sans-serif';
-                    ctx.fillStyle = 'white';
-                    ctx.fillText('पंचायती राज विभाग, बिहार | ' + new Date().toLocaleString('hi-IN'), 10, 25);
-                    
-                    showNotification('फोटो कैप्चर हो गई।', 'success');
+                    showNotification('फोटो डिवाइस में सेव हो गई', 'success');
                 } else {
-                    // Demo mode - simulate capture
-                    showNotification('डेमो मोड: फोटो कैप्चर सिमुलेट किया गया।', 'info');
+                    // Fallback for older browsers
+                    const link = document.createElement('a');
+                    link.download = `पंचायत_अटेंडेंस_${Date.now()}.jpg`;
+                    link.href = canvas.toDataURL('image/jpeg', 0.7);
+                    link.click();
+                    
+                    showNotification('फोटो डाउनलोड हो गई', 'success');
                 }
-                
-                // Enable submit button
-                document.getElementById('submitBtn').disabled = false;
+            } catch (error) {
+                console.error('Error saving photo:', error);
+                showNotification('फोटो सेव करने में त्रुटि', 'error');
+            }
+        }
+        
+        // ========== ATTENDANCE FUNCTIONS ==========
+        async function markAttendance() {
+            const employeeSelect = document.getElementById('employeeSelect');
+            const departmentSelect = document.getElementById('departmentSelect');
+            const designationInput = document.getElementById('designationInput');
+            
+            if (!employeeSelect.value || !departmentSelect.value) {
+                showNotification('कृपया कर्मचारी और विभाग चुनें', 'error');
+                return;
             }
             
-            // ========== ATTENDANCE FUNCTIONS ==========
-            function markAttendance() {
-                const employeeSelect = document.getElementById('employeeSelect');
-                const departmentSelect = document.getElementById('departmentSelect');
-                const designationInput = document.getElementById('designationInput');
+            if (!capturedPhoto) {
+                showNotification('कृपया पहले फोटो कैप्चर करें', 'error');
+                return;
+            }
+            
+            const employeeId = employeeSelect.value;
+            const employeeName = employeeSelect.options[employeeSelect.selectedIndex].text;
+            const department = departmentSelect.value;
+            const designation = designationInput.value || 'N/A';
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'});
+            const date = now.toISOString().split('T')[0];
+            
+            // Get address if available
+            let address = document.getElementById('locationAddress').textContent;
+            if (address === 'प्राप्त किया जा रहा है...' || address === 'पता प्राप्त नहीं किया जा सका') {
+                address = "पता उपलब्ध नहीं";
+            }
+            
+            const newRecord = {
+                id: Date.now(),
+                employeeId: parseInt(employeeId),
+                name: employeeName,
+                department: department,
+                designation: designation,
+                time: time,
+                date: date,
+                status: 'present',
+                comment: document.getElementById('commentInput').value,
+                photoTime: currentPhotoTime || time,
+                location: currentLocation ? `${currentLocation.latitude}, ${currentLocation.longitude}` : 'उपलब्ध नहीं',
+                address: address,
+                ipAddress: currentIP || 'उपलब्ध नहीं',
+                photoData: capturedPhoto
+            };
+            
+            attendanceRecords.unshift(newRecord);
+            saveData();
+            
+            // Reset form
+            resetAttendanceForm();
+            
+            // Update UI
+            updateStats();
+            updateRecordsTable();
+            
+            showNotification(`${employeeName} की अटेंडेंस दर्ज हो गई!`, 'success');
+            
+            // Switch to records section
+            showSection('records');
+        }
+        
+        // ========== QUICK ATTENDANCE ==========
+        function quickAttendance(employeeId) {
+            const employee = employees.find(emp => emp.id == employeeId);
+            if (!employee) {
+                showNotification('कर्मचारी नहीं मिला', 'error');
+                return;
+            }
+            
+            // Auto-fill the form
+            document.getElementById('employeeSelect').value = employee.id;
+            document.getElementById('departmentSelect').value = employee.department;
+            document.getElementById('designationInput').value = employee.designation;
+            
+            // Switch to attendance section
+            showSection('attendance');
+            
+            // Focus on comment field
+            setTimeout(() => {
+                document.getElementById('commentInput').focus();
+            }, 100);
+        }
+        
+        // ========== BULK ATTENDANCE ==========
+        function markBulkAttendance() {
+            if (employees.length === 0) {
+                showNotification('कोई कर्मचारी नहीं है', 'error');
+                return;
+            }
+            
+            if (!confirm(`${employees.length} कर्मचारियों के लिए एक साथ अटेंडेंस दर्ज करें?`)) {
+                return;
+            }
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString('hi-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            const date = now.toISOString().split('T')[0];
+            
+            let count = 0;
+            employees.forEach(employee => {
+                // Check if attendance already marked for today
+                const alreadyMarked = attendanceRecords.some(record => 
+                    record.employeeId === employee.id && record.date === date
+                );
                 
-                if (!employeeSelect.value || !departmentSelect.value) {
-                    showNotification('कृपया कर्मचारी और विभाग चुनें', 'error');
-                    return;
+                if (!alreadyMarked) {
+                    const newRecord = {
+                        id: Date.now() + count,
+                        employeeId: employee.id,
+                        name: employee.name,
+                        department: employee.department,
+                        designation: employee.designation,
+                        time: time,
+                        date: date,
+                        status: 'present',
+                        comment: 'बल्क अटेंडेंस',
+                        photoTime: time,
+                        location: currentLocation ? `${currentLocation.latitude}, ${currentLocation.longitude}` : 'उपलब्ध नहीं',
+                        address: document.getElementById('locationAddress').textContent,
+                        ipAddress: currentIP || 'उपलब्ध नहीं',
+                        photoData: null
+                    };
+                    
+                    attendanceRecords.unshift(newRecord);
+                    count++;
                 }
-                
-                const employeeId = employeeSelect.value;
-                const employeeName = employeeSelect.options[employeeSelect.selectedIndex].text;
-                const department = departmentSelect.value;
-                const designation = designationInput.value || 'N/A';
-                
-                const now = new Date();
-                const time = now.toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'});
-                const date = now.toISOString().split('T')[0];
-                
-                const newRecord = {
-                    id: Date.now(),
-                    employeeId: parseInt(employeeId),
-                    name: employeeName,
-                    department: department,
-                    designation: designation,
-                    time: time,
-                    date: date,
-                    status: 'present',
-                    comment: document.getElementById('commentInput').value
-                };
-                
-                attendanceRecords.unshift(newRecord);
+            });
+            
+            if (count > 0) {
                 saveData();
-                
-                // Reset form
-                resetAttendanceForm();
-                
-                // Update UI
                 updateStats();
                 updateRecordsTable();
-                
-                showNotification(`${employeeName} की अटेंडेंस दर्ज हो गई!`, 'success');
-                
-                // Switch to records section
-                showSection('records');
+                showNotification(`${count} कर्मचारियों की अटेंडेंस दर्ज हो गई`, 'success');
+            } else {
+                showNotification('सभी कर्मचारियों की अटेंडेंस पहले ही दर्ज है', 'info');
+            }
+        }
+        
+        function resetAttendanceForm() {
+            document.getElementById('employeeSelect').value = '';
+            document.getElementById('departmentSelect').value = '';
+            document.getElementById('designationInput').value = '';
+            document.getElementById('commentInput').value = '';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('photoTime').textContent = 'अभी तक नहीं ली गई';
+            capturedPhoto = null;
+            currentPhotoTime = null;
+            
+            // Stop camera if running
+            stopCamera();
+        }
+        
+        // ========== RECORDS MANAGEMENT ==========
+        function updateRecordsTable() {
+            const tableBody = document.getElementById('recordsTable');
+            const filterDate = document.getElementById('recordDate').value;
+            
+            // Filter records by date
+            let filteredRecords = attendanceRecords;
+            if (filterDate) {
+                filteredRecords = attendanceRecords.filter(record => record.date === filterDate);
             }
             
-            // ========== QUICK ATTENDANCE ==========
-            function quickAttendance(employeeId) {
-                const employee = employees.find(emp => emp.id == employeeId);
-                if (!employee) {
-                    showNotification('कर्मचारी नहीं मिला', 'error');
-                    return;
-                }
-                
-                // Auto-fill the form
-                document.getElementById('employeeSelect').value = employee.id;
-                document.getElementById('departmentSelect').value = employee.department;
-                document.getElementById('designationInput').value = employee.designation;
-                
-                // Enable submit button
-                document.getElementById('submitBtn').disabled = false;
-                
-                // Switch to attendance section
-                showSection('attendance');
-                
-                // Focus on comment field
-                setTimeout(() => {
-                    document.getElementById('commentInput').focus();
-                }, 100);
-            }
-            
-            // ========== BULK ATTENDANCE ==========
-            function markBulkAttendance() {
-                if (employees.length === 0) {
-                    showNotification('कोई कर्मचारी नहीं है', 'error');
-                    return;
-                }
-                
-                if (!confirm(`${employees.length} कर्मचारियों के लिए एक साथ अटेंडेंस दर्ज करें?`)) {
-                    return;
-                }
-                
-                const now = new Date();
-                const time = now.toLocaleTimeString('hi-IN', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
-                const date = now.toISOString().split('T')[0];
-                
-                let count = 0;
-                employees.forEach(employee => {
-                    // Check if attendance already marked for today
-                    const alreadyMarked = attendanceRecords.some(record => 
-                        record.employeeId === employee.id && record.date === date
-                    );
-                    
-                    if (!alreadyMarked) {
-                        const newRecord = {
-                            id: Date.now() + count,
-                            employeeId: employee.id,
-                            name: employee.name,
-                            department: employee.department,
-                            designation: employee.designation,
-                            time: time,
-                            date: date,
-                            status: 'present',
-                            comment: 'बल्क अटेंडेंस'
-                        };
-                        
-                        attendanceRecords.unshift(newRecord);
-                        count++;
-                    }
-                });
-                
-                if (count > 0) {
-                    saveData();
-                    updateStats();
-                    updateRecordsTable();
-                    showNotification(`${count} कर्मचारियों की अटेंडेंस दर्ज हो गई`, 'success');
-                } else {
-                    showNotification('सभी कर्मचारियों की अटेंडेंस पहले ही दर्ज है', 'info');
-                }
-            }
-            
-            function resetAttendanceForm() {
-                document.getElementById('employeeSelect').value = '';
-                document.getElementById('departmentSelect').value = '';
-                document.getElementById('designationInput').value = '';
-                document.getElementById('commentInput').value = '';
-                document.getElementById('submitBtn').disabled = true;
-                
-                // Stop camera if running
-                stopCamera();
-            }
-            
-            // ========== RECORDS MANAGEMENT ==========
-            function updateRecordsTable() {
-                const tableBody = document.getElementById('recordsTable');
-                const filterDate = document.getElementById('recordDate').value;
-                
-                // Filter records by date
-                let filteredRecords = attendanceRecords;
-                if (filterDate) {
-                    filteredRecords = attendanceRecords.filter(record => record.date === filterDate);
-                }
-                
-                if (filteredRecords.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
-                                <i class="fas fa-clipboard" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
-                                कोई रिकॉर्ड नहीं मिला
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                let html = '';
-                filteredRecords.forEach((record, index) => {
-                    html += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
-                                         border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
-                                        ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 500; color: var(--primary);">${record.name}</div>
-                                        <div style="font-size: 0.85rem; color: var(--gray);">${record.designation}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${record.department}</td>
-                            <td>${record.time}</td>
-                            <td>
-                                <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
-                                    ${record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित'}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(30, 90, 168, 0.1); color: var(--accent);" onclick="viewRecord(${record.id})">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(211, 47, 47, 0.1); color: var(--danger);" onclick="deleteRecord(${record.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tableBody.innerHTML = html;
-            }
-            
-            function filterRecords() {
-                updateRecordsTable();
-            }
-            
-            function resetFilter() {
-                document.getElementById('recordDate').value = '';
-                updateRecordsTable();
-            }
-            
-            function deleteRecord(id) {
-                if (confirm('क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?')) {
-                    attendanceRecords = attendanceRecords.filter(record => record.id !== id);
-                    saveData();
-                    updateRecordsTable();
-                    updateStats();
-                    showNotification('रिकॉर्ड हटा दिया गया', 'success');
-                }
-            }
-            
-            function clearAllRecords() {
-                if (confirm('क्या आप सभी रिकॉर्ड्स हटाना चाहते हैं? यह कार्य वापस नहीं किया जा सकता।')) {
-                    attendanceRecords = [];
-                    saveData();
-                    updateRecordsTable();
-                    updateStats();
-                    showNotification('सभी रिकॉर्ड्स हटा दिए गए', 'success');
-                }
-            }
-            
-            function viewRecord(id) {
-                const record = attendanceRecords.find(r => r.id === id);
-                if (record) {
-                    const modalContent = `
-                        <div class="modal">
-                            <div class="modal-header">
-                                <h3 style="margin: 0; color: var(--primary);">
-                                    <i class="fas fa-eye"></i> रिकॉर्ड विवरण
-                                </h3>
-                                <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div style="display: grid; gap: 20px;">
-                                    <div style="display: flex; gap: 15px; align-items: center;">
-                                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
-                                             border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">
-                                            ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                                        </div>
-                                        <div>
-                                            <h4 style="margin: 0 0 5px 0; color: var(--primary);">${record.name}</h4>
-                                            <p style="margin: 0; color: var(--gray);">${record.department} • ${record.designation}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                        <div>
-                                            <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">तारीख</label>
-                                            <div style="font-weight: 500; color: var(--primary);">${record.date}</div>
-                                        </div>
-                                        <div>
-                                            <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">समय</label>
-                                            <div style="font-weight: 500; color: var(--primary);">${record.time}</div>
-                                        </div>
-                                        <div>
-                                            <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">स्थिति</label>
-                                            <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
-                                                ${record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित'}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">दर्ज किया गया</label>
-                                            <div style="font-weight: 500; color: var(--primary);">आज</div>
-                                        </div>
-                                    </div>
-                                    
-                                    ${record.comment ? `
-                                        <div>
-                                            <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">टिप्पणी</label>
-                                            <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius-sm); color: var(--primary); border: 1px solid var(--gray-light);">
-                                                ${record.comment}
-                                            </div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    document.getElementById('modalContainer').innerHTML = modalContent;
-                    document.getElementById('modalContainer').classList.add('active');
-                }
-            }
-            
-            // ========== EMPLOYEES MANAGEMENT ==========
-            function updateEmployeesTable() {
-                const tableBody = document.getElementById('employeesTable');
-                
-                if (employees.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
-                                <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
-                                कोई कर्मचारी नहीं मिला
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                let html = '';
-                employees.forEach((employee, index) => {
-                    html += `
-                        <tr>
-                            <td>${employee.id}</td>
-                            <td style="color: var(--primary);">${employee.name}</td>
-                            <td>${employee.department}</td>
-                            <td>${employee.designation}</td>
-                            <td>${employee.contact}</td>
-                            <td>
-                                <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(30, 90, 168, 0.1); color: var(--accent);" onclick="editEmployee(${employee.id})">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(211, 47, 47, 0.1); color: var(--danger);" onclick="deleteEmployee(${employee.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tableBody.innerHTML = html;
-                document.getElementById('sidebarTotalEmployees').textContent = employees.length;
-            }
-            
-            function showAddEmployeeModal() {
-                const modalContent = `
-                    <div class="modal">
-                        <div class="modal-header">
-                            <h3 style="margin: 0; color: var(--primary);">
-                                <i class="fas fa-user-plus"></i> नया कर्मचारी जोड़ें
-                            </h3>
-                            <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div style="display: grid; gap: 15px;">
-                                <div class="form-group">
-                                    <label class="form-label">नाम</label>
-                                    <input type="text" class="form-control" id="newEmployeeName" placeholder="कर्मचारी का नाम">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">विभाग</label>
-                                    <select class="form-control" id="newEmployeeDepartment">
-                                        <option value="पंचायती राज विभाग">पंचायती राज विभाग</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">पदनाम</label>
-                                    <input type="text" class="form-control" id="newEmployeeDesignation" placeholder="पदनाम">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">संपर्क नंबर</label>
-                                    <input type="tel" class="form-control" id="newEmployeeContact" placeholder="संपर्क नंबर">
-                                </div>
-                                <button class="btn btn-success" onclick="addEmployee()">
-                                    <i class="fas fa-save"></i> कर्मचारी जोड़ें
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-clipboard" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            कोई रिकॉर्ड नहीं मिला
+                        </td>
+                    </tr>
                 `;
-                
-                document.getElementById('modalContainer').innerHTML = modalContent;
-                document.getElementById('modalContainer').classList.add('active');
+                return;
             }
             
-            function addEmployee() {
-                const name = document.getElementById('newEmployeeName').value;
-                const department = document.getElementById('newEmployeeDepartment').value;
-                const designation = document.getElementById('newEmployeeDesignation').value;
-                const contact = document.getElementById('newEmployeeContact').value;
-                
-                if (!name || !department || !designation) {
-                    showNotification('कृपया सभी आवश्यक फ़ील्ड भरें', 'error');
-                    return;
-                }
-                
-                const newEmployee = {
-                    id: employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1,
-                    name: name,
-                    department: department,
-                    designation: designation,
-                    contact: contact || 'N/A'
-                };
-                
-                employees.push(newEmployee);
+            let html = '';
+            filteredRecords.forEach((record, index) => {
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
+                                     border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                    ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--primary);">${record.name}</div>
+                                    <div style="font-size: 0.85rem; color: var(--gray);">${record.designation}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${record.department}</td>
+                        <td>${record.time}</td>
+                        <td>
+                            <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                ${record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(30, 90, 168, 0.1); color: var(--accent);" onclick="viewRecord(${record.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(211, 47, 47, 0.1); color: var(--danger);" onclick="deleteRecord(${record.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+        
+        function filterRecords() {
+            updateRecordsTable();
+        }
+        
+        function resetFilter() {
+            document.getElementById('recordDate').value = '';
+            updateRecordsTable();
+        }
+        
+        function deleteRecord(id) {
+            if (confirm('क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?')) {
+                attendanceRecords = attendanceRecords.filter(record => record.id !== id);
                 saveData();
-                updateEmployeesTable();
-                closeModal();
-                showNotification('कर्मचारी सफलतापूर्वक जोड़ा गया', 'success');
-            }
-            
-            function editEmployee(id) {
-                showNotification('यह सुविधा जल्द ही उपलब्ध होगी', 'info');
-            }
-            
-            function deleteEmployee(id) {
-                if (confirm('क्या आप वाकई इस कर्मचारी को हटाना चाहते हैं?')) {
-                    employees = employees.filter(emp => emp.id !== id);
-                    saveData();
-                    updateEmployeesTable();
-                    showNotification('कर्मचारी हटा दिया गया', 'success');
-                }
-            }
-            
-            // ========== STATS & ANALYTICS ==========
-            function updateStats() {
-                const today = new Date().toISOString().split('T')[0];
-                const todayRecords = attendanceRecords.filter(r => r.date === today);
-                const presentToday = todayRecords.filter(r => r.status === 'present').length;
-                
-                // Calculate average time
-                const times = todayRecords
-                    .filter(r => r.status === 'present')
-                    .map(r => {
-                        const [time, period] = r.time.split(' ');
-                        const [hours, minutes] = time.split(':');
-                        let hour = parseInt(hours);
-                        if (period === 'PM' && hour < 12) hour += 12;
-                        if (period === 'AM' && hour === 12) hour = 0;
-                        return hour * 60 + parseInt(minutes);
-                    });
-                
-                let avgTime = 'N/A';
-                if (times.length > 0) {
-                    const avgMinutes = times.reduce((a, b) => a + b, 0) / times.length;
-                    const hour = Math.floor(avgMinutes / 60);
-                    const minute = Math.floor(avgMinutes % 60);
-                    const period = hour >= 12 ? 'PM' : 'AM';
-                    const displayHour = hour % 12 || 12;
-                    avgTime = `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`;
-                }
-                
-                // Update sidebar
-                document.getElementById('sidebarToday').textContent = presentToday;
-                
-                // This week's records (last 7 days)
-                const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
-                const weekRecords = attendanceRecords.filter(r => r.date >= weekAgo);
-                document.getElementById('sidebarWeek').textContent = weekRecords.length;
-                
-                // This month's records
-                const monthStart = new Date().toISOString().substring(0, 7) + '-01';
-                const monthRecords = attendanceRecords.filter(r => r.date >= monthStart);
-                document.getElementById('sidebarMonth').textContent = monthRecords.length;
-                
-                // Update dashboard
-                document.getElementById('todayPresent').textContent = presentToday;
-                document.getElementById('todayAbsent').textContent = Math.max(0, employees.length - presentToday);
-                document.getElementById('avgTime').textContent = avgTime;
-            }
-            
-            function updateAnalytics() {
+                updateRecordsTable();
                 updateStats();
-                // Chart functionality can be added here with Chart.js
+                showNotification('रिकॉर्ड हटा दिया गया', 'success');
             }
-            
-            function showTodayRecords() {
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('recordDate').value = today;
-                showSection('records');
+        }
+        
+        function clearAllRecords() {
+            if (confirm('क्या आप सभी रिकॉर्ड्स हटाना चाहते हैं? यह कार्य वापस नहीं किया जा सकता।')) {
+                attendanceRecords = [];
+                saveData();
+                updateRecordsTable();
+                updateStats();
+                showNotification('सभी रिकॉर्ड्स हटा दिए गए', 'success');
             }
-            
-            // ========== EXPORT FUNCTIONS ==========
-            function exportRecords() {
-                if (attendanceRecords.length === 0) {
-                    showNotification('एक्सपोर्ट करने के लिए कोई डाटा नहीं', 'warning');
-                    return;
-                }
-                
-                const headers = ['क्रम', 'तारीख', 'समय', 'नाम', 'विभाग', 'पदनाम', 'स्थिति', 'टिप्पणी'];
-                const rows = attendanceRecords.map((record, index) => [
-                    index + 1,
-                    record.date,
-                    record.time,
-                    record.name,
-                    record.department,
-                    record.designation,
-                    record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित',
-                    record.comment || ''
-                ]);
-                
-                let csvContent = headers.join(',') + '\n';
-                rows.forEach(row => {
-                    csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
-                });
-                
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `पंचायत_अटेंडेंस_रिकॉर्ड_${new Date().toISOString().split('T')[0]}.csv`;
-                link.click();
-                
-                showNotification('CSV फाइल डाउनलोड हो गई', 'success');
-            }
-            
-            function exportData() {
-                const data = {
-                    app: 'पंचायती राज विभाग, बिहार AI अटेंडेंस सिस्टम',
-                    version: '2.1',
-                    exportDate: new Date().toISOString(),
-                    employees: employees,
-                    attendanceRecords: attendanceRecords
-                };
-                
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `पंचायत_बिहार_अटेंडेंस_डाटा_${Date.now()}.json`;
-                link.click();
-                
-                showNotification('सभी डाटा डाउनलोड हो गया', 'success');
-            }
-            
-            function printRecords() {
-                window.print();
-            }
-            
-            // ========== REPORT GENERATION ==========
-            function generateDailyReport() {
-                showNotification('दैनिक रिपोर्ट जल्द ही उपलब्ध होगी', 'info');
-            }
-            
-            function generateMonthlyReport() {
-                showNotification('मासिक रिपोर्ट जल्द ही उपलब्ध होगी', 'info');
-            }
-            
-            function generateDepartmentReport() {
-                showNotification('विभागवार रिपोर्ट जल्द ही उपलब्ध होगी', 'info');
-            }
-            
-            // ========== SETTINGS ==========
-            function loadSettings() {
-                try {
-                    const settings = JSON.parse(localStorage.getItem('panchayatAttendanceSettings') || '{}');
-                    
-                    if (settings.language) {
-                        document.getElementById('languageSelect').value = settings.language;
-                    }
-                    if (settings.startTime) {
-                        document.getElementById('startTime').value = settings.startTime;
-                    }
-                    if (settings.endTime) {
-                        document.getElementById('endTime').value = settings.endTime;
-                    }
-                    if (settings.enableNotifications !== undefined) {
-                        document.getElementById('enableNotifications').checked = settings.enableNotifications;
-                    }
-                    if (settings.enableCamera !== undefined) {
-                        document.getElementById('enableCamera').checked = settings.enableCamera;
-                    }
-                } catch (error) {
-                    console.error('Error loading settings:', error);
-                }
-            }
-            
-            function saveSettings() {
-                const settings = {
-                    language: document.getElementById('languageSelect').value,
-                    startTime: document.getElementById('startTime').value,
-                    endTime: document.getElementById('endTime').value,
-                    enableNotifications: document.getElementById('enableNotifications').checked,
-                    enableCamera: document.getElementById('enableCamera').checked
-                };
-                
-                try {
-                    localStorage.setItem('panchayatAttendanceSettings', JSON.stringify(settings));
-                    showNotification('सेटिंग्स सहेजी गईं', 'success');
-                } catch (error) {
-                    console.error('Error saving settings:', error);
-                    showNotification('सेटिंग्स सहेजने में त्रुटि', 'error');
-                }
-            }
-            
-            function resetSettings() {
-                if (confirm('क्या आप सेटिंग्स को डिफ़ॉल्ट पर रीसेट करना चाहते हैं?')) {
-                    localStorage.removeItem('panchayatAttendanceSettings');
-                    loadSettings();
-                    showNotification('सेटिंग्स डिफ़ॉल्ट पर रीसेट हो गईं', 'success');
-                }
-            }
-            
-            // ========== MODAL FUNCTIONS ==========
-            function showHelpModal() {
+        }
+        
+        function viewRecord(id) {
+            const record = attendanceRecords.find(r => r.id === id);
+            if (record) {
                 const modalContent = `
                     <div class="modal">
                         <div class="modal-header">
                             <h3 style="margin: 0; color: var(--primary);">
-                                <i class="fas fa-question-circle"></i> मदद
+                                <i class="fas fa-eye"></i> रिकॉर्ड विवरण
                             </h3>
                             <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
                                 <i class="fas fa-times"></i>
@@ -2546,29 +2445,62 @@
                         </div>
                         <div class="modal-body">
                             <div style="display: grid; gap: 20px;">
-                                <div>
-                                    <h4 style="margin-bottom: 10px; color: var(--primary);">सिस्टम उपयोग विधि</h4>
-                                    <ol style="margin-left: 20px; color: var(--gray); line-height: 2;">
-                                        <li><strong>अटेंडेंस दर्ज करें:</strong> कर्मचारी चुनें, कैमरा शुरू करें, फोटो लें और सबमिट करें</li>
-                                        <li><strong>रिकॉर्ड देखें:</strong> सभी अटेंडेंस रिकॉर्ड्स देखें और फिल्टर करें</li>
-                                        <li><strong>विश्लेषण:</strong> AI द्वारा उपस्थिति पैटर्न का विश्लेषण देखें</li>
-                                        <li><strong>कर्मचारी प्रबंधन:</strong> नए कर्मचारी जोड़ें और मौजूदा कर्मचारियों का प्रबंधन करें</li>
-                                        <li><strong>रिपोर्ट्स:</strong> विभिन्न प्रकार की रिपोर्ट्स जेनरेट करें</li>
-                                        <li><strong>डाटा एक्सपोर्ट:</strong> CSV या JSON फॉर्मेट में डाटा डाउनलोड करें</li>
-                                    </ol>
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); 
+                                         border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">
+                                        ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 style="margin: 0 0 5px 0; color: var(--primary);">${record.name}</h4>
+                                        <p style="margin: 0; color: var(--gray);">${record.department} • ${record.designation}</p>
+                                    </div>
+                                </div>
+                                
+                                ${record.photoData ? `
+                                    <div style="text-align: center;">
+                                        <h4 style="margin-bottom: 10px; color: var(--primary);">कैप्चर की गई फोटो</h4>
+                                        <img src="${record.photoData}" alt="Attendance Photo" style="max-width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--gray-light);">
+                                        <p style="margin-top: 10px; color: var(--gray); font-size: 0.9rem;">फोटो समय: ${record.photoTime}</p>
+                                    </div>
+                                ` : ''}
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">तारीख</label>
+                                        <div style="font-weight: 500; color: var(--primary);">${record.date}</div>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">समय</label>
+                                        <div style="font-weight: 500; color: var(--primary);">${record.time}</div>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">स्थिति</label>
+                                        <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                            ${record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">IP पता</label>
+                                        <div style="font-weight: 500; color: var(--primary);">${record.ipAddress}</div>
+                                    </div>
                                 </div>
                                 
                                 <div>
-                                    <h4 style="margin-bottom: 10px; color: var(--primary);">संपर्क</h4>
-                                    <p style="color: var(--gray); margin: 0;">
-                                        <i class="fas fa-user" style="color: var(--accent); margin-right: 8px;"></i>
-                                        विकसित: <strong>Mr. Aman Kumar, Data Entry Operator</strong>
-                                    </p>
-                                    <p style="color: var(--gray); margin: 10px 0 0 0;">
-                                        <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 8px;"></i>
-                                        पंचायती राज विभाग, बिहार सरकार - AI स्मार्ट अटेंडेंस सिस्टम v2.1
-                                    </p>
+                                    <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">स्थान</label>
+                                    <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius-sm); color: var(--primary); border: 1px solid var(--gray-light);">
+                                        <div style="margin-bottom: 5px;"><strong>निर्देशांक:</strong> ${record.location}</div>
+                                        <div><strong>पता:</strong> ${record.address}</div>
+                                    </div>
                                 </div>
+                                
+                                ${record.comment ? `
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">टिप्पणी</label>
+                                        <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius-sm); color: var(--primary); border: 1px solid var(--gray-light);">
+                                            ${record.comment}
+                                        </div>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -2577,100 +2509,471 @@
                 document.getElementById('modalContainer').innerHTML = modalContent;
                 document.getElementById('modalContainer').classList.add('active');
             }
+        }
+        
+        // ========== EMPLOYEES MANAGEMENT ==========
+        function updateEmployeesTable() {
+            const tableBody = document.getElementById('employeesTable');
             
-            function closeModal() {
-                document.getElementById('modalContainer').classList.remove('active');
-            }
-            
-            // ========== NOTIFICATION SYSTEM ==========
-            function showNotification(message, type = 'info') {
-                const container = document.getElementById('notificationContainer');
-                const notification = document.createElement('div');
-                notification.className = `notification notification-${type}`;
-                
-                let icon = 'info-circle';
-                if (type === 'success') icon = 'check-circle';
-                if (type === 'error') icon = 'exclamation-circle';
-                
-                notification.innerHTML = `
-                    <div class="notification-icon">
-                        <i class="fas fa-${icon}"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 500; margin-bottom: 5px; color: var(--primary);">
-                            ${type === 'success' ? 'सफलता' : type === 'error' ? 'त्रुटि' : 'सूचना'}
-                        </div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">${message}</div>
-                    </div>
+            if (employees.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            कोई कर्मचारी नहीं मिला
+                        </td>
+                    </tr>
                 `;
-                
-                container.appendChild(notification);
-                
-                // Show notification
-                setTimeout(() => {
-                    notification.classList.add('show');
-                }, 10);
-                
-                // Remove after 4 seconds
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 4000);
+                return;
             }
             
-            // ========== DATA STORAGE ==========
-            function saveData() {
-                try {
-                    const data = {
-                        version: '2.1',
-                        lastUpdated: new Date().toISOString(),
-                        employees: employees,
-                        attendanceRecords: attendanceRecords
-                    };
-                    localStorage.setItem('panchayatAttendanceData', JSON.stringify(data));
-                } catch (error) {
-                    console.error('Error saving data:', error);
-                    showNotification('डाटा सहेजने में त्रुटि', 'error');
+            let html = '';
+            employees.forEach((employee, index) => {
+                html += `
+                    <tr>
+                        <td>${employee.id}</td>
+                        <td style="color: var(--primary);">${employee.name}</td>
+                        <td>${employee.department}</td>
+                        <td>${employee.designation}</td>
+                        <td>${employee.contact}</td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(30, 90, 168, 0.1); color: var(--accent);" onclick="editEmployee(${employee.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(211, 47, 47, 0.1); color: var(--danger);" onclick="deleteEmployee(${employee.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+            document.getElementById('sidebarTotalEmployees').textContent = employees.length;
+        }
+        
+        function showAddEmployeeModal() {
+            const modalContent = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 style="margin: 0; color: var(--primary);">
+                            <i class="fas fa-user-plus"></i> नया कर्मचारी जोड़ें
+                        </h3>
+                        <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: grid; gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">नाम</label>
+                                <input type="text" class="form-control" id="newEmployeeName" placeholder="कर्मचारी का नाम">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">विभाग</label>
+                                <select class="form-control" id="newEmployeeDepartment">
+                                    <option value="पंचायती राज विभाग">पंचायती राज विभाग</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">पदनाम</label>
+                                <input type="text" class="form-control" id="newEmployeeDesignation" placeholder="पदनाम">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">संपर्क नंबर</label>
+                                <input type="tel" class="form-control" id="newEmployeeContact" placeholder="संपर्क नंबर">
+                            </div>
+                            <button class="btn btn-success" onclick="addEmployee()">
+                                <i class="fas fa-save"></i> कर्मचारी जोड़ें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalContainer').innerHTML = modalContent;
+            document.getElementById('modalContainer').classList.add('active');
+        }
+        
+        function addEmployee() {
+            const name = document.getElementById('newEmployeeName').value;
+            const department = document.getElementById('newEmployeeDepartment').value;
+            const designation = document.getElementById('newEmployeeDesignation').value;
+            const contact = document.getElementById('newEmployeeContact').value;
+            
+            if (!name || !department || !designation) {
+                showNotification('कृपया सभी आवश्यक फ़ील्ड भरें', 'error');
+                return;
+            }
+            
+            const newEmployee = {
+                id: employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1,
+                name: name,
+                department: department,
+                designation: designation,
+                contact: contact || 'N/A'
+            };
+            
+            employees.push(newEmployee);
+            saveData();
+            updateEmployeesTable();
+            closeModal();
+            showNotification('कर्मचारी सफलतापूर्वक जोड़ा गया', 'success');
+        }
+        
+        function editEmployee(id) {
+            showNotification('यह सुविधा जल्द ही उपलब्ध होगी', 'info');
+        }
+        
+        function deleteEmployee(id) {
+            if (confirm('क्या आप वाकई इस कर्मचारी को हटाना चाहते हैं?')) {
+                employees = employees.filter(emp => emp.id !== id);
+                saveData();
+                updateEmployeesTable();
+                showNotification('कर्मचारी हटा दिया गया', 'success');
+            }
+        }
+        
+        // ========== STATS & ANALYTICS ==========
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayRecords = attendanceRecords.filter(r => r.date === today);
+            const presentToday = todayRecords.filter(r => r.status === 'present').length;
+            
+            // Calculate average time
+            const times = todayRecords
+                .filter(r => r.status === 'present')
+                .map(r => {
+                    const [time, period] = r.time.split(' ');
+                    const [hours, minutes] = time.split(':');
+                    let hour = parseInt(hours);
+                    if (period === 'PM' && hour < 12) hour += 12;
+                    if (period === 'AM' && hour === 12) hour = 0;
+                    return hour * 60 + parseInt(minutes);
+                });
+            
+            let avgTime = 'N/A';
+            if (times.length > 0) {
+                const avgMinutes = times.reduce((a, b) => a + b, 0) / times.length;
+                const hour = Math.floor(avgMinutes / 60);
+                const minute = Math.floor(avgMinutes % 60);
+                const period = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                avgTime = `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`;
+            }
+            
+            // Update sidebar
+            document.getElementById('sidebarToday').textContent = presentToday;
+            
+            // This week's records (last 7 days)
+            const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+            const weekRecords = attendanceRecords.filter(r => r.date >= weekAgo);
+            document.getElementById('sidebarWeek').textContent = weekRecords.length;
+            
+            // This month's records
+            const monthStart = new Date().toISOString().substring(0, 7) + '-01';
+            const monthRecords = attendanceRecords.filter(r => r.date >= monthStart);
+            document.getElementById('sidebarMonth').textContent = monthRecords.length;
+            
+            // Update dashboard
+            document.getElementById('todayPresent').textContent = presentToday;
+            document.getElementById('todayAbsent').textContent = Math.max(0, employees.length - presentToday);
+            document.getElementById('avgTime').textContent = avgTime;
+        }
+        
+        function updateAnalytics() {
+            updateStats();
+        }
+        
+        function showTodayRecords() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('recordDate').value = today;
+            showSection('records');
+        }
+        
+        // ========== EXPORT FUNCTIONS ==========
+        function exportRecords() {
+            if (attendanceRecords.length === 0) {
+                showNotification('एक्सपोर्ट करने के लिए कोई डाटा नहीं', 'warning');
+                return;
+            }
+            
+            const headers = ['क्रम', 'तारीख', 'समय', 'नाम', 'विभाग', 'पदनाम', 'स्थिति', 'स्थान', 'पता', 'IP पता', 'फोटो समय', 'टिप्पणी'];
+            const rows = attendanceRecords.map((record, index) => [
+                index + 1,
+                record.date,
+                record.time,
+                record.name,
+                record.department,
+                record.designation,
+                record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित',
+                record.location,
+                record.address,
+                record.ipAddress,
+                record.photoTime,
+                record.comment || ''
+            ]);
+            
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `पंचायत_अटेंडेंस_रिकॉर्ड_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            
+            showNotification('CSV फाइल डाउनलोड हो गई', 'success');
+        }
+        
+        function exportData() {
+            const data = {
+                app: 'पंचायती राज विभाग, बिहार AI अटेंडेंस सिस्टम',
+                version: '3.0',
+                exportDate: new Date().toISOString(),
+                employees: employees,
+                attendanceRecords: attendanceRecords.map(record => {
+                    const { photoData, ...recordWithoutPhoto } = record;
+                    return recordWithoutPhoto;
+                })
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `पंचायत_बिहार_अटेंडेंस_डाटा_${Date.now()}.json`;
+            link.click();
+            
+            showNotification('सभी डाटा डाउनलोड हो गया', 'success');
+        }
+        
+        function printRecords() {
+            window.print();
+        }
+        
+        // ========== REPORT GENERATION ==========
+        function generateDailyReport() {
+            showNotification('दैनिक रिपोर्ट जल्द ही उपलब्ध होगी', 'info');
+        }
+        
+        function generateMonthlyReport() {
+            showNotification('मासिक रिपोर्ट जल्द ही उपलब्ध होगी', 'info');
+        }
+        
+        function generateDepartmentReport() {
+            showNotification('विभागवार रिपोर्ट जल्द ही उपलब्ध होगी', 'info');
+        }
+        
+        // ========== SETTINGS ==========
+        function loadSettings() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('panchayatAttendanceSettings') || '{}');
+                
+                if (settings.language) {
+                    document.getElementById('languageSelect').value = settings.language;
                 }
+                if (settings.startTime) {
+                    document.getElementById('startTime').value = settings.startTime;
+                }
+                if (settings.endTime) {
+                    document.getElementById('endTime').value = settings.endTime;
+                }
+                if (settings.enableNotifications !== undefined) {
+                    document.getElementById('enableNotifications').checked = settings.enableNotifications;
+                }
+                if (settings.enableCamera !== undefined) {
+                    document.getElementById('enableCamera').checked = settings.enableCamera;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
             }
+        }
+        
+        function saveSettings() {
+            const settings = {
+                language: document.getElementById('languageSelect').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                enableNotifications: document.getElementById('enableNotifications').checked,
+                enableCamera: document.getElementById('enableCamera').checked
+            };
             
-            function loadData() {
-                try {
-                    const saved = localStorage.getItem('panchayatAttendanceData');
-                    if (saved) {
-                        const data = JSON.parse(saved);
-                        employees = data.employees || [];
-                        attendanceRecords = data.attendanceRecords || [];
-                        console.log('Loaded', employees.length, 'employees and', attendanceRecords.length, 'records');
+            try {
+                localStorage.setItem('panchayatAttendanceSettings', JSON.stringify(settings));
+                showNotification('सेटिंग्स सहेजी गईं', 'success');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showNotification('सेटिंग्स सहेजने में त्रुटि', 'error');
+            }
+        }
+        
+        function resetSettings() {
+            if (confirm('क्या आप सेटिंग्स को डिफ़ॉल्ट पर रीसेट करना चाहते हैं?')) {
+                localStorage.removeItem('panchayatAttendanceSettings');
+                loadSettings();
+                showNotification('सेटिंग्स डिफ़ॉल्ट पर रीसेट हो गईं', 'success');
+            }
+        }
+        
+        // ========== MODAL FUNCTIONS ==========
+        function showHelpModal() {
+            const modalContent = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 style="margin: 0; color: var(--primary);">
+                            <i class="fas fa-question-circle"></i> मदद
+                        </h3>
+                        <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: grid; gap: 20px;">
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--primary);">सिस्टम उपयोग विधि</h4>
+                                <ol style="margin-left: 20px; color: var(--gray); line-height: 2;">
+                                    <li><strong>अटेंडेंस दर्ज करें:</strong> कर्मचारी चुनें, स्थान प्राप्त करें, कैमरा शुरू करें, फोटो लें और सबमिट करें</li>
+                                    <li><strong>स्वचालित स्थान ट्रैकिंग:</strong> GPS से लैटिट्यूड/लॉन्गिट्यूड और पता स्वतः प्राप्त होता है</li>
+                                    <li><strong>फोटो प्रबंधन:</strong> कैप्चर की गई फोटो स्वतः गैलरी में सेव होती है</li>
+                                    <li><strong>IP ट्रैकिंग:</strong> कर्मचारी का IP पता स्वतः दर्ज होता है</li>
+                                    <li><strong>रिकॉर्ड देखें:</strong> सभी अटेंडेंस रिकॉर्ड्स देखें और फिल्टर करें</li>
+                                    <li><strong>डाटा एक्सपोर्ट:</strong> CSV या JSON फॉर्मेट में डाटा डाउनलोड करें</li>
+                                </ol>
+                            </div>
+                            
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--primary);">नई सुविधाएं (v3.0)</h4>
+                                <ul style="margin-left: 20px; color: var(--gray); line-height: 2;">
+                                    <li>स्वचालित स्थान कैप्चर (GPS)</li>
+                                    <li>IP पता ट्रैकिंग</li>
+                                    <li>फोटो गैलरी में सेव</li>
+                                    <li>फोटो अटेंडेंस रिपोर्ट में संलग्न</li>
+                                    <li>तेज लोडिंग और ऑप्टिमाइज़्ड कोड</li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--primary);">संपर्क</h4>
+                                <p style="color: var(--gray); margin: 0;">
+                                    <i class="fas fa-user" style="color: var(--accent); margin-right: 8px;"></i>
+                                    विकसित: <strong>Mr. Aman Kumar, Data Entry Operator</strong>
+                                </p>
+                                <p style="color: var(--gray); margin: 10px 0 0 0;">
+                                    <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 8px;"></i>
+                                    पंचायती राज विभाग, बिहार सरकार - AI स्मार्ट अटेंडेंस सिस्टम v3.0
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalContainer').innerHTML = modalContent;
+            document.getElementById('modalContainer').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('modalContainer').classList.remove('active');
+        }
+        
+        // ========== NOTIFICATION SYSTEM ==========
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas fa-${icon}"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 500; margin-bottom: 5px; color: var(--primary);">
+                        ${type === 'success' ? 'सफलता' : type === 'error' ? 'त्रुटि' : 'सूचना'}
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--gray);">${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
                     }
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    showNotification('डाटा लोड करने में त्रुटि', 'error');
-                }
+                }, 300);
+            }, 4000);
+        }
+        
+        // ========== DATA STORAGE ==========
+        function saveData() {
+            try {
+                const data = {
+                    version: '3.0',
+                    lastUpdated: new Date().toISOString(),
+                    employees: employees,
+                    attendanceRecords: attendanceRecords.map(record => {
+                        // Store photo data only if it's not too large
+                        const { photoData, ...recordWithoutPhoto } = record;
+                        if (photoData && photoData.length < 100000) { // Limit photo size
+                            return record;
+                        }
+                        return recordWithoutPhoto;
+                    })
+                };
+                localStorage.setItem('panchayatAttendanceData', JSON.stringify(data));
+            } catch (error) {
+                console.error('Error saving data:', error);
+                showNotification('डाटा सहेजने में त्रुटि', 'error');
             }
-            
-            // ========== UTILITY FUNCTIONS ==========
-            // Close modal when clicking outside
-            document.addEventListener('click', function(event) {
-                const modalContainer = document.getElementById('modalContainer');
-                if (event.target === modalContainer) {
-                    closeModal();
+        }
+        
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('panchayatAttendanceData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    employees = data.employees || [];
+                    attendanceRecords = data.attendanceRecords || [];
+                    console.log('Loaded', employees.length, 'employees and', attendanceRecords.length, 'records');
                 }
-            });
-            
-            // Close modal with Escape key
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    closeModal();
-                }
-            });
-            
-            // Initialize
-            console.log('AI Attendance System initialized successfully!');
-        </script>
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('डाटा लोड करने में त्रुटि', 'error');
+            }
+        }
+        
+        // ========== UTILITY FUNCTIONS ==========
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modalContainer = document.getElementById('modalContainer');
+            if (event.target === modalContainer) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Initialize
+        console.log('AI Attendance System v3.0 initialized successfully!');
+    </script>
 </body>
 </html>

@@ -829,6 +829,51 @@
             margin-top: 20px;
         }
         
+        /* ========== PHOTO METADATA SECTION ========== */
+        .metadata-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: var(--border-radius-md);
+            padding: 25px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .metadata-item {
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius-sm);
+            border-left: 4px solid var(--accent-color);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .metadata-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .metadata-label i {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+        
+        .metadata-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+        
         /* ========== PROFESSIONAL BUTTONS ========== */
         .btn {
             padding: 16px 28px;
@@ -972,45 +1017,140 @@
             font-weight: 500;
         }
         
-        .admin-table-container {
+        /* ========== REPORTS TABLE ========== */
+        .reports-container {
             background: white;
             border-radius: var(--border-radius-md);
             overflow: hidden;
             box-shadow: var(--shadow-md);
+            margin-top: 20px;
         }
         
-        .admin-table {
+        .reports-table {
             width: 100%;
             border-collapse: collapse;
-        }
-        
-        .admin-table th {
-            background: var(--light-bg);
-            padding: 18px 20px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--primary-dark);
-            border-bottom: 1px solid var(--border-color);
             font-size: 0.9rem;
         }
         
-        .admin-table td {
+        .reports-table thead {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+        }
+        
+        .reports-table th {
             padding: 16px 20px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .reports-table th:last-child {
+            border-right: none;
+        }
+        
+        .reports-table tbody tr {
             border-bottom: 1px solid var(--border-color);
+            transition: background var(--transition-fast);
+        }
+        
+        .reports-table tbody tr:hover {
+            background: rgba(0, 188, 212, 0.05);
+        }
+        
+        .reports-table td {
+            padding: 14px 20px;
             color: var(--text-primary);
+            vertical-align: top;
         }
         
-        .admin-table tr:hover {
-            background: rgba(0, 188, 212, 0.02);
+        .report-photo-cell {
+            width: 80px;
+            text-align: center;
         }
         
-        .admin-table tr:last-child td {
-            border-bottom: none;
+        .report-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform var(--transition-normal);
+        }
+        
+        .report-photo:hover {
+            transform: scale(2);
+            z-index: 100;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .photo-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .photo-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .photo-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        
+        .photo-modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+        
+        .close-photo-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
         
         .table-actions {
             display: flex;
             gap: 8px;
+        }
+        
+        .table-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: var(--light-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .table-action-btn:hover {
+            background: var(--accent-color);
+            color: white;
         }
         
         /* ========== TOAST NOTIFICATIONS ========== */
@@ -1085,6 +1225,11 @@
                 position: static;
                 margin-bottom: 30px;
             }
+            
+            .reports-table {
+                display: block;
+                overflow-x: auto;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1115,6 +1260,10 @@
             }
             
             .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metadata-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -1177,6 +1326,16 @@
         </div>
     </div>
     
+    <!-- Photo Modal -->
+    <div class="photo-modal" id="photoModal">
+        <div class="photo-modal-content">
+            <button class="close-photo-modal" id="closePhotoModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="modalPhoto" alt="फुल साइज फोटो">
+        </div>
+    </div>
+    
     <!-- Loading Screen -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
@@ -1230,13 +1389,13 @@
                             <i class="fas fa-history"></i>
                             रिकॉर्ड्स
                         </button>
-                        <button class="tab-btn" data-tab="map">
-                            <i class="fas fa-map-marked-alt"></i>
-                            लोकेशन मैप
+                        <button class="tab-btn" data-tab="reports">
+                            <i class="fas fa-chart-bar"></i>
+                            रिपोर्ट्स
                         </button>
                         <button class="tab-btn admin-tab" data-tab="admin" style="display: none;">
                             <i class="fas fa-user-shield"></i>
-                            एडमिन पैनल
+                            एडमिन
                         </button>
                     </div>
                     
@@ -1253,29 +1412,40 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">कर्मचारी का नाम</label>
+                                    <label class="form-label">कर्मचारी का नाम *</label>
                                     <div class="autocomplete-container">
                                         <div class="input-group">
                                             <i class="fas fa-user input-icon"></i>
                                             <input type="text" class="form-control" id="employeeName" 
-                                                   placeholder="नाम लिखें या चुनें" autocomplete="off">
+                                                   placeholder="नाम लिखें या चुनें" autocomplete="off" required>
                                         </div>
                                         <div class="autocomplete-dropdown" id="nameAutocomplete"></div>
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">विभाग</label>
+                                    <label class="form-label">विभाग *</label>
                                     <div class="input-group">
                                         <i class="fas fa-building input-icon"></i>
-                                        <select class="form-control" id="department">
+                                        <select class="form-control" id="department" required>
                                             <option value="">विभाग चुनें</option>
                                             <option value="पंचायत विकास">पंचायत विकास</option>
                                             <option value="स्वास्थ्य सेवाएं">स्वास्थ्य सेवाएं</option>
                                             <option value="शिक्षा विभाग">शिक्षा विभाग</option>
                                             <option value="प्रशासनिक">प्रशासनिक</option>
                                             <option value="कार्यालय स्टाफ">कार्यालय स्टाफ</option>
+                                            <option value="फ़ील्ड स्टाफ">फ़ील्ड स्टाफ</option>
+                                            <option value="तकनीकी स्टाफ">तकनीकी स्टाफ</option>
                                         </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">पदनाम</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-briefcase input-icon"></i>
+                                        <input type="text" class="form-control" id="designation" 
+                                               placeholder="कर्मचारी का पदनाम">
                                     </div>
                                 </div>
                             </div>
@@ -1308,6 +1478,10 @@
                                     <div class="location-stat">
                                         <div class="location-label">निर्देशांक</div>
                                         <div class="location-value" id="coordinates">-</div>
+                                    </div>
+                                    <div class="location-stat">
+                                        <div class="location-label">IP एड्रेस</div>
+                                        <div class="location-value" id="ipAddress">-</div>
                                     </div>
                                 </div>
                                 
@@ -1347,37 +1521,104 @@
                                         <i class="fas fa-video"></i> कैमरा प्रारंभ
                                     </button>
                                     <button class="btn btn-success" id="capturePhotoBtn" disabled>
-                                        <i class="fas fa-camera"></i> फोटो लें
+                                        <i class="fas fa-camera"></i> फोटो कैप्चर करें
                                     </button>
                                 </div>
                             </div>
                             
-                            <!-- Submit Section -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-paper-plane"></i>
-                                        सबमिट करें
-                                    </h2>
-                                </div>
-                                
-                                <div class="photo-preview" id="photoPreview" style="display: none; margin-bottom: 25px;">
-                                    <div class="photo-container" style="border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
-                                        <img id="capturedPhoto" alt="कैप्चर की गई फोटो" style="width: 100%; max-height: 300px; object-fit: contain; background: #f8f9fa;">
+                            <!-- Photo Preview & Metadata -->
+                            <div class="photo-preview" id="photoPreview" style="display: none;">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">
+                                            <i class="fas fa-check-circle"></i>
+                                            फोटो प्रिव्यू और डिटेल्स
+                                        </h2>
                                     </div>
                                     
-                                    <div class="photo-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div class="photo-container" style="text-align: center; margin-bottom: 25px;">
+                                        <img id="capturedPhoto" alt="कैप्चर की गई फोटो" style="max-width: 100%; max-height: 400px; border-radius: 10px; box-shadow: var(--shadow-md);">
+                                    </div>
+                                    
+                                    <div class="metadata-container">
+                                        <h3 style="color: var(--primary-dark); margin-bottom: 20px; font-size: 1.2rem;">
+                                            <i class="fas fa-info-circle"></i> कैप्चर की गई जानकारी
+                                        </h3>
+                                        
+                                        <div class="metadata-grid">
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-user"></i> कर्मचारी का नाम
+                                                </div>
+                                                <div class="metadata-value" id="metaName">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-building"></i> विभाग
+                                                </div>
+                                                <div class="metadata-value" id="metaDepartment">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-briefcase"></i> पदनाम
+                                                </div>
+                                                <div class="metadata-value" id="metaDesignation">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-calendar-alt"></i> तारीख
+                                                </div>
+                                                <div class="metadata-value" id="metaDate">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-clock"></i> समय
+                                                </div>
+                                                <div class="metadata-value" id="metaTime">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-map-marker-alt"></i> स्थान पता
+                                                </div>
+                                                <div class="metadata-value" id="metaAddress">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-globe"></i> IP एड्रेस
+                                                </div>
+                                                <div class="metadata-value" id="metaIp">-</div>
+                                            </div>
+                                            
+                                            <div class="metadata-item">
+                                                <div class="metadata-label">
+                                                    <i class="fas fa-map-pin"></i> निर्देशांक
+                                                </div>
+                                                <div class="metadata-value" id="metaCoordinates">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="photo-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;">
                                         <button class="btn btn-outline-accent" id="retakePhotoBtn">
-                                            <i class="fas fa-redo"></i> पुनः लें
+                                            <i class="fas fa-redo"></i> पुनः फोटो लें
                                         </button>
-                                        <button class="btn btn-accent" id="submitAttendanceBtn">
-                                            <i class="fas fa-check-circle"></i> सबमिट करें
+                                        <button class="btn btn-success" id="submitAttendanceBtn">
+                                            <i class="fas fa-check-circle"></i> अटेंडेंस सबमिट करें
                                         </button>
                                     </div>
                                 </div>
-                                
-                                <button class="btn btn-success btn-lg btn-block" id="quickSubmitBtn" style="padding: 18px;">
-                                    <i class="fas fa-bolt"></i> त्वरित अटेंडेंस सबमिट
+                            </div>
+                            
+                            <!-- Quick Submit Button -->
+                            <div class="card" id="quickSubmitCard">
+                                <button class="btn btn-primary btn-lg btn-block" id="quickMarkBtn">
+                                    <i class="fas fa-bolt"></i> त्वरित अटेंडेंस मार्क करें
                                 </button>
                             </div>
                         </div>
@@ -1444,42 +1685,75 @@
                             </div>
                         </div>
                         
-                        <!-- Map Tab -->
-                        <div class="tab-pane" id="mapTab">
+                        <!-- Reports Tab -->
+                        <div class="tab-pane" id="reportsTab">
                             <div class="card">
                                 <div class="card-header">
                                     <h2 class="card-title">
-                                        <i class="fas fa-map"></i>
-                                        रीयल-टाइम लोकेशन ट्रैकिंग
+                                        <i class="fas fa-chart-bar"></i>
+                                        विस्तृत रिपोर्ट्स
                                     </h2>
-                                </div>
-                                
-                                <div class="map-container" style="height: 450px;">
-                                    <div id="liveMap"></div>
-                                </div>
-                                
-                                <div class="location-stats" style="margin-top: 25px;">
-                                    <div class="location-stat">
-                                        <div class="location-label">लैटिट्यूड</div>
-                                        <div class="location-value" id="liveLat">-</div>
-                                    </div>
-                                    <div class="location-stat">
-                                        <div class="location-label">लॉन्गिट्यूड</div>
-                                        <div class="location-value" id="liveLon">-</div>
-                                    </div>
-                                    <div class="location-stat">
-                                        <div class="location-label">सटीकता</div>
-                                        <div class="location-value" id="liveAccuracy">-</div>
-                                    </div>
-                                    <div class="location-stat">
-                                        <div class="location-label">अपडेट समय</div>
-                                        <div class="location-value" id="liveTime">-</div>
+                                    <div class="card-actions">
+                                        <button class="btn btn-sm btn-accent" id="generateReportBtn">
+                                            <i class="fas fa-file-pdf"></i> PDF जेनरेट करें
+                                        </button>
+                                        <button class="btn btn-sm btn-success" id="exportReportBtn">
+                                            <i class="fas fa-file-excel"></i> Excel एक्सपोर्ट
+                                        </button>
                                     </div>
                                 </div>
                                 
-                                <button class="btn btn-accent btn-block" id="startTrackingBtn" style="margin-top: 25px;">
-                                    <i class="fas fa-play-circle"></i> ट्रैकिंग प्रारंभ करें
-                                </button>
+                                <div class="reports-container">
+                                    <table class="reports-table">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No.</th>
+                                                <th>कर्मचारी</th>
+                                                <th>विभाग</th>
+                                                <th>पदनाम</th>
+                                                <th>तारीख</th>
+                                                <th>समय</th>
+                                                <th>स्थान पता</th>
+                                                <th>निर्देशांक</th>
+                                                <th>IP एड्रेस</th>
+                                                <th>फोटो</th>
+                                                <th>स्टेटस</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reportsTableBody">
+                                            <tr>
+                                                <td colspan="11" style="text-align: center; padding: 40px;">
+                                                    <i class="fas fa-chart-line" style="font-size: 3rem; color: #e2e8f0; margin-bottom: 15px;"></i>
+                                                    <p style="color: #64748b;">रिपोर्ट जेनरेट करने के लिए एडमिन लॉगिन करें</p>
+                                                    <button class="btn btn-accent" id="loginForReportsBtn" style="margin-top: 15px;">
+                                                        <i class="fas fa-sign-in-alt"></i> एडमिन लॉगिन
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="reports-summary" style="margin-top: 30px;">
+                                    <div class="admin-stats-grid">
+                                        <div class="admin-stat-card">
+                                            <div class="admin-stat-value" id="totalAttendanceCount">0</div>
+                                            <div class="admin-stat-label">कुल अटेंडेंस</div>
+                                        </div>
+                                        <div class="admin-stat-card">
+                                            <div class="admin-stat-value" id="todayAttendanceCount">0</div>
+                                            <div class="admin-stat-label">आज की अटेंडेंस</div>
+                                        </div>
+                                        <div class="admin-stat-card">
+                                            <div class="admin-stat-value" id="verifiedCount">0</div>
+                                            <div class="admin-stat-label">सत्यापित रिकॉर्ड्स</div>
+                                        </div>
+                                        <div class="admin-stat-card">
+                                            <div class="admin-stat-value" id="uniqueEmployeesCount">0</div>
+                                            <div class="admin-stat-label">अद्वितीय कर्मचारी</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -1517,22 +1791,27 @@
                                     </div>
                                 </div>
                                 
-                                <div class="admin-table-container">
-                                    <table class="admin-table">
+                                <div class="reports-container" style="margin-top: 30px;">
+                                    <table class="reports-table">
                                         <thead>
                                             <tr>
+                                                <th>S.No.</th>
                                                 <th>कर्मचारी</th>
                                                 <th>विभाग</th>
+                                                <th>पदनाम</th>
+                                                <th>तारीख</th>
                                                 <th>समय</th>
-                                                <th>स्थान</th>
-                                                <th>स्थिति</th>
+                                                <th>स्थान पता</th>
+                                                <th>निर्देशांक</th>
+                                                <th>IP एड्रेस</th>
+                                                <th>फोटो</th>
                                                 <th>कार्रवाई</th>
                                             </tr>
                                         </thead>
                                         <tbody id="adminTableBody">
                                             <tr>
-                                                <td colspan="6" style="text-align: center; padding: 40px;">
-                                                    <i class="fas fa-database" style="font-size: 2rem; color: #e2e8f0; margin-bottom: 15px;"></i>
+                                                <td colspan="11" style="text-align: center; padding: 40px;">
+                                                    <i class="fas fa-database" style="font-size: 3rem; color: #e2e8f0; margin-bottom: 15px;"></i>
                                                     <p style="color: #64748b;">कोई डाटा उपलब्ध नहीं</p>
                                                 </td>
                                             </tr>
@@ -1592,14 +1871,14 @@
                         त्वरित कार्रवाई
                     </h3>
                     <div class="quick-actions-grid" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
-                        <button class="btn btn-outline-accent" id="quickMarkBtn" style="justify-content: flex-start; padding: 14px;">
+                        <button class="btn btn-outline-accent" id="quickAttendanceBtn" style="justify-content: flex-start; padding: 14px;">
                             <i class="fas fa-camera"></i> त्वरित अटेंडेंस
                         </button>
-                        <button class="btn btn-outline" id="viewTodayBtn" style="justify-content: flex-start; padding: 14px;">
-                            <i class="fas fa-eye"></i> आज का लॉग देखें
+                        <button class="btn btn-outline" id="viewReportsBtn" style="justify-content: flex-start; padding: 14px;">
+                            <i class="fas fa-eye"></i> रिपोर्ट देखें
                         </button>
-                        <button class="btn btn-outline" id="exportDataBtn" style="justify-content: flex-start; padding: 14px;">
-                            <i class="fas fa-file-export"></i> डाटा एक्सपोर्ट
+                        <button class="btn btn-outline" id="exportAllDataBtn" style="justify-content: flex-start; padding: 14px;">
+                            <i class="fas fa-file-export"></i> सभी डाटा एक्सपोर्ट
                         </button>
                     </div>
                 </div>
@@ -1632,15 +1911,15 @@
                             </span>
                         </div>
                         <div class="status-item" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="status-label" style="font-size: 0.9rem;">डाटा संग्रहण</span>
-                            <span class="status-value" id="statusStorage" style="color: #00c853; font-weight: 500;">
-                                <i class="fas fa-circle" style="font-size: 0.7rem;"></i> 65%
+                            <span class="status-label" style="font-size: 0.9rem;">IP ट्रैकिंग</span>
+                            <span class="status-value" id="statusIp" style="color: #00c853; font-weight: 500;">
+                                <i class="fas fa-circle" style="font-size: 0.7rem;"></i> सक्रिय
                             </span>
                         </div>
                         <div class="status-item" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="status-label" style="font-size: 0.9rem;">अंतिम अपडेट</span>
-                            <span class="status-value" id="statusUpdate" style="color: #2962ff; font-weight: 500;">
-                                अभी अभी
+                            <span class="status-label" style="font-size: 0.9rem;">डाटा संग्रहण</span>
+                            <span class="status-value" id="statusStorage" style="color: #00c853; font-weight: 500;">
+                                <i class="fas fa-circle" style="font-size: 0.7rem;"></i> 65%
                             </span>
                         </div>
                     </div>
@@ -1653,6 +1932,7 @@
             <div class="footer-content">
                 <div class="footer-text">© 2024 पंचायती राज विभाग, शेखपुरा। सभी अधिकार सुरक्षित।</div>
                 <div class="footer-text" style="font-size: 0.85rem;">विकसित: <span class="developer-name">आईटी विभाग, शेखपुरा</span></div>
+                <div class="footer-text" style="font-size: 0.8rem; opacity: 0.6;">GPS + Camera + IP Tracking System</div>
             </div>
         </footer>
     </div>
@@ -1680,9 +1960,11 @@
             isLoading: true,
             currentLocation: null,
             currentAddress: '',
+            currentIP: '',
             attendanceRecords: [],
             capturedPhoto: null,
-            activeTab: 'attendance'
+            activeTab: 'attendance',
+            userIP: ''
         };
         
         // DOM Elements
@@ -1704,6 +1986,11 @@
             // Header Elements
             adminAccessBtn: document.getElementById('adminAccessBtn'),
             adminTab: document.querySelector('.admin-tab'),
+            
+            // Photo Modal
+            photoModal: document.getElementById('photoModal'),
+            modalPhoto: document.getElementById('modalPhoto'),
+            closePhotoModal: document.getElementById('closePhotoModal'),
             
             // Other elements will be initialized
         };
@@ -1761,11 +2048,14 @@
                 DOM.tabPanes = document.querySelectorAll('.tab-pane');
                 DOM.employeeName = document.getElementById('employeeName');
                 DOM.department = document.getElementById('department');
+                DOM.designation = document.getElementById('designation');
                 DOM.nameAutocomplete = document.getElementById('nameAutocomplete');
                 DOM.gpsStatus = document.getElementById('gpsStatus');
                 DOM.coordinates = document.getElementById('coordinates');
+                DOM.ipAddress = document.getElementById('ipAddress');
                 DOM.addressText = document.getElementById('addressText');
                 DOM.refreshLocationBtn = document.getElementById('refreshLocationBtn');
+                DOM.map = document.getElementById('map');
                 DOM.cameraPlaceholder = document.getElementById('cameraPlaceholder');
                 DOM.cameraPreview = document.getElementById('cameraPreview');
                 DOM.startCameraBtn = document.getElementById('startCameraBtn');
@@ -1775,7 +2065,7 @@
                 DOM.capturedPhoto = document.getElementById('capturedPhoto');
                 DOM.retakePhotoBtn = document.getElementById('retakePhotoBtn');
                 DOM.submitAttendanceBtn = document.getElementById('submitAttendanceBtn');
-                DOM.quickSubmitBtn = document.getElementById('quickSubmitBtn');
+                DOM.quickMarkBtn = document.getElementById('quickMarkBtn');
                 DOM.recordsContainer = document.getElementById('recordsContainer');
                 DOM.applyFilterBtn = document.getElementById('applyFilterBtn');
                 DOM.exportBtn = document.getElementById('exportBtn');
@@ -1783,24 +2073,37 @@
                 DOM.statTotal = document.getElementById('statTotal');
                 DOM.statMonth = document.getElementById('statMonth');
                 DOM.statAccuracy = document.getElementById('statAccuracy');
-                DOM.quickMarkBtn = document.getElementById('quickMarkBtn');
-                DOM.viewTodayBtn = document.getElementById('viewTodayBtn');
-                DOM.exportDataBtn = document.getElementById('exportDataBtn');
+                DOM.quickAttendanceBtn = document.getElementById('quickAttendanceBtn');
+                DOM.viewReportsBtn = document.getElementById('viewReportsBtn');
+                DOM.exportAllDataBtn = document.getElementById('exportAllDataBtn');
                 DOM.recentActivity = document.getElementById('recentActivity');
                 DOM.statusGps = document.getElementById('statusGps');
+                DOM.statusIp = document.getElementById('statusIp');
                 DOM.statusStorage = document.getElementById('statusStorage');
-                DOM.statusUpdate = document.getElementById('statusUpdate');
-                DOM.startTrackingBtn = document.getElementById('startTrackingBtn');
-                DOM.liveLat = document.getElementById('liveLat');
-                DOM.liveLon = document.getElementById('liveLon');
-                DOM.liveAccuracy = document.getElementById('liveAccuracy');
-                DOM.liveTime = document.getElementById('liveTime');
                 DOM.logoutAdminBtn = document.getElementById('logoutAdminBtn');
                 DOM.adminTableBody = document.getElementById('adminTableBody');
                 DOM.adminTotalRecords = document.getElementById('adminTotalRecords');
                 DOM.adminTodayRecords = document.getElementById('adminTodayRecords');
                 DOM.adminVerified = document.getElementById('adminVerified');
                 DOM.adminUniqueUsers = document.getElementById('adminUniqueUsers');
+                DOM.generateReportBtn = document.getElementById('generateReportBtn');
+                DOM.exportReportBtn = document.getElementById('exportReportBtn');
+                DOM.reportsTableBody = document.getElementById('reportsTableBody');
+                DOM.totalAttendanceCount = document.getElementById('totalAttendanceCount');
+                DOM.todayAttendanceCount = document.getElementById('todayAttendanceCount');
+                DOM.verifiedCount = document.getElementById('verifiedCount');
+                DOM.uniqueEmployeesCount = document.getElementById('uniqueEmployeesCount');
+                DOM.loginForReportsBtn = document.getElementById('loginForReportsBtn');
+                
+                // Metadata elements
+                DOM.metaName = document.getElementById('metaName');
+                DOM.metaDepartment = document.getElementById('metaDepartment');
+                DOM.metaDesignation = document.getElementById('metaDesignation');
+                DOM.metaDate = document.getElementById('metaDate');
+                DOM.metaTime = document.getElementById('metaTime');
+                DOM.metaAddress = document.getElementById('metaAddress');
+                DOM.metaIp = document.getElementById('metaIp');
+                DOM.metaCoordinates = document.getElementById('metaCoordinates');
             }
             
             initEventListeners() {
@@ -1810,6 +2113,7 @@
                 DOM.adminLoginBtn.addEventListener('click', () => this.handleAdminLogin());
                 DOM.togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
                 DOM.logoutAdminBtn.addEventListener('click', () => this.handleAdminLogout());
+                DOM.loginForReportsBtn.addEventListener('click', () => this.showAdminLogin());
                 
                 // Tab Switching
                 DOM.tabBtns.forEach(btn => {
@@ -1822,26 +2126,36 @@
                 
                 // Camera Events
                 DOM.startCameraBtn.addEventListener('click', () => this.toggleCamera());
-                DOM.capturePhotoBtn.addEventListener('click', () => this.capturePhoto());
+                DOM.capturePhotoBtn.addEventListener('click', () => this.capturePhotoWithMetadata());
                 DOM.switchCameraBtn.addEventListener('click', () => this.switchCamera());
                 DOM.retakePhotoBtn.addEventListener('click', () => this.retakePhoto());
                 DOM.submitAttendanceBtn.addEventListener('click', () => this.submitAttendance());
-                DOM.quickSubmitBtn.addEventListener('click', () => this.quickSubmit());
+                DOM.quickMarkBtn.addEventListener('click', () => this.quickMarkAttendance());
+                DOM.quickAttendanceBtn.addEventListener('click', () => this.quickMarkAttendance());
                 
                 // Records Events
                 DOM.applyFilterBtn.addEventListener('click', () => this.filterRecords());
                 DOM.exportBtn.addEventListener('click', () => this.exportData());
-                DOM.quickMarkBtn.addEventListener('click', () => this.quickMarkAttendance());
-                DOM.viewTodayBtn.addEventListener('click', () => this.viewTodayRecords());
-                DOM.exportDataBtn.addEventListener('click', () => this.exportAllData());
+                DOM.exportAllDataBtn.addEventListener('click', () => this.exportAllData());
+                DOM.viewReportsBtn.addEventListener('click', () => this.switchTab('reports'));
                 
-                // Map Tracking
-                DOM.startTrackingBtn.addEventListener('click', () => this.toggleLiveTracking());
+                // Reports Events
+                DOM.generateReportBtn.addEventListener('click', () => this.generatePDFReport());
+                DOM.exportReportBtn.addEventListener('click', () => this.exportExcelReport());
+                
+                // Photo Modal Events
+                DOM.closePhotoModal.addEventListener('click', () => this.closePhotoModal());
                 
                 // Close modal on outside click
                 DOM.adminLoginModal.addEventListener('click', (e) => {
                     if (e.target === DOM.adminLoginModal) {
                         this.hideAdminLogin();
+                    }
+                });
+                
+                DOM.photoModal.addEventListener('click', (e) => {
+                    if (e.target === DOM.photoModal) {
+                        this.closePhotoModal();
                     }
                 });
                 
@@ -1856,7 +2170,10 @@
             async initializeApp() {
                 try {
                     // Simulate loading
-                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    DOM.loadingText.textContent = 'सिस्टम शुरू हो रहा है...';
+                    
+                    // Get IP Address first
+                    await this.getIPAddress();
                     
                     // Initialize GPS
                     await this.initializeGPS();
@@ -1868,14 +2185,34 @@
                     this.updateStats();
                     
                     // Hide loading screen
-                    DOM.loadingOverlay.classList.add('hidden');
-                    DOM.appContainer.classList.add('active');
-                    
-                    Toast.success('स्मार्ट अटेंडेंस सिस्टम तैयार!');
+                    setTimeout(() => {
+                        DOM.loadingOverlay.classList.add('hidden');
+                        DOM.appContainer.classList.add('active');
+                        
+                        Toast.success('स्मार्ट अटेंडेंस सिस्टम तैयार!');
+                    }, 1500);
                     
                 } catch (error) {
                     console.error('Initialization error:', error);
                     Toast.error('सिस्टम शुरू करने में त्रुटि');
+                }
+            }
+            
+            // Get IP Address
+            async getIPAddress() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    APP_STATE.userIP = data.ip;
+                    DOM.ipAddress.textContent = data.ip;
+                    DOM.statusIp.innerHTML = '<i class="fas fa-circle" style="font-size: 0.7rem;"></i> सक्रिय';
+                    return data.ip;
+                } catch (error) {
+                    console.error('IP fetch error:', error);
+                    APP_STATE.userIP = '127.0.0.1';
+                    DOM.ipAddress.textContent = 'प्राप्त नहीं';
+                    DOM.statusIp.innerHTML = '<i class="fas fa-circle" style="font-size: 0.7rem; color: #ff9800;"></i> त्रुटि';
+                    return '127.0.0.1';
                 }
             }
             
@@ -1908,8 +2245,9 @@
                     this.hideAdminLogin();
                     Toast.success('एडमिन लॉगिन सफल!');
                     
-                    // Update admin stats
+                    // Update admin stats and reports
                     this.updateAdminStats();
+                    this.updateReportsTable();
                     
                 } else {
                     DOM.loginError.classList.add('show');
@@ -1984,21 +2322,29 @@
                 DOM.statusGps.innerHTML = '<i class="fas fa-circle" style="font-size: 0.7rem;"></i> अक्षम';
                 DOM.statusGps.style.color = '#ff9800';
                 
+                // Use default coordinates for demo
+                APP_STATE.currentLocation = {
+                    lat: 25.1518,
+                    lon: 85.8565,
+                    accuracy: 50
+                };
+                
                 Toast.warning(message);
             }
             
             async getAddressFromCoords(lat, lon) {
                 try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&accept-language=hi`);
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&accept-language=hi`);
                     const data = await response.json();
                     
                     if (data.display_name) {
-                        const address = data.display_name.split(',').slice(0, 3).join(', ');
+                        const address = data.display_name.split(',').slice(0, 4).join(', ');
                         DOM.addressText.textContent = address;
                         APP_STATE.currentAddress = address;
                     }
                 } catch (error) {
-                    DOM.addressText.textContent = 'पता प्राप्त करने में त्रुटि';
+                    DOM.addressText.textContent = 'पंचायती राज विभाग, शेखपुरा';
+                    APP_STATE.currentAddress = 'पंचायती राज विभाग, शेखपुरा';
                 }
             }
             
@@ -2077,9 +2423,23 @@
                 }
             }
             
-            capturePhoto() {
-                if (!this.isCameraActive) return;
+            async capturePhotoWithMetadata() {
+                if (!this.isCameraActive) {
+                    Toast.error('कृपया पहले कैमरा प्रारंभ करें');
+                    return;
+                }
                 
+                if (!this.validateForm()) {
+                    Toast.error('कृपया कर्मचारी का नाम और विभाग चुनें');
+                    return;
+                }
+                
+                // Get current date and time
+                const now = new Date();
+                const date = now.toLocaleDateString('hi-IN');
+                const time = now.toLocaleTimeString('hi-IN');
+                
+                // Capture photo
                 const canvas = document.createElement('canvas');
                 const video = DOM.cameraPreview;
                 canvas.width = video.videoWidth;
@@ -2088,27 +2448,53 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                // Add timestamp overlay
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-                ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                // Add metadata overlay on photo
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, canvas.height - 120, canvas.width, 120);
                 
-                ctx.font = '14px Arial';
+                ctx.font = 'bold 16px Arial';
                 ctx.fillStyle = 'white';
-                ctx.textBaseline = 'middle';
+                ctx.textBaseline = 'top';
                 
-                const now = new Date();
-                const timestamp = now.toLocaleString('hi-IN');
-                const text = `पंचायती राज विभाग, शेखपुरा | ${timestamp}`;
+                const metadataLines = [
+                    `कर्मचारी: ${DOM.employeeName.value}`,
+                    `विभाग: ${DOM.department.value}`,
+                    `तारीख: ${date}`,
+                    `समय: ${time}`,
+                    `स्थान: ${APP_STATE.currentAddress?.substring(0, 30) || 'अज्ञात'}`
+                ];
                 
-                ctx.fillText(text, 20, canvas.height - 40);
+                let y = canvas.height - 110;
+                metadataLines.forEach(text => {
+                    ctx.fillText(text, 20, y);
+                    y += 25;
+                });
                 
-                const photoData = canvas.toDataURL('image/jpeg', 0.8);
+                const photoData = canvas.toDataURL('image/jpeg', 0.85);
                 APP_STATE.capturedPhoto = photoData;
                 DOM.capturedPhoto.src = photoData;
                 DOM.photoPreview.style.display = 'block';
                 
+                // Update metadata display
+                this.updateMetadataDisplay(date, time);
+                
                 this.stopCamera();
-                Toast.success('फोटो कैप्चर हो गई');
+                Toast.success('फोटो कैप्चर हो गई सभी जानकारी के साथ');
+                
+                // Scroll to photo preview
+                DOM.photoPreview.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            updateMetadataDisplay(date, time) {
+                DOM.metaName.textContent = DOM.employeeName.value;
+                DOM.metaDepartment.textContent = DOM.department.value;
+                DOM.metaDesignation.textContent = DOM.designation.value || '-';
+                DOM.metaDate.textContent = date;
+                DOM.metaTime.textContent = time;
+                DOM.metaAddress.textContent = APP_STATE.currentAddress || 'अज्ञात';
+                DOM.metaIp.textContent = APP_STATE.userIP;
+                DOM.metaCoordinates.textContent = APP_STATE.currentLocation ? 
+                    `${APP_STATE.currentLocation.lat.toFixed(6)}, ${APP_STATE.currentLocation.lon.toFixed(6)}` : '-';
             }
             
             retakePhoto() {
@@ -2117,29 +2503,37 @@
                 this.startCamera();
             }
             
+            showPhotoModal(photoSrc) {
+                DOM.modalPhoto.src = photoSrc;
+                DOM.photoModal.classList.add('active');
+            }
+            
+            closePhotoModal() {
+                DOM.photoModal.classList.remove('active');
+            }
+            
             // Attendance Functions
             async submitAttendance() {
-                if (!this.validateForm()) {
-                    Toast.error('कृपया सभी आवश्यक जानकारी भरें');
-                    return;
-                }
-                
                 if (!APP_STATE.capturedPhoto) {
-                    Toast.error('कृपया फोटो कैप्चर करें');
+                    Toast.error('कृपया पहले फोटो कैप्चर करें');
                     return;
                 }
                 
+                const now = new Date();
                 const record = {
-                    id: Date.now(),
+                    id: Date.now() + Math.random().toString(36).substr(2, 9),
                     employeeName: DOM.employeeName.value.trim(),
                     department: DOM.department.value,
-                    timestamp: new Date().toISOString(),
-                    date: new Date().toLocaleDateString('hi-IN'),
-                    time: new Date().toLocaleTimeString('hi-IN'),
+                    designation: DOM.designation.value.trim() || '',
+                    photo: APP_STATE.capturedPhoto,
                     location: APP_STATE.currentLocation,
                     address: APP_STATE.currentAddress,
-                    photo: APP_STATE.capturedPhoto,
-                    verified: APP_STATE.currentLocation?.accuracy < 50
+                    ipAddress: APP_STATE.userIP,
+                    timestamp: now.toISOString(),
+                    date: now.toLocaleDateString('hi-IN'),
+                    time: now.toLocaleTimeString('hi-IN'),
+                    verified: APP_STATE.currentLocation?.accuracy < 100,
+                    status: 'सत्यापित'
                 };
                 
                 APP_STATE.attendanceRecords.unshift(record);
@@ -2147,20 +2541,29 @@
                 this.updateStats();
                 this.displayRecords();
                 this.addRecentActivity(record);
+                this.updateReportsTable();
                 
+                // Reset form
                 DOM.photoPreview.style.display = 'none';
                 DOM.employeeName.value = '';
                 DOM.department.value = '';
+                DOM.designation.value = '';
                 APP_STATE.capturedPhoto = null;
                 
-                Toast.success(`${record.employeeName} की अटेंडेंस दर्ज हो गई`);
+                Toast.success(`${record.employeeName} की अटेंडेंस सफलतापूर्वक दर्ज हो गई`);
                 this.switchTab('records');
             }
             
-            quickSubmit() {
+            quickMarkAttendance() {
+                this.switchTab('attendance');
+                DOM.employeeName.focus();
+                
                 // Auto-fill demo data for quick testing
                 if (!DOM.employeeName.value) {
-                    const demoEmployees = ['राजेश कुमार', 'प्रिया शर्मा', 'अमित पटेल', 'स्नेहा सिंह'];
+                    const demoEmployees = [
+                        'राजेश कुमार', 'प्रिया शर्मा', 'अमित पटेल', 'स्नेहा सिंह',
+                        'विक्रम यादव', 'अंजलि गुप्ता', 'राहुल वर्मा', 'मीना चौधरी'
+                    ];
                     DOM.employeeName.value = demoEmployees[Math.floor(Math.random() * demoEmployees.length)];
                 }
                 
@@ -2168,19 +2571,24 @@
                     DOM.department.value = 'पंचायत विकास';
                 }
                 
-                this.capturePhoto();
-                setTimeout(() => this.submitAttendance(), 1000);
-            }
-            
-            quickMarkAttendance() {
-                this.switchTab('attendance');
-                DOM.employeeName.focus();
+                if (!DOM.designation.value) {
+                    DOM.designation.value = 'कर्मचारी';
+                }
+                
+                Toast.info('अब कैमरा बटन दबाकर फोटो कैप्चर करें');
             }
             
             // Records Functions
             saveRecords() {
                 try {
-                    localStorage.setItem('attendanceRecords', JSON.stringify(APP_STATE.attendanceRecords));
+                    localStorage.setItem('panchayat_attendance_records', JSON.stringify(APP_STATE.attendanceRecords));
+                    
+                    // Update storage status
+                    const storageData = JSON.stringify(APP_STATE.attendanceRecords);
+                    const storageUsage = Math.round((storageData.length / (5 * 1024 * 1024)) * 100);
+                    DOM.statusStorage.innerHTML = `<i class="fas fa-circle" style="font-size: 0.7rem;"></i> ${Math.min(storageUsage, 100)}%`;
+                    DOM.statusStorage.style.color = storageUsage > 80 ? '#ff9800' : '#00c853';
+                    
                 } catch (error) {
                     console.error('Save error:', error);
                 }
@@ -2188,7 +2596,7 @@
             
             loadRecords() {
                 try {
-                    const saved = localStorage.getItem('attendanceRecords');
+                    const saved = localStorage.getItem('panchayat_attendance_records');
                     if (saved) {
                         APP_STATE.attendanceRecords = JSON.parse(saved);
                         this.displayRecords();
@@ -2214,7 +2622,7 @@
                 }
                 
                 let html = '';
-                records.slice(0, 50).forEach(record => {
+                records.slice(0, 20).forEach((record, index) => {
                     const initials = record.employeeName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                     
                     html += `
@@ -2236,7 +2644,11 @@
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9;">
                                 <div>
                                     <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 5px;">पता</div>
-                                    <div style="font-weight: 500; color: #475569;">${record.address || 'N/A'}</div>
+                                    <div style="font-weight: 500; color: #475569; font-size: 0.9rem;">${record.address || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 5px;">IP एड्रेस</div>
+                                    <div style="font-weight: 500; color: #475569;">${record.ipAddress || 'N/A'}</div>
                                 </div>
                                 <div>
                                     <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 5px;">स्थिति</div>
@@ -2278,14 +2690,21 @@
                 Toast.success('CSV फाइल डाउनलोड हो गई');
             }
             
+            exportAllData() {
+                this.exportData();
+            }
+            
             convertToCSV(data) {
-                const headers = ['कर्मचारी', 'विभाग', 'तारीख', 'समय', 'पता', 'स्थिति'];
+                const headers = ['कर्मचारी', 'विभाग', 'पदनाम', 'तारीख', 'समय', 'स्थान पता', 'निर्देशांक', 'IP एड्रेस', 'स्थिति'];
                 const rows = data.map(record => [
                     record.employeeName,
                     record.department,
+                    record.designation,
                     record.date,
                     record.time,
                     record.address,
+                    `${record.location?.lat}, ${record.location?.lon}`,
+                    record.ipAddress,
                     record.verified ? 'सत्यापित' : 'असत्यापित'
                 ]);
                 
@@ -2294,13 +2713,92 @@
                 ).join('\n');
             }
             
-            exportAllData() {
-                this.exportData();
+            // Reports Functions
+            updateReportsTable() {
+                if (!APP_STATE.isAdminLoggedIn) {
+                    return;
+                }
+                
+                const records = APP_STATE.attendanceRecords;
+                const tbody = DOM.reportsTableBody;
+                
+                if (records.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="11" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-chart-line" style="font-size: 3rem; color: #e2e8f0; margin-bottom: 15px;"></i>
+                                <p style="color: #64748b;">अभी तक कोई अटेंडेंस रिकॉर्ड नहीं</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                records.forEach((record, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td style="font-weight: 500;">${record.employeeName}</td>
+                            <td>${record.department}</td>
+                            <td>${record.designation || '-'}</td>
+                            <td>${record.date}</td>
+                            <td>${record.time}</td>
+                            <td style="max-width: 200px;">${record.address || 'अज्ञात'}</td>
+                            <td>${record.location ? `${record.location.lat.toFixed(6)}, ${record.location.lon.toFixed(6)}` : '-'}</td>
+                            <td>${record.ipAddress}</td>
+                            <td class="report-photo-cell">
+                                <img src="${record.photo}" class="report-photo" alt="फोटो" onclick="app.showPhotoModal('${record.photo}')">
+                            </td>
+                            <td>
+                                <span style="display: inline-flex; align-items: center; gap: 4px; color: ${record.verified ? '#00c853' : '#ff9800'};">
+                                    <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
+                                    ${record.verified ? 'सत्यापित' : 'असत्यापित'}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                
+                // Update report summary
+                this.updateReportSummary();
             }
             
-            viewTodayRecords() {
-                this.switchTab('records');
-                // Filter for today's records
+            updateReportSummary() {
+                const today = new Date().toLocaleDateString('hi-IN');
+                const todayRecords = APP_STATE.attendanceRecords.filter(r => r.date === today);
+                const verifiedRecords = APP_STATE.attendanceRecords.filter(r => r.verified).length;
+                const uniqueEmployees = [...new Set(APP_STATE.attendanceRecords.map(r => r.employeeName))];
+                
+                DOM.totalAttendanceCount.textContent = APP_STATE.attendanceRecords.length;
+                DOM.todayAttendanceCount.textContent = todayRecords.length;
+                DOM.verifiedCount.textContent = verifiedRecords;
+                DOM.uniqueEmployeesCount.textContent = uniqueEmployees.length;
+            }
+            
+            generatePDFReport() {
+                Toast.info('PDF रिपोर्ट जेनरेट की जा रही है...');
+                // In a real app, you would use a PDF generation library here
+            }
+            
+            exportExcelReport() {
+                if (APP_STATE.attendanceRecords.length === 0) {
+                    Toast.error('एक्सपोर्ट करने के लिए कोई डाटा नहीं');
+                    return;
+                }
+                
+                const csv = this.convertToCSV(APP_STATE.attendanceRecords);
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `attendance_report_${new Date().toISOString().split('T')[0]}.csv`);
+                link.click();
+                
+                Toast.success('Excel रिपोर्ट डाउनलोड हो गई');
             }
             
             // Stats Functions
@@ -2318,8 +2816,6 @@
                 DOM.statTotal.textContent = APP_STATE.attendanceRecords.length;
                 DOM.statMonth.textContent = thisMonthRecords.length;
                 DOM.statAccuracy.textContent = `${accuracy}%`;
-                
-                DOM.statusUpdate.textContent = 'अभी अभी';
             }
             
             updateAdminStats() {
@@ -2343,13 +2839,13 @@
             
             updateAdminTable() {
                 const tbody = DOM.adminTableBody;
-                const records = APP_STATE.attendanceRecords.slice(0, 20); // Show last 20 records
+                const records = APP_STATE.attendanceRecords.slice(0, 50);
                 
                 if (records.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-database" style="font-size: 2rem; color: #e2e8f0; margin-bottom: 15px;"></i>
+                            <td colspan="11" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-database" style="font-size: 3rem; color: #e2e8f0; margin-bottom: 15px;"></i>
                                 <p style="color: #64748b;">कोई डाटा उपलब्ध नहीं</p>
                             </td>
                         </tr>
@@ -2358,23 +2854,28 @@
                 }
                 
                 let html = '';
-                records.forEach(record => {
+                records.forEach((record, index) => {
                     html += `
                         <tr>
+                            <td>${index + 1}</td>
                             <td style="font-weight: 500;">${record.employeeName}</td>
                             <td>${record.department}</td>
+                            <td>${record.designation || '-'}</td>
+                            <td>${record.date}</td>
                             <td>${record.time}</td>
-                            <td>${record.address?.substring(0, 30)}${record.address?.length > 30 ? '...' : ''}</td>
-                            <td>
-                                <span style="display: inline-flex; align-items: center; gap: 4px; color: ${record.verified ? '#00c853' : '#ff9800'};">
-                                    <i class="fas fa-${record.verified ? 'check-circle' : 'exclamation-triangle'}"></i>
-                                    ${record.verified ? 'सत्यापित' : 'असत्यापित'}
-                                </span>
+                            <td style="max-width: 200px;">${record.address || 'अज्ञात'}</td>
+                            <td>${record.location ? `${record.location.lat.toFixed(6)}, ${record.location.lon.toFixed(6)}` : '-'}</td>
+                            <td>${record.ipAddress}</td>
+                            <td class="report-photo-cell">
+                                <img src="${record.photo}" class="report-photo" alt="फोटो" onclick="app.showPhotoModal('${record.photo}')">
                             </td>
                             <td>
                                 <div class="table-actions">
-                                    <button onclick="app.viewRecord('${record.id}')" style="background: none; border: none; color: #2962ff; cursor: pointer;">
+                                    <button class="table-action-btn" onclick="app.viewRecord('${record.id}')" title="देखें">
                                         <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="table-action-btn" onclick="app.deleteRecord('${record.id}')" title="हटाएं">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
@@ -2403,10 +2904,10 @@
                     </div>
                     <div style="flex: 1;">
                         <div style="font-size: 0.9rem; color: #1e293b; margin-bottom: 4px;">
-                            ${record.employeeName} की अटेंडेंस दर्ज हुई
+                            ${record.employeeName} - ${record.department}
                         </div>
                         <div style="font-size: 0.8rem; color: #64748b;">
-                            ${now}
+                            ${now} - ${record.time}
                         </div>
                     </div>
                 `;
@@ -2420,78 +2921,6 @@
                 // Keep only 5 recent activities
                 while (activity.children.length > 5) {
                     activity.removeChild(activity.lastChild);
-                }
-            }
-            
-            // Live Tracking
-            liveTracking = false;
-            trackingWatchId = null;
-            
-            toggleLiveTracking() {
-                if (this.liveTracking) {
-                    this.stopLiveTracking();
-                } else {
-                    this.startLiveTracking();
-                }
-            }
-            
-            startLiveTracking() {
-                if (!navigator.geolocation) {
-                    Toast.error('लाइव ट्रैकिंग समर्थित नहीं');
-                    return;
-                }
-                
-                this.liveTracking = true;
-                DOM.startTrackingBtn.innerHTML = '<i class="fas fa-stop-circle"></i> ट्रैकिंग रोकें';
-                
-                this.trackingWatchId = navigator.geolocation.watchPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        const accuracy = Math.round(position.coords.accuracy);
-                        const speed = position.coords.speed ? `${Math.round(position.coords.speed * 3.6)} km/h` : '-';
-                        
-                        DOM.liveLat.textContent = lat.toFixed(6);
-                        DOM.liveLon.textContent = lon.toFixed(6);
-                        DOM.liveAccuracy.textContent = `${accuracy} मीटर`;
-                        DOM.liveTime.textContent = new Date().toLocaleTimeString('hi-IN');
-                        
-                        // Update live map
-                        this.updateLiveMap(lat, lon);
-                    },
-                    (error) => {
-                        Toast.error('ट्रैकिंग त्रुटि');
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        maximumAge: 0
-                    }
-                );
-                
-                Toast.success('लाइव ट्रैकिंग प्रारंभ हो गई');
-            }
-            
-            stopLiveTracking() {
-                if (this.trackingWatchId) {
-                    navigator.geolocation.clearWatch(this.trackingWatchId);
-                    this.trackingWatchId = null;
-                }
-                
-                this.liveTracking = false;
-                DOM.startTrackingBtn.innerHTML = '<i class="fas fa-play-circle"></i> ट्रैकिंग प्रारंभ करें';
-                Toast.info('लाइव ट्रैकिंग रुक गई');
-            }
-            
-            updateLiveMap(lat, lon) {
-                if (!window.L) return;
-                
-                if (!this.liveMap) {
-                    this.liveMap = L.map('liveMap').setView([lat, lon], 16);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.liveMap);
-                    this.liveMarker = L.marker([lat, lon]).addTo(this.liveMap);
-                } else {
-                    this.liveMarker.setLatLng([lat, lon]);
-                    this.liveMap.setView([lat, lon]);
                 }
             }
             
@@ -2511,6 +2940,12 @@
                 if (tabName === 'admin' && APP_STATE.isAdminLoggedIn) {
                     this.updateAdminStats();
                 }
+                
+                if (tabName === 'reports') {
+                    if (APP_STATE.isAdminLoggedIn) {
+                        this.updateReportsTable();
+                    }
+                }
             }
             
             validateForm() {
@@ -2525,11 +2960,17 @@
                 }
                 
                 const employees = [
-                    'राजेश कुमार', 'प्रिया शर्मा', 'अमित पटेल', 'स्नेहा सिंह',
-                    'विक्रम यादव', 'अंजलि गुप्ता', 'राहुल वर्मा', 'मीना चौधरी'
+                    {name: 'राजेश कुमार', department: 'पंचायत विकास', designation: 'सुपरवाइजर'},
+                    {name: 'प्रिया शर्मा', department: 'स्वास्थ्य सेवाएं', designation: 'नर्स'},
+                    {name: 'अमित पटेल', department: 'शिक्षा विभाग', designation: 'शिक्षक'},
+                    {name: 'स्नेहा सिंह', department: 'प्रशासनिक', designation: 'क्लर्क'},
+                    {name: 'विक्रम यादव', department: 'फ़ील्ड स्टाफ', designation: 'फ़ील्ड ऑफिसर'},
+                    {name: 'अंजलि गुप्ता', department: 'कार्यालय स्टाफ', designation: 'सहायक'},
+                    {name: 'राहुल वर्मा', department: 'तकनीकी स्टाफ', designation: 'टेक्नीशियन'},
+                    {name: 'मीना चौधरी', department: 'पंचायत विकास', designation: 'सहायक'}
                 ];
                 
-                const matches = employees.filter(emp => emp.toLowerCase().includes(query));
+                const matches = employees.filter(emp => emp.name.toLowerCase().includes(query));
                 
                 if (matches.length === 0) {
                     DOM.nameAutocomplete.innerHTML = '<div class="autocomplete-item">कोई मिलान नहीं मिला</div>';
@@ -2539,9 +2980,12 @@
                 let html = '';
                 matches.forEach(emp => {
                     html += `
-                        <div class="autocomplete-item" onclick="DOM.employeeName.value='${emp}'; DOM.nameAutocomplete.innerHTML=''">
-                            <div class="employee-avatar">${emp.split(' ').map(n => n[0]).join('').substring(0, 2)}</div>
-                            <div>${emp}</div>
+                        <div class="autocomplete-item" onclick="app.selectEmployee('${emp.name}', '${emp.department}', '${emp.designation}')">
+                            <div class="employee-avatar">${emp.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</div>
+                            <div>
+                                <div style="font-weight: 500;">${emp.name}</div>
+                                <div style="font-size: 0.85rem; color: #64748b;">${emp.department} - ${emp.designation}</div>
+                            </div>
                         </div>
                     `;
                 });
@@ -2549,9 +2993,29 @@
                 DOM.nameAutocomplete.innerHTML = html;
             }
             
+            selectEmployee(name, department, designation) {
+                DOM.employeeName.value = name;
+                DOM.department.value = department;
+                DOM.designation.value = designation;
+                DOM.nameAutocomplete.innerHTML = '';
+            }
+            
             viewRecord(id) {
-                // View individual record
-                Toast.info('रिकॉर्ड विस्तार से देखें');
+                const record = APP_STATE.attendanceRecords.find(r => r.id === id);
+                if (record) {
+                    alert(`${record.employeeName} का पूरा डिटेल्स:\n\nविभाग: ${record.department}\nपदनाम: ${record.designation}\nतारीख: ${record.date}\nसमय: ${record.time}\nस्थान: ${record.address}\nनिर्देशांक: ${record.location?.lat}, ${record.location?.lon}\nIP: ${record.ipAddress}`);
+                }
+            }
+            
+            deleteRecord(id) {
+                if (confirm('क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?')) {
+                    APP_STATE.attendanceRecords = APP_STATE.attendanceRecords.filter(r => r.id !== id);
+                    this.saveRecords();
+                    this.updateStats();
+                    this.updateAdminStats();
+                    this.updateReportsTable();
+                    Toast.success('रिकॉर्ड सफलतापूर्वक हटा दिया गया');
+                }
             }
         }
         

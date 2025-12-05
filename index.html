@@ -3,65 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>पंचायती राज विभाग, शेखपुरा - AI अटेंडेंस सिस्टम</title>
+    <title>AI स्मार्ट अटेंडेंस - पंचायती राज विभाग, शेखपुरा</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* ========== ROOT VARIABLES ========== */
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #1e40af;
+            --primary-light: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #6b7280;
+            --gray-light: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+        }
+        
         /* ========== RESET & BASE ========== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        :root {
-            --primary-blue: #1a237e;
-            --secondary-blue: #0d47a1;
-            --accent-blue: #2196f3;
-            --success-green: #00c853;
-            --warning-orange: #ff9800;
-            --danger-red: #f44336;
-            --light-bg: #f5f7fa;
-            --text-dark: #263238;
-            --text-light: #ffffff;
         }
         
         body {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            color: var(--text-dark);
+            font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--dark);
             min-height: 100vh;
+            line-height: 1.6;
         }
         
         /* ========== LOADING SCREEN ========== */
-        .loading-overlay {
+        #loadingScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--primary-blue);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.5s;
+            transition: opacity 0.5s ease;
         }
         
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
+        .loader {
+            width: 80px;
+            height: 80px;
             border: 5px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top-color: var(--accent-blue);
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 30px;
+        }
+        
+        .loader-text {
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .loader-subtext {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            text-align: center;
+            max-width: 300px;
         }
         
         @keyframes spin {
@@ -69,129 +92,283 @@
             100% { transform: rotate(360deg); }
         }
         
-        .loading-text {
-            color: white;
-            text-align: center;
-            font-size: 1.2rem;
-            max-width: 300px;
-        }
-        
-        /* ========== MAIN CONTAINER ========== */
-        .container {
-            max-width: 1200px;
+        /* ========== MAIN LAYOUT ========== */
+        .app-container {
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
         
         /* ========== HEADER ========== */
-        .header {
-            background: var(--primary-blue);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
+        .app-header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 20px;
+            border-left: 5px solid var(--secondary);
         }
         
-        .logo-section {
+        .brand-section {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
         
-        .app-logo {
-            width: 60px;
-            height: 60px;
-            background: var(--accent-blue);
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            color: white;
+            font-size: 2rem;
+            box-shadow: var(--shadow);
         }
         
-        .app-title h1 {
-            font-size: 1.5rem;
+        .brand-text h1 {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
             margin-bottom: 5px;
         }
         
-        .app-subtitle {
+        .brand-text p {
+            color: var(--gray);
             font-size: 0.9rem;
-            opacity: 0.9;
         }
         
-        /* ========== TABS ========== */
-        .tabs-container {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .tabs-header {
-            display: flex;
-            background: #f0f4ff;
-            overflow-x: auto;
-        }
-        
-        .tab-btn {
-            padding: 15px 20px;
-            border: none;
-            background: transparent;
-            color: var(--text-dark);
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
+        .ai-badge {
+            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
         }
         
-        .tab-btn.active {
-            background: var(--accent-blue);
+        /* ========== DASHBOARD LAYOUT ========== */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 30px;
+        }
+        
+        .user-profile {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--gray-light);
+            margin-bottom: 25px;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            box-shadow: var(--shadow);
         }
         
-        .tab-content {
+        .user-info h3 {
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .user-role {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .nav-item {
+            margin-bottom: 10px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            background: var(--gray-light);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .quick-stats {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f7ff 100%);
+            border-radius: var(--radius);
             padding: 20px;
+            margin-top: 20px;
         }
         
-        .tab-pane {
-            display: none;
+        .stat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
         }
         
-        .tab-pane.active {
-            display: block;
+        .stat-item:last-child {
+            border-bottom: none;
         }
         
-        /* ========== CARDS ========== */
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+        }
+        
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        /* ========== WELCOME BANNER ========== */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            padding: 30px;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .welcome-text h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-text p {
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        /* ========== CARDS GRID ========== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
         .card {
             background: white;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-top: 4px solid var(--primary-light);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
         
         .card-title {
             font-size: 1.2rem;
-            color: var(--primary-blue);
-            margin-bottom: 15px;
+            color: var(--primary-dark);
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        /* ========== FORMS ========== */
+        .card-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .icon-blue {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        }
+        
+        .icon-green {
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+        }
+        
+        .icon-purple {
+            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+        }
+        
+        .icon-orange {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+        }
+        
+        /* ========== FORM ELEMENTS ========== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -199,89 +376,105 @@
         .form-label {
             display: block;
             margin-bottom: 8px;
+            color: var(--dark);
             font-weight: 500;
-            color: var(--text-dark);
         }
         
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 14px 20px;
+            border: 2px solid var(--gray-light);
+            border-radius: var(--radius-sm);
             font-size: 16px;
-            transition: border 0.3s;
+            transition: var(--transition);
+            background: white;
         }
         
         .form-control:focus {
-            border-color: var(--accent-blue);
             outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .select-wrapper {
+            position: relative;
+        }
+        
+        .select-wrapper i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            pointer-events: none;
         }
         
         /* ========== BUTTONS ========== */
         .btn {
-            padding: 12px 25px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
-            font-weight: 500;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 16px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
         }
         
         .btn-primary {
-            background: var(--accent-blue);
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
             color: white;
         }
         
         .btn-primary:hover {
-            background: var(--secondary-blue);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
         
         .btn-success {
-            background: var(--success-green);
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
             color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
         
         .btn-block {
             width: 100%;
-            justify-content: center;
         }
         
-        /* ========== STATS GRID ========== */
-        .stats-grid {
+        .btn-icon {
+            padding: 12px;
+            width: 45px;
+            height: 45px;
+        }
+        
+        /* ========== ATTENDANCE SECTION ========== */
+        .attendance-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
         
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        @media (max-width: 768px) {
+            .attendance-section {
+                grid-template-columns: 1fr;
+            }
         }
         
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin: 10px 0;
-        }
-        
-        /* ========== CAMERA ========== */
-        .camera-container {
-            width: 100%;
-            height: 300px;
-            background: #000;
-            border-radius: 10px;
+        .camera-box {
+            background: #1a1a1a;
+            border-radius: var(--radius);
             overflow: hidden;
+            height: 350px;
             position: relative;
-            margin-bottom: 15px;
         }
         
         .camera-placeholder {
@@ -291,392 +484,862 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #888;
+            color: #999;
         }
         
         .camera-placeholder i {
             font-size: 3rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
-        #videoPreview {
+        #videoElement {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: none;
         }
         
-        /* ========== RECORDS ========== */
-        .records-container {
+        .camera-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid rgba(59, 130, 246, 0.7);
+            border-radius: 50%;
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* ========== RECORDS TABLE ========== */
+        .table-container {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .table-body {
             max-height: 400px;
             overflow-y: auto;
         }
         
-        .record-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--accent-blue);
+        .table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
-        .record-header {
+        .table th {
+            padding: 15px 20px;
+            text-align: left;
+            background: #f8fafc;
+            color: var(--dark);
+            font-weight: 600;
+            border-bottom: 2px solid var(--gray-light);
+        }
+        
+        .table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-present {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+        }
+        
+        .status-absent {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        /* ========== ANALYTICS CHART ========== */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .chart-placeholder {
+            height: 300px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+        }
+        
+        .chart-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-light);
+        }
+        
+        /* ========== NOTIFICATIONS ========== */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 350px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border-left: 4px solid var(--primary-light);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .notification-success .notification-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+        }
+        
+        .notification-error .notification-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .notification-info .notification-icon {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-light);
+        }
+        
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 25px;
+            border-bottom: 2px solid var(--gray-light);
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+        }
+        
+        .modal-body {
+            padding: 25px;
         }
         
         /* ========== FOOTER ========== */
-        .footer {
+        .app-footer {
             text-align: center;
-            padding: 20px;
-            color: var(--primary-blue);
-            margin-top: 30px;
+            padding: 30px 0;
+            margin-top: 50px;
+            color: var(--gray);
+            border-top: 2px solid var(--gray-light);
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .footer-brand {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+        }
+        
+        .developer {
+            color: var(--accent);
+            font-weight: 600;
         }
         
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
+            .app-container {
+                padding: 15px;
             }
             
-            .tabs-header {
-                flex-wrap: wrap;
-            }
-            
-            .tab-btn {
-                flex: 1;
-                min-width: 120px;
-                justify-content: center;
-            }
-            
-            .header-content {
+            .app-header {
+                padding: 20px;
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .brand-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .notification {
+                left: 15px;
+                right: 15px;
+                max-width: none;
             }
         }
     </style>
 </head>
 <body>
     <!-- Loading Screen -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">
-            पंचायती राज विभाग, शेखपुरा<br>
-            AI अटेंडेंस सिस्टम शुरू हो रहा है...
-        </div>
+    <div id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loader-text">पंचायती राज विभाग, शेखपुरा</div>
+        <div class="loader-subtext">AI स्मार्ट अटेंडेंस सिस्टम शुरू हो रहा है...</div>
     </div>
     
-    <!-- Main Container -->
-    <div class="container" id="mainContainer" style="display: none;">
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+    
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+    
+    <!-- Main App Container -->
+    <div class="app-container" style="display: none;" id="mainApp">
         <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo-section">
-                    <div class="app-logo">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="app-title">
-                        <h1>पंचायती राज विभाग, शेखपुरा</h1>
-                        <p class="app-subtitle">AI-पावर्ड स्मार्ट अटेंडेंस सिस्टम</p>
-                    </div>
+        <header class="app-header">
+            <div class="brand-section">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="showHelp()">
-                        <i class="fas fa-question-circle"></i> मदद
-                    </button>
+                <div class="brand-text">
+                    <h1>पंचायती राज विभाग, शेखपुरा</h1>
+                    <p>
+                        <span class="ai-badge">
+                            <i class="fas fa-robot"></i> AI स्मार्ट अटेंडेंस सिस्टम
+                        </span>
+                    </p>
                 </div>
+            </div>
+            <div>
+                <button class="btn btn-primary" onclick="showHelpModal()">
+                    <i class="fas fa-question-circle"></i> मदद
+                </button>
             </div>
         </header>
         
-        <!-- Tabs -->
-        <div class="tabs-container">
-            <div class="tabs-header">
-                <button class="tab-btn active" onclick="switchTab('attendance')">
-                    <i class="fas fa-camera"></i> अटेंडेंस दर्ज करें
-                </button>
-                <button class="tab-btn" onclick="switchTab('records')">
-                    <i class="fas fa-history"></i> रिकॉर्ड्स
-                </button>
-                <button class="tab-btn" onclick="switchTab('analytics')">
-                    <i class="fas fa-chart-line"></i> एनालिटिक्स
-                </button>
-                <button class="tab-btn" onclick="switchTab('settings')">
-                    <i class="fas fa-cog"></i> सेटिंग्स
-                </button>
-            </div>
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="user-info">
+                        <h3>अधिकारी पोर्टल</h3>
+                        <p class="user-role">सुपरवाइजर</p>
+                    </div>
+                </div>
+                
+                <ul class="sidebar-nav">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                            <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span>
+                            <span>डैशबोर्ड</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('attendance')">
+                            <span class="nav-icon"><i class="fas fa-camera"></i></span>
+                            <span>अटेंडेंस दर्ज करें</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('records')">
+                            <span class="nav-icon"><i class="fas fa-history"></i></span>
+                            <span>अटेंडेंस रिकॉर्ड</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('analytics')">
+                            <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                            <span>विश्लेषण</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('employees')">
+                            <span class="nav-icon"><i class="fas fa-users"></i></span>
+                            <span>कर्मचारी</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('reports')">
+                            <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                            <span>रिपोर्ट्स</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('settings')">
+                            <span class="nav-icon"><i class="fas fa-cog"></i></span>
+                            <span>सेटिंग्स</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">आज की अटेंडेंस</span>
+                        <span class="stat-value" id="sidebarToday">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">इस सप्ताह</span>
+                        <span class="stat-value" id="sidebarWeek">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">इस महीने</span>
+                        <span class="stat-value" id="sidebarMonth">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">कुल कर्मचारी</span>
+                        <span class="stat-value">24</span>
+                    </div>
+                </div>
+            </aside>
             
-            <div class="tab-content">
-                <!-- Attendance Tab -->
-                <div class="tab-pane active" id="attendanceTab">
-                    <div class="card">
-                        <h3 class="card-title"><i class="fas fa-user"></i> कर्मचारी जानकारी</h3>
-                        
-                        <div class="form-group">
-                            <label class="form-label">कर्मचारी का नाम *</label>
-                            <input type="text" class="form-control" id="employeeName" placeholder="नाम डालें">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">विभाग *</label>
-                            <select class="form-control" id="department">
-                                <option value="">विभाग चुनें</option>
-                                <option value="पंचायत विकास">पंचायत विकास</option>
-                                <option value="स्वास्थ्य सेवाएं">स्वास्थ्य सेवाएं</option>
-                                <option value="शिक्षा">शिक्षा</option>
-                                <option value="प्रशासन">प्रशासन</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">पदनाम</label>
-                            <input type="text" class="form-control" id="designation" placeholder="पदनाम डालें">
-                        </div>
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-text">
+                        <h2>नमस्ते, अधिकारी साहब!</h2>
+                        <p>आज की अटेंडेंस दर्ज करने के लिए नीचे दिए गए विकल्पों का उपयोग करें या कैमरा बटन दबाएं।</p>
                     </div>
-                    
+                </div>
+                
+                <!-- Dashboard Cards -->
+                <div class="cards-grid" id="dashboardSection">
+                    <!-- Quick Action Card -->
                     <div class="card">
-                        <h3 class="card-title"><i class="fas fa-camera"></i> फोटो कैप्चर</h3>
-                        
-                        <div class="camera-container">
-                            <div class="camera-placeholder" id="cameraPlaceholder">
-                                <i class="fas fa-camera"></i>
-                                <p>कैमरा यहाँ दिखेगा</p>
-                            </div>
-                            <video id="videoPreview" autoplay playsinline></video>
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <div class="card-icon icon-blue">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                त्वरित कार्रवाई
+                            </h3>
                         </div>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <button class="btn btn-primary" onclick="startCamera()">
-                                <i class="fas fa-video"></i> कैमरा शुरू करें
+                        <div style="display: grid; gap: 15px;">
+                            <button class="btn btn-primary" onclick="showSection('attendance')">
+                                <i class="fas fa-camera"></i> अटेंडेंस दर्ज करें
                             </button>
-                            <button class="btn btn-success" onclick="capturePhoto()" id="captureBtn" disabled>
-                                <i class="fas fa-camera-retro"></i> फोटो लें
+                            <button class="btn btn-success" onclick="showTodayRecords()">
+                                <i class="fas fa-calendar-day"></i> आज का लॉग देखें
+                            </button>
+                            <button class="btn" style="background: var(--gray-light);" onclick="exportData()">
+                                <i class="fas fa-download"></i> डाटा डाउनलोड करें
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Photo Preview -->
-                    <div class="card" id="photoPreviewCard" style="display: none;">
-                        <h3 class="card-title"><i class="fas fa-check-circle"></i> फोटो प्रिव्यू</h3>
-                        
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <img id="capturedImage" style="max-width: 100%; border-radius: 8px;">
-                        </div>
-                        
-                        <button class="btn btn-primary btn-block" onclick="submitAttendance()">
-                            <i class="fas fa-paper-plane"></i> अटेंडेंस सबमिट करें
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Records Tab -->
-                <div class="tab-pane" id="recordsTab">
+                    <!-- Today's Summary Card -->
                     <div class="card">
-                        <h3 class="card-title"><i class="fas fa-clipboard-list"></i> अटेंडेंस रिकॉर्ड्स</h3>
-                        
-                        <div class="records-container" id="recordsList">
-                            <div style="text-align: center; padding: 40px; color: #666;">
-                                <i class="fas fa-clipboard" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                                <p>कोई रिकॉर्ड नहीं मिला</p>
-                            </div>
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <div class="card-icon icon-green">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                आज का सारांश
+                            </h3>
                         </div>
-                        
-                        <div style="display: flex; gap: 10px; margin-top: 20px;">
-                            <button class="btn btn-primary" onclick="exportToCSV()">
-                                <i class="fas fa-download"></i> CSV डाउनलोड
-                            </button>
-                            <button class="btn btn-success" onclick="clearAllRecords()">
-                                <i class="fas fa-trash"></i> सभी रिकॉर्ड हटाएं
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Analytics Tab -->
-                <div class="tab-pane" id="analyticsTab">
-                    <div class="card">
-                        <h3 class="card-title"><i class="fas fa-chart-pie"></i> आज का सारांश</h3>
-                        
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <i class="fas fa-calendar-day" style="color: var(--accent-blue); font-size: 1.5rem;"></i>
-                                <div class="stat-value" id="todayCount">0</div>
-                                <div>आज की अटेंडेंस</div>
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--gray-light);">
+                                <span>उपस्थित</span>
+                                <strong id="todayPresent">0</strong>
                             </div>
-                            <div class="stat-card">
-                                <i class="fas fa-database" style="color: var(--success-green); font-size: 1.5rem;"></i>
-                                <div class="stat-value" id="totalCount">0</div>
-                                <div>कुल रिकॉर्ड्स</div>
+                            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--gray-light);">
+                                <span>अनुपस्थित</span>
+                                <strong id="todayAbsent">0</strong>
                             </div>
-                            <div class="stat-card">
-                                <i class="fas fa-chart-line" style="color: var(--warning-orange); font-size: 1.5rem;"></i>
-                                <div class="stat-value" id="monthCount">0</div>
-                                <div>इस महीने</div>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-users" style="color: var(--danger-red); font-size: 1.5rem;"></i>
-                                <div class="stat-value" id="deptCount">0</div>
-                                <div>विभाग</div>
+                            <div style="display: flex; justify-content: space-between; padding: 15px 0;">
+                                <span>औसत समय</span>
+                                <strong>9:15 AM</strong>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Department Stats Card -->
                     <div class="card">
-                        <h3 class="card-title"><i class="fas fa-lightbulb"></i> AI विश्लेषण</h3>
-                        
-                        <div id="aiAnalysis" style="padding: 15px; background: #f8f9ff; border-radius: 8px;">
-                            <p>जैसे ही आप अटेंडेंस दर्ज करेंगे, AI स्वतः विश्लेषण दिखाएगा</p>
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <div class="card-icon icon-purple">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                विभागवार सारांश
+                            </h3>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>पंचायत विकास</span>
+                                    <span>85%</span>
+                                </div>
+                                <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 85%; height: 100%; background: var(--secondary);"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>स्वास्थ्य सेवाएं</span>
+                                    <span>92%</span>
+                                </div>
+                                <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 92%; height: 100%; background: var(--primary-light);"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>शिक्षा विभाग</span>
+                                    <span>78%</span>
+                                </div>
+                                <div style="height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 78%; height: 100%; background: var(--accent);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Insights Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <div class="card-icon icon-orange">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                AI सुझाव
+                            </h3>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 15px;">
+                                <p style="margin: 0; color: var(--dark); font-size: 0.9rem;">
+                                    <i class="fas fa-lightbulb" style="color: var(--secondary); margin-right: 8px;"></i>
+                                    आज स्वास्थ्य विभाग की उपस्थिति उत्कृष्ट है।
+                                </p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: var(--radius-sm);">
+                                <p style="margin: 0; color: var(--dark); font-size: 0.9rem;">
+                                    <i class="fas fa-clock" style="color: var(--primary-light); margin-right: 8px;"></i>
+                                    सुबह 9-10 बजे सबसे अधिक अटेंडेंस दर्ज की जाती है।
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Settings Tab -->
-                <div class="tab-pane" id="settingsTab">
+                <!-- Attendance Section -->
+                <div id="attendanceSection" style="display: none;">
                     <div class="card">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> सिस्टम सेटिंग्स</h3>
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-camera" style="color: var(--primary-light);"></i>
+                                नई अटेंडेंस दर्ज करें
+                            </h3>
+                        </div>
                         
-                        <div class="form-group">
-                            <label class="form-label">AI सिस्टम</label>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <label class="switch">
-                                    <input type="checkbox" id="aiToggle" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span>AI विश्लेषण चालू रखें</span>
+                        <div class="attendance-section">
+                            <!-- Form Section -->
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">कर्मचारी का नाम</label>
+                                    <div class="select-wrapper">
+                                        <select class="form-control" id="employeeSelect">
+                                            <option value="">कर्मचारी चुनें</option>
+                                            <option value="1">राजेश कुमार</option>
+                                            <option value="2">प्रिया शर्मा</option>
+                                            <option value="3">अमित पटेल</option>
+                                            <option value="4">स्नेहा सिंह</option>
+                                            <option value="5">विक्रम यादव</option>
+                                        </select>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">विभाग</label>
+                                    <div class="select-wrapper">
+                                        <select class="form-control" id="departmentSelect">
+                                            <option value="">विभाग चुनें</option>
+                                            <option value="पंचायत विकास">पंचायत विकास</option>
+                                            <option value="स्वास्थ्य सेवाएं">स्वास्थ्य सेवाएं</option>
+                                            <option value="शिक्षा">शिक्षा</option>
+                                            <option value="प्रशासन">प्रशासन</option>
+                                        </select>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">पदनाम</label>
+                                    <input type="text" class="form-control" id="designationInput" placeholder="पदनाम डालें">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">टिप्पणी (वैकल्पिक)</label>
+                                    <textarea class="form-control" id="commentInput" rows="3" placeholder="कोई टिप्पणी डालें"></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Camera Section -->
+                            <div>
+                                <div class="camera-box">
+                                    <div class="camera-placeholder" id="cameraPlaceholder">
+                                        <i class="fas fa-camera"></i>
+                                        <p>कैमरा यहाँ दिखेगा</p>
+                                    </div>
+                                    <video id="videoElement" autoplay playsinline></video>
+                                    <div class="camera-frame"></div>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                                    <button class="btn btn-primary" onclick="startCamera()" id="startCameraBtn">
+                                        <i class="fas fa-video"></i> कैमरा शुरू करें
+                                    </button>
+                                    <button class="btn btn-success" onclick="capturePhoto()" id="captureBtn" disabled>
+                                        <i class="fas fa-camera-retro"></i> फोटो लें
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label class="form-label">डेटा स्वतः सेव</label>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <label class="switch">
-                                    <input type="checkbox" id="autoSaveToggle" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span>स्वतः सेव करें</span>
+                        <div style="margin-top: 30px; display: flex; gap: 15px;">
+                            <button class="btn btn-success btn-block" onclick="markAttendance()" id="submitBtn" disabled>
+                                <i class="fas fa-check-circle"></i> अटेंडेंस दर्ज करें
+                            </button>
+                            <button class="btn" style="background: var(--gray-light);" onclick="showSection('dashboard')">
+                                <i class="fas fa-times"></i> रद्द करें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Records Section -->
+                <div id="recordsSection" style="display: none;">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 style="margin: 0; color: white;">
+                                <i class="fas fa-history"></i> अटेंडेंस रिकॉर्ड
+                            </h3>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="date" class="form-control" style="width: auto; padding: 8px 15px;" id="recordDate">
+                                <button class="btn btn-success" style="padding: 8px 15px;" onclick="filterRecords()">
+                                    <i class="fas fa-filter"></i>
+                                </button>
                             </div>
                         </div>
                         
-                        <button class="btn btn-primary" onclick="saveSettings()">
-                            <i class="fas fa-save"></i> सेटिंग्स सेव करें
+                        <div class="table-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>कर्मचारी</th>
+                                        <th>विभाग</th>
+                                        <th>समय</th>
+                                        <th>स्थिति</th>
+                                        <th>कार्रवाई</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recordsTable">
+                                    <!-- Records will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="exportRecords()">
+                            <i class="fas fa-file-export"></i> CSV एक्सपोर्ट करें
                         </button>
-                        
-                        <button class="btn btn-success" onclick="exportAllData()" style="margin-top: 10px;">
-                            <i class="fas fa-download"></i> सभी डाटा डाउनलोड करें
+                        <button class="btn" style="background: var(--gray-light);" onclick="printRecords()">
+                            <i class="fas fa-print"></i> प्रिंट करें
                         </button>
                     </div>
                 </div>
-            </div>
+                
+                <!-- Analytics Section -->
+                <div id="analyticsSection" style="display: none;">
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-chart-bar" style="color: var(--primary-light);"></i>
+                                    मासिक अटेंडेंस ट्रेंड
+                                </h3>
+                            </div>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>मासिक ट्रेंड चार्ट यहाँ दिखेगा</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-chart-pie" style="color: var(--accent);"></i>
+                                    विभागवार विश्लेषण
+                                </h3>
+                            </div>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-pie-chart"></i>
+                                <p>विभागवार डाटा यहाँ दिखेगा</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 25px;">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-lightbulb" style="color: var(--warning);"></i>
+                                AI इनसाइट्स
+                            </h3>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: grid; gap: 15px;">
+                                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                    <div style="background: rgba(16, 185, 129, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-calendar-check" style="color: var(--secondary);"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="margin-bottom: 5px; color: var(--dark);">उच्च उपस्थिति दर</h4>
+                                        <p style="color: var(--gray); margin: 0;">स्वास्थ्य विभाग में 92% उपस्थिति दर है, जो अन्य विभागों से अधिक है।</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                    <div style="background: rgba(239, 68, 68, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="margin-bottom: 5px; color: var(--dark);">सुधार की आवश्यकता</h4>
+                                        <p style="color: var(--gray); margin: 0;">शुक्रवार को शिक्षा विभाग में उपस्थिति दर 70% है, जो सप्ताह की सबसे कम है।</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                    <div style="background: rgba(59, 130, 246, 0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-bullseye" style="color: var(--primary-light);"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="margin-bottom: 5px; color: var(--dark);">लक्ष्य हासिल</h4>
+                                        <p style="color: var(--gray); margin: 0;">इस महीने 95% समग्र उपस्थिति दर का लक्ष्य हासिल किया गया है।</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Other sections (Employees, Reports, Settings) would be similar -->
+            </main>
         </div>
         
         <!-- Footer -->
-        <footer class="footer">
-            <p>पंचायती राज विभाग, शेखपुरा - AI स्मार्ट अटेंडेंस सिस्टम</p>
-            <p style="font-size: 0.9rem; margin-top: 5px;">Developed by अमन कुमार © 2024</p>
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-brand">पंचायती राज विभाग, शेखपुरा</div>
+                <div>AI स्मार्ट अटेंडेंस सिस्टम v2.0</div>
+                <div>Developed by <span class="developer">अमन कुमार</span> © 2024</div>
+            </div>
         </footer>
     </div>
-    
-    <!-- Simple Switch CSS -->
-    <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: var(--accent-blue);
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-    </style>
 
     <script>
         // ========== GLOBAL VARIABLES ==========
         let attendanceRecords = [];
         let videoStream = null;
-        let capturedPhoto = null;
+        let currentSection = 'dashboard';
         
         // ========== INITIALIZATION ==========
-        window.onload = function() {
-            console.log("System starting...");
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
             
-            // Load data from localStorage
-            loadData();
-            
-            // Simulate loading process
+            // Simulate loading
             setTimeout(() => {
-                document.getElementById('loadingOverlay').style.opacity = '0';
-                document.getElementById('mainContainer').style.display = 'block';
+                // Hide loading screen
+                document.getElementById('loadingScreen').style.opacity = '0';
                 
                 setTimeout(() => {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    showNotification('सिस्टम तैयार है! अटेंडेंस दर्ज करना शुरू करें।', 'success');
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'block';
+                    
+                    // Load data
+                    loadData();
+                    
+                    // Update UI
+                    updateStats();
+                    showNotification('सिस्टम तैयार है!', 'success');
                 }, 500);
-                
-                // Update stats
-                updateStats();
             }, 1500);
-        };
+            
+            // Set today's date in filter
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('recordDate').value = today;
+            
+            // Initialize sample data
+            initializeSampleData();
+        });
         
-        // ========== TAB MANAGEMENT ==========
-        function switchTab(tabName) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
+        // ========== SAMPLE DATA ==========
+        function initializeSampleData() {
+            // Sample attendance records
+            attendanceRecords = [
+                {
+                    id: 1,
+                    name: 'राजेश कुमार',
+                    department: 'पंचायत विकास',
+                    designation: 'सहायक',
+                    time: '09:15 AM',
+                    date: new Date().toISOString().split('T')[0],
+                    status: 'present',
+                    comment: 'समय पर उपस्थित'
+                },
+                {
+                    id: 2,
+                    name: 'प्रिया शर्मा',
+                    department: 'स्वास्थ्य सेवाएं',
+                    designation: 'नर्स',
+                    time: '09:30 AM',
+                    date: new Date().toISOString().split('T')[0],
+                    status: 'present',
+                    comment: ''
+                },
+                {
+                    id: 3,
+                    name: 'अमित पटेल',
+                    department: 'शिक्षा',
+                    designation: 'शिक्षक',
+                    time: '10:00 AM',
+                    date: new Date().toISOString().split('T')[0],
+                    status: 'present',
+                    comment: 'विलंब से आए'
+                }
+            ];
+            
+            // Save to localStorage
+            saveData();
+            updateRecordsTable();
+        }
+        
+        // ========== SECTION MANAGEMENT ==========
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="Section"]').forEach(el => {
+                el.style.display = 'none';
             });
             
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                pane.classList.remove('active');
+            // Show selected section
+            document.getElementById(section + 'Section').style.display = 'block';
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
             });
             
-            // Add active class to clicked tab
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            
-            // If switching to records tab, refresh list
-            if (tabName === 'records') {
-                displayRecords();
+            // Find and activate corresponding nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            for (let link of navLinks) {
+                if (link.textContent.includes(getSectionName(section))) {
+                    link.classList.add('active');
+                    break;
+                }
             }
             
-            // If switching to analytics tab, update stats
-            if (tabName === 'analytics') {
-                updateStats();
-                updateAIAnalysis();
+            // Update current section
+            currentSection = section;
+            
+            // Special handling for each section
+            if (section === 'records') {
+                updateRecordsTable();
+            } else if (section === 'analytics') {
+                updateAnalytics();
+            } else if (section === 'attendance') {
+                resetAttendanceForm();
             }
+        }
+        
+        function getSectionName(section) {
+            const sections = {
+                'dashboard': 'डैशबोर्ड',
+                'attendance': 'अटेंडेंस दर्ज करें',
+                'records': 'अटेंडेंस रिकॉर्ड',
+                'analytics': 'विश्लेषण',
+                'employees': 'कर्मचारी',
+                'reports': 'रिपोर्ट्स',
+                'settings': 'सेटिंग्स'
+            };
+            return sections[section] || section;
         }
         
         // ========== CAMERA FUNCTIONS ==========
@@ -684,36 +1347,57 @@
             try {
                 const constraints = {
                     video: {
-                        facingMode: 'user',
                         width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        height: { ideal: 720 },
+                        facingMode: 'user'
                     }
                 };
                 
                 videoStream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('videoPreview');
+                const video = document.getElementById('videoElement');
                 
                 video.srcObject = videoStream;
                 video.style.display = 'block';
                 document.getElementById('cameraPlaceholder').style.display = 'none';
                 document.getElementById('captureBtn').disabled = false;
                 
+                // Update button
+                const btn = document.getElementById('startCameraBtn');
+                btn.innerHTML = '<i class="fas fa-stop"></i> कैमरा बंद करें';
+                btn.onclick = stopCamera;
+                
                 showNotification('कैमरा शुरू हो गया', 'success');
             } catch (error) {
                 console.error('Camera error:', error);
-                showNotification('कैमरा शुरू करने में त्रुटि: ' + error.message, 'error');
+                showNotification('कैमरा एक्सेस अस्वीकृत। कृपया अनुमति दें।', 'error');
                 
-                // Show demo image for testing
+                // Show demo mode
                 document.getElementById('cameraPlaceholder').innerHTML = `
-                    <i class="fas fa-user-circle" style="font-size: 4rem;"></i>
+                    <i class="fas fa-user-circle" style="font-size: 3rem;"></i>
                     <p>कैमरा उपलब्ध नहीं</p>
-                    <p style="font-size: 0.8rem; margin-top: 10px;">डेमो मोड में</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">डेमो मोड सक्रिय</p>
                 `;
             }
         }
         
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            
+            document.getElementById('videoElement').style.display = 'none';
+            document.getElementById('cameraPlaceholder').style.display = 'flex';
+            document.getElementById('captureBtn').disabled = true;
+            
+            // Reset button
+            const btn = document.getElementById('startCameraBtn');
+            btn.innerHTML = '<i class="fas fa-video"></i> कैमरा शुरू करें';
+            btn.onclick = startCamera;
+        }
+        
         function capturePhoto() {
-            const video = document.getElementById('videoPreview');
+            const video = document.getElementById('videoElement');
             const canvas = document.createElement('canvas');
             
             canvas.width = video.videoWidth;
@@ -726,164 +1410,225 @@
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(0, 0, canvas.width, 40);
             
-            ctx.font = '16px Arial';
+            ctx.font = '16px Inter, Noto Sans Devanagari, sans-serif';
             ctx.fillStyle = 'white';
-            ctx.fillText('पंचायती राज विभाग, शेखपुरा | ' + new Date().toLocaleString('hi-IN'), 10, 25);
+            ctx.fillText('पंचायती राज विभाग | ' + new Date().toLocaleString('hi-IN'), 10, 25);
             
-            capturedPhoto = canvas.toDataURL('image/jpeg');
-            document.getElementById('capturedImage').src = capturedPhoto;
-            document.getElementById('photoPreviewCard').style.display = 'block';
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
             
-            // Scroll to preview
-            document.getElementById('photoPreviewCard').scrollIntoView({ behavior: 'smooth' });
-            
-            showNotification('फोटो कैप्चर हो गई', 'success');
+            showNotification('फोटो कैप्चर हो गई। अब अटेंडेंस दर्ज करें।', 'success');
         }
         
         // ========== ATTENDANCE FUNCTIONS ==========
-        function submitAttendance() {
-            const name = document.getElementById('employeeName').value.trim();
-            const department = document.getElementById('department').value;
-            const designation = document.getElementById('designation').value.trim();
+        function markAttendance() {
+            const employeeSelect = document.getElementById('employeeSelect');
+            const departmentSelect = document.getElementById('departmentSelect');
+            const designationInput = document.getElementById('designationInput');
             
-            if (!name) {
-                showNotification('कृपया कर्मचारी का नाम डालें', 'error');
+            if (!employeeSelect.value || !departmentSelect.value) {
+                showNotification('कृपया कर्मचारी और विभाग चुनें', 'error');
                 return;
             }
             
-            if (!department) {
-                showNotification('कृपया विभाग चुनें', 'error');
-                return;
-            }
+            const employeeName = employeeSelect.options[employeeSelect.selectedIndex].text;
+            const department = departmentSelect.value;
+            const designation = designationInput.value || 'N/A';
             
-            const record = {
+            const newRecord = {
                 id: Date.now(),
-                name: name,
+                name: employeeName,
                 department: department,
-                designation: designation || 'N/A',
-                photo: capturedPhoto || '',
-                timestamp: new Date().toISOString(),
-                date: new Date().toLocaleDateString('hi-IN'),
-                time: new Date().toLocaleTimeString('hi-IN'),
-                location: getDemoLocation()
+                designation: designation,
+                time: new Date().toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'}),
+                date: new Date().toISOString().split('T')[0],
+                status: 'present',
+                comment: document.getElementById('commentInput').value
             };
             
-            attendanceRecords.unshift(record); // Add to beginning
+            attendanceRecords.unshift(newRecord);
             saveData();
             
             // Reset form
-            document.getElementById('employeeName').value = '';
-            document.getElementById('department').value = '';
-            document.getElementById('designation').value = '';
-            document.getElementById('photoPreviewCard').style.display = 'none';
+            resetAttendanceForm();
             
-            // Stop camera
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-                videoStream = null;
-            }
-            
-            document.getElementById('videoPreview').style.display = 'none';
-            document.getElementById('cameraPlaceholder').style.display = 'flex';
-            document.getElementById('captureBtn').disabled = true;
-            
-            showNotification(`${name} की अटेंडेंस दर्ज हो गई!`, 'success');
-            
-            // Update stats
+            // Update UI
             updateStats();
-            updateAIAnalysis();
+            updateRecordsTable();
+            
+            showNotification(`${employeeName} की अटेंडेंस दर्ज हो गई!`, 'success');
+            
+            // Switch to records section
+            showSection('records');
+        }
+        
+        function resetAttendanceForm() {
+            document.getElementById('employeeSelect').value = '';
+            document.getElementById('departmentSelect').value = '';
+            document.getElementById('designationInput').value = '';
+            document.getElementById('commentInput').value = '';
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Stop camera if running
+            stopCamera();
         }
         
         // ========== RECORDS MANAGEMENT ==========
-        function displayRecords() {
-            const container = document.getElementById('recordsList');
+        function updateRecordsTable() {
+            const tableBody = document.getElementById('recordsTable');
+            const filterDate = document.getElementById('recordDate').value;
             
-            if (attendanceRecords.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-clipboard" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                        <p>कोई रिकॉर्ड नहीं मिला</p>
-                    </div>
+            // Filter records by date
+            let filteredRecords = attendanceRecords;
+            if (filterDate) {
+                filteredRecords = attendanceRecords.filter(record => record.date === filterDate);
+            }
+            
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-clipboard" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            कोई रिकॉर्ड नहीं मिला
+                        </td>
+                    </tr>
                 `;
                 return;
             }
             
             let html = '';
-            attendanceRecords.forEach(record => {
-                const initials = record.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                
+            filteredRecords.forEach(record => {
                 html += `
-                    <div class="record-item">
-                        <div class="record-header">
+                    <tr>
+                        <td>
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 40px; height: 40px; background: var(--accent-blue); 
-                                     border-radius: 50%; display: flex; align-items: center; 
-                                     justify-content: center; color: white; font-weight: bold;">
-                                    ${initials.substring(0, 2)}
+                                <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); 
+                                     border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                    ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                                 </div>
                                 <div>
-                                    <strong>${record.name}</strong>
-                                    <div style="font-size: 0.9rem; color: #666;">${record.department}</div>
+                                    <div style="font-weight: 500;">${record.name}</div>
+                                    <div style="font-size: 0.85rem; color: var(--gray);">${record.designation}</div>
                                 </div>
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 0.9rem; color: #666;">${record.date}</div>
-                                <div style="font-size: 0.8rem; color: #888;">${record.time}</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.9rem;">
-                            <span>पदनाम: ${record.designation}</span>
-                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" 
-                                    onclick="deleteRecord(${record.id})">
-                                <i class="fas fa-trash"></i>
+                        </td>
+                        <td>${record.department}</td>
+                        <td>${record.time}</td>
+                        <td>
+                            <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                ${record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="viewRecord(${record.id})">
+                                <i class="fas fa-eye"></i>
                             </button>
-                        </div>
-                    </div>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1);" onclick="deleteRecord(${record.id})">
+                                <i class="fas fa-trash" style="color: var(--danger);"></i>
+                            </button>
+                        </td>
+                    </tr>
                 `;
             });
             
-            container.innerHTML = html;
+            tableBody.innerHTML = html;
+        }
+        
+        function filterRecords() {
+            updateRecordsTable();
         }
         
         function deleteRecord(id) {
             if (confirm('क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं?')) {
                 attendanceRecords = attendanceRecords.filter(record => record.id !== id);
                 saveData();
-                displayRecords();
+                updateRecordsTable();
                 updateStats();
                 showNotification('रिकॉर्ड हटा दिया गया', 'success');
             }
         }
         
-        function clearAllRecords() {
-            if (attendanceRecords.length === 0) {
-                showNotification('हटाने के लिए कोई रिकॉर्ड नहीं', 'warning');
-                return;
-            }
-            
-            if (confirm('क्या आप सभी रिकॉर्ड्स हटाना चाहते हैं? यह एक्शन पूर्ववत नहीं किया जा सकता।')) {
-                attendanceRecords = [];
-                saveData();
-                displayRecords();
-                updateStats();
-                showNotification('सभी रिकॉर्ड्स हटा दिए गए', 'success');
+        function viewRecord(id) {
+            const record = attendanceRecords.find(r => r.id === id);
+            if (record) {
+                const modalContent = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 style="margin: 0; color: var(--primary-dark);">
+                                <i class="fas fa-eye"></i> रिकॉर्ड विवरण
+                            </h3>
+                            <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="display: grid; gap: 20px;">
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); 
+                                         border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">
+                                        ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 style="margin: 0 0 5px 0; color: var(--primary-dark);">${record.name}</h4>
+                                        <p style="margin: 0; color: var(--gray);">${record.department} • ${record.designation}</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">तारीख</label>
+                                        <div style="font-weight: 500; color: var(--dark);">${record.date}</div>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">समय</label>
+                                        <div style="font-weight: 500; color: var(--dark);">${record.time}</div>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">स्थिति</label>
+                                        <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                            ${record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">दर्ज किया गया</label>
+                                        <div style="font-weight: 500; color: var(--dark);">आज</div>
+                                    </div>
+                                </div>
+                                
+                                ${record.comment ? `
+                                    <div>
+                                        <label style="display: block; font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">टिप्पणी</label>
+                                        <div style="background: #f8fafc; padding: 15px; border-radius: var(--radius-sm);">
+                                            ${record.comment}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('modalContainer').innerHTML = modalContent;
+                document.getElementById('modalContainer').classList.add('active');
             }
         }
         
         // ========== EXPORT FUNCTIONS ==========
-        function exportToCSV() {
+        function exportRecords() {
             if (attendanceRecords.length === 0) {
                 showNotification('एक्सपोर्ट करने के लिए कोई डाटा नहीं', 'warning');
                 return;
             }
             
-            const headers = ['तारीख', 'समय', 'नाम', 'विभाग', 'पदनाम'];
+            const headers = ['तारीख', 'समय', 'नाम', 'विभाग', 'पदनाम', 'स्थिति', 'टिप्पणी'];
             const rows = attendanceRecords.map(record => [
                 record.date,
                 record.time,
                 record.name,
                 record.department,
-                record.designation
+                record.designation,
+                record.status === 'present' ? 'उपस्थित' : 'अनुपस्थित',
+                record.comment || ''
             ]);
             
             let csvContent = headers.join(',') + '\n';
@@ -891,236 +1636,187 @@
                 csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
             });
             
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `अटेंडेंस_रिकॉर्ड_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `अटेंडेंस_रिकॉर्ड_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
             
             showNotification('CSV फाइल डाउनलोड हो गई', 'success');
         }
         
-        function exportAllData() {
+        function exportData() {
             const data = {
-                app: 'पंचायती राज विभाग AI अटेंडेंस',
-                records: attendanceRecords,
-                exportDate: new Date().toISOString()
+                app: 'पंचायती राज विभाग AI अटेंडेंस सिस्टम',
+                version: '2.0',
+                exportDate: new Date().toISOString(),
+                records: attendanceRecords
             };
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `अटेंडेंस_डाटा_${Date.now()}.json`;
-            a.click();
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `पंचायत_अटेंडेंस_डाटा_${Date.now()}.json`;
+            link.click();
             
             showNotification('सभी डाटा डाउनलोड हो गया', 'success');
         }
         
-        // ========== ANALYTICS FUNCTIONS ==========
+        function printRecords() {
+            window.print();
+        }
+        
+        // ========== STATS & ANALYTICS ==========
         function updateStats() {
-            const today = new Date().toLocaleDateString('hi-IN');
+            const today = new Date().toISOString().split('T')[0];
             const todayRecords = attendanceRecords.filter(r => r.date === today);
-            const thisMonth = new Date().getMonth();
-            const monthRecords = attendanceRecords.filter(r => new Date(r.timestamp).getMonth() === thisMonth);
+            const presentToday = todayRecords.filter(r => r.status === 'present').length;
             
-            document.getElementById('todayCount').textContent = todayRecords.length;
-            document.getElementById('totalCount').textContent = attendanceRecords.length;
-            document.getElementById('monthCount').textContent = monthRecords.length;
+            // Update sidebar
+            document.getElementById('sidebarToday').textContent = presentToday;
+            document.getElementById('sidebarWeek').textContent = attendanceRecords.length;
+            document.getElementById('sidebarMonth').textContent = attendanceRecords.length;
             
-            // Count unique departments
-            const departments = [...new Set(attendanceRecords.map(r => r.department))].filter(d => d);
-            document.getElementById('deptCount').textContent = departments.length;
+            // Update dashboard
+            document.getElementById('todayPresent').textContent = presentToday;
+            document.getElementById('todayAbsent').textContent = Math.max(0, 24 - presentToday); // Assuming 24 employees
         }
         
-        function updateAIAnalysis() {
-            const container = document.getElementById('aiAnalysis');
-            
-            if (attendanceRecords.length === 0) {
-                container.innerHTML = `
-                    <p>जैसे ही आप अटेंडेंस दर्ज करेंगे, AI स्वतः विश्लेषण दिखाएगा</p>
-                `;
-                return;
-            }
-            
-            const today = new Date().toLocaleDateString('hi-IN');
-            const todayRecords = attendanceRecords.filter(r => r.date === today);
-            const departments = {};
-            
-            attendanceRecords.forEach(record => {
-                departments[record.department] = (departments[record.department] || 0) + 1;
-            });
-            
-            // Find top department
-            let topDept = '';
-            let maxCount = 0;
-            for (const [dept, count] of Object.entries(departments)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    topDept = dept;
-                }
-            }
-            
-            let analysis = `<p><strong>AI विश्लेषण:</strong></p>`;
-            analysis += `<p>• आज की अटेंडेंस: ${todayRecords.length}</p>`;
-            analysis += `<p>• सबसे अधिक अटेंडेंस: ${topDept} (${maxCount} बार)</p>`;
-            analysis += `<p>• कुल विभाग: ${Object.keys(departments).length}</p>`;
-            
-            if (todayRecords.length < 3 && todayRecords.length > 0) {
-                analysis += `<p style="color: var(--warning-orange); margin-top: 10px;">
-                    <i class="fas fa-exclamation-triangle"></i> आज की अटेंडेंस कम है
-                </p>`;
-            }
-            
-            container.innerHTML = analysis;
+        function updateAnalytics() {
+            // This function would update charts and analytics
+            // For now, we'll just update the stats
+            updateStats();
         }
         
-        // ========== SETTINGS FUNCTIONS ==========
-        function saveSettings() {
-            const aiEnabled = document.getElementById('aiToggle').checked;
-            const autoSave = document.getElementById('autoSaveToggle').checked;
-            
-            localStorage.setItem('aiEnabled', aiEnabled);
-            localStorage.setItem('autoSave', autoSave);
-            
-            showNotification('सेटिंग्स सेव हो गईं', 'success');
+        function showTodayRecords() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('recordDate').value = today;
+            showSection('records');
+            updateRecordsTable();
         }
         
-        function loadSettings() {
-            const aiEnabled = localStorage.getItem('aiEnabled') !== 'false';
-            const autoSave = localStorage.getItem('autoSave') !== 'false';
+        // ========== MODAL FUNCTIONS ==========
+        function showHelpModal() {
+            const modalContent = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 style="margin: 0; color: var(--primary-dark);">
+                            <i class="fas fa-question-circle"></i> मदद
+                        </h3>
+                        <button class="btn btn-icon" onclick="closeModal()" style="background: transparent; color: var(--gray);">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: grid; gap: 20px;">
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--primary-dark);">सिस्टम उपयोग विधि</h4>
+                                <ol style="margin-left: 20px; color: var(--gray); line-height: 2;">
+                                    <li><strong>अटेंडेंस दर्ज करें:</strong> कर्मचारी चुनें, कैमरा शुरू करें, फोटो लें और सबमिट करें</li>
+                                    <li><strong>रिकॉर्ड देखें:</strong> सभी अटेंडेंस रिकॉर्ड्स देखें और फिल्टर करें</li>
+                                    <li><strong>विश्लेषण:</strong> AI द्वारा उपस्थिति पैटर्न का विश्लेषण देखें</li>
+                                    <li><strong>डाटा एक्सपोर्ट:</strong> CSV या JSON फॉर्मेट में डाटा डाउनलोड करें</li>
+                                </ol>
+                            </div>
+                            
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--primary-dark);">संपर्क</h4>
+                                <p style="color: var(--gray); margin: 0;">
+                                    <i class="fas fa-user" style="color: var(--primary-light); margin-right: 8px;"></i>
+                                    विकसित: <strong>अमन कुमार</strong>
+                                </p>
+                                <p style="color: var(--gray); margin: 10px 0 0 0;">
+                                    <i class="fas fa-info-circle" style="color: var(--accent); margin-right: 8px;"></i>
+                                    पंचायती राज विभाग, शेखपुरा - AI स्मार्ट अटेंडेंस सिस्टम
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
             
-            document.getElementById('aiToggle').checked = aiEnabled;
-            document.getElementById('autoSaveToggle').checked = autoSave;
+            document.getElementById('modalContainer').innerHTML = modalContent;
+            document.getElementById('modalContainer').classList.add('active');
         }
         
-        // ========== UTILITY FUNCTIONS ==========
-        function getDemoLocation() {
-            return {
-                latitude: 25.1518,
-                longitude: 85.8565,
-                address: 'पंचायती राज विभाग, शेखपुरा (डेमो लोकेशन)'
-            };
+        function closeModal() {
+            document.getElementById('modalContainer').classList.remove('active');
         }
         
+        // ========== NOTIFICATION SYSTEM ==========
         function showNotification(message, type = 'info') {
-            // Create notification element
+            const container = document.getElementById('notificationContainer');
             const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-                color: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 1000;
-                animation: slideIn 0.3s ease-out;
-                max-width: 300px;
-            `;
-            
+            notification.className = `notification notification-${type}`;
             notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="notification-icon">
                     <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                    <span>${message}</span>
+                </div>
+                <div>
+                    <div style="font-weight: 500; margin-bottom: 5px;">
+                        ${type === 'success' ? 'सफलता' : type === 'error' ? 'त्रुटि' : 'सूचना'}
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--gray);">${message}</div>
                 </div>
             `;
             
-            document.body.appendChild(notification);
+            container.appendChild(notification);
             
-            // Remove after 3 seconds
+            // Show notification
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
+                notification.classList.add('show');
+            }, 10);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
                 setTimeout(() => {
-                    document.body.removeChild(notification);
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
                 }, 300);
-            }, 3000);
-            
-            // Add animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
+            }, 4000);
         }
         
-        function showHelp() {
-            const helpText = `
-                <div style="padding: 20px;">
-                    <h3 style="margin-bottom: 15px;">पंचायती राज विभाग AI अटेंडेंस सिस्टम</h3>
-                    <p><strong>उपयोग विधि:</strong></p>
-                    <ol style="margin-left: 20px; margin-bottom: 15px;">
-                        <li>कर्मचारी का नाम और विभाग भरें</li>
-                        <li>'कैमरा शुरू करें' बटन दबाएं</li>
-                        <li>'फोटो लें' बटन दबाकर फोटो कैप्चर करें</li>
-                        <li>'अटेंडेंस सबमिट करें' बटन दबाएं</li>
-                    </ol>
-                    <p><strong>फीचर्स:</strong></p>
-                    <ul style="margin-left: 20px;">
-                        <li>अटेंडेंस दर्ज करें</li>
-                        <li>रिकॉर्ड्स देखें</li>
-                        <li>AI विश्लेषण</li>
-                        <li>डाटा एक्सपोर्ट</li>
-                    </ul>
-                    <p style="margin-top: 15px;"><strong>विकसित:</strong> अमन कुमार</p>
-                </div>
-            `;
-            
-            alert(helpText);
-        }
-        
-        // ========== DATA MANAGEMENT ==========
+        // ========== DATA STORAGE ==========
         function saveData() {
             try {
-                localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
-                console.log('Data saved successfully');
+                localStorage.setItem('panchayatAttendanceRecords', JSON.stringify(attendanceRecords));
             } catch (error) {
                 console.error('Error saving data:', error);
-                showNotification('डाटा सेव करने में त्रुटि', 'error');
             }
         }
         
         function loadData() {
             try {
-                const saved = localStorage.getItem('attendanceRecords');
+                const saved = localStorage.getItem('panchayatAttendanceRecords');
                 if (saved) {
                     attendanceRecords = JSON.parse(saved);
-                    console.log('Data loaded successfully:', attendanceRecords.length, 'records');
+                    console.log('Loaded', attendanceRecords.length, 'records');
                 }
-                
-                loadSettings();
             } catch (error) {
                 console.error('Error loading data:', error);
-                attendanceRecords = [];
             }
         }
         
-        // ========== INITIAL SETUP ==========
-        // Make sure all essential elements exist
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing...');
-            
-            // Add event listeners
-            document.getElementById('employeeName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('department').focus();
-                }
-            });
-            
-            // Initialize
-            loadData();
-            updateStats();
-            updateAIAnalysis();
+        // ========== UTILITY FUNCTIONS ==========
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modalContainer = document.getElementById('modalContainer');
+            if (event.target === modalContainer) {
+                closeModal();
+            }
         });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Initialize
+        console.log('AI Attendance System initialized successfully!');
     </script>
 </body>
 </html>

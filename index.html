@@ -1042,7 +1042,7 @@
                                 <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: var(--radius-sm);">
                                     <p style="margin: 0; color: var(--dark); font-size: 0.9rem;">
                                         <i class="fas fa-clock" style="color: var(--primary-light); margin-right: 8px;"></i>
-                                        सुबह 9-10 बजे सबसे अधिक अटेंडेंस दर्ज की जाती है।
+                                        सुबह 10:30-11:00 बजे सबसे अधिक अटेंडेंस दर्ज की जाती है।
                                     </p>
                                 </div>
                             </div>
@@ -1071,11 +1071,17 @@
                                             <option value="1">AMRENDRA KUMAR</option>
                                             <option value="2">SULOK KUMAR</option>
                                             <option value="3">DHIRAJ KUMAR</option>
-                                            <option value="4">DEEPAK KUMAR</option>
+                                            <option value="4">DEEPAK KUMAR SINGH</option>
                                             <option value="5">SANGEETA KUMARI</option>
-                                            <option value="6">PRATIMA KUMAR</option>
+                                            <option value="6">PRATIMA KUMARI</option>
                                             <option value="7">JULI KUMARI</option>
                                             <option value="8">SHIREEN TARRANUM</option>
+                                             <option value="9">AVINASH KUMAR</option>
+                                             <option value="10">RAJVARDHAN SHARMA</option>
+                                             <option value="11">CHANDAN KUMAR</option>
+                                             <option value="12">JACKY KUMAR</option>
+                                             <option value="13">DEEPAK KUMAR</option>
+                                             <option value="14">BEAUTY KUMARI</option>
                                         </select>
                                         <i class="fas fa-chevron-down"></i>
                                     </div>
@@ -1087,10 +1093,7 @@
                                         <select class="form-control" id="departmentSelect">
                                             <option value="">विभाग चुनें</option>
                                             <option value="पंचायती राज विभाग">पंचायती राज विभाग</option>
-                                            <option value="वित्त विभाग">वित्त विभाग</option>
-                                            <option value="स्वास्थ्य विभाग">स्वास्थ्य विभाग</option>
-                                            <option value="शिक्षा विभाग">शिक्षा विभाग</option>
-                                        </select>
+                                            </select>
                                         <i class="fas fa-chevron-down"></i>
                                     </div>
                                 </div>
@@ -1478,13 +1481,19 @@
             // Sample employees
             employees = [
                 { id: 1, name: 'AMRENDRA KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '1234567890' },
-                { id: 2, name: 'SULOK KUMAR', department: 'पंचायती राज विभाग', designation: 'ACCOUNTANT', contact: '9876543210' },
-                { id: 3, name: 'DHIRAJ KUMAR', department: 'पंचायती राज विभाग', designation: 'OFFICER', contact: '8765432109' },
-                { id: 4, name: 'DEEPAK KUMAR', department: 'पंचायती राज विभाग', designation: 'ASSISTANT', contact: '7654321098' },
-                { id: 5, name: 'SANGEETA KUMARI', department: 'पंचायती राज विभाग', designation: 'CLERK', contact: '6543210987' },
-                { id: 6, name: 'PRATIMA KUMAR', department: 'पंचायती राज विभाग', designation: 'SUPERVISOR', contact: '5432109876' },
-                { id: 7, name: 'JULI KUMARI', department: 'पंचायती राज विभाग', designation: 'MANAGER', contact: '4321098765' },
-                { id: 8, name: 'SHIREEN TARRANUM', department: 'पंचायती राज विभाग', designation: 'DIRECTOR', contact: '3210987654' }
+                { id: 2, name: 'SULOK KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '9876543210' },
+                { id: 3, name: 'DHIRAJ KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '8765432109' },
+                { id: 4, name: 'DEEPAK KUMAR SINGH', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '7654321098' },
+                { id: 5, name: 'SANGEETA KUMARI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '6543210987' },
+                { id: 6, name: 'PRATIMA KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '5432109876' },
+                { id: 7, name: 'JULI KUMARI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '4321098765' },
+                { id: 8, name: 'SHIREEN TARRANUM', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 9, name: 'AVINASH KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 10, name: 'RAJVARDHAN SHARMA', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 11, name: 'CHANDAN KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 12, name: 'JACKY KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 13, name: 'DEEPAK KUMAR', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
+                { id: 14, name: 'BEAUTY KUMRI', department: 'पंचायती राज विभाग', designation: 'DATA ENTRY OPERATOR', contact: '3210987654' }
             ];
             
             // Sample attendance records
@@ -1508,7 +1517,7 @@
                     employeeId: 2,
                     name: 'SULOK KUMAR',
                     department: 'पंचायती राज विभाग',
-                    designation: 'ACCOUNTANT',
+                    designation: 'DATA ENTRY OPERATOR',
                     time: '09:30 AM',
                     date: today,
                     status: 'present',
@@ -1519,7 +1528,7 @@
                     employeeId: 3,
                     name: 'DHIRAJ KUMAR',
                     department: 'पंचायती राज विभाग',
-                    designation: 'OFFICER',
+                    designation: 'DATA ENTRY OPERATOR',
                     time: '10:00 AM',
                     date: today,
                     status: 'present',
@@ -1530,7 +1539,7 @@
                     employeeId: 4,
                     name: 'DEEPAK KUMAR',
                     department: 'पंचायती राज विभाग',
-                    designation: 'ASSISTANT',
+                    designation: 'DATA ENTRY OPERATOR',
                     time: '09:45 AM',
                     date: yesterday,
                     status: 'present',
@@ -1983,9 +1992,6 @@
                                 <label class="form-label">विभाग</label>
                                 <select class="form-control" id="newEmployeeDepartment">
                                     <option value="पंचायती राज विभाग">पंचायती राज विभाग</option>
-                                    <option value="वित्त विभाग">वित्त विभाग</option>
-                                    <option value="स्वास्थ्य विभाग">स्वास्थ्य विभाग</option>
-                                    <option value="शिक्षा विभाग">शिक्षा विभाग</option>
                                 </select>
                             </div>
                             <div class="form-group">

@@ -11,6 +11,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
         /* Reset and Base Styles */
         * {
@@ -623,6 +626,47 @@
             border-bottom: none;
         }
 
+        /* Map Container */
+        .map-container {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--radius);
+            margin-top: 20px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+        }
+
+        #geofenceMap {
+            width: 100%;
+            height: 100%;
+        }
+
+        .geofence-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .geofence-status.inside {
+            background: #e8f5e9;
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .geofence-status.outside {
+            background: #ffebee;
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .geofence-status i {
+            font-size: 20px;
+        }
+
         /* Records Section */
         .records-container {
             background: white;
@@ -769,6 +813,34 @@
             color: var(--danger);
         }
 
+        /* Geofence Settings */
+        .geofence-settings {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-top: 25px;
+            border: 2px solid #e8eaf6;
+        }
+
+        .geofence-settings h4 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .geofence-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .geofence-controls input {
+            flex: 1;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .two-column-layout {
@@ -832,6 +904,10 @@
             .main-content {
                 padding: 20px;
             }
+            
+            .geofence-controls {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 480px) {
@@ -894,6 +970,14 @@
                 transform: translateX(0);
                 opacity: 1;
             }
+        }
+
+        /* Geofence Circle on Map */
+        .geofence-circle {
+            stroke: #1a237e;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            fill: rgba(26, 35, 126, 0.1);
         }
     </style>
 </head>
@@ -1002,6 +1086,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="#geofence" class="nav-link" data-section="geofence">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Geofence Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="#reports" class="nav-link" data-section="reports">
                             <i class="fas fa-chart-bar"></i>
                             <span>Reports & Analytics</span>
@@ -1095,10 +1185,10 @@
                                 <p>Register new employee</p>
                             </div>
                             
-                            <div class="action-card" id="quickGenerateReport">
-                                <i class="fas fa-file-export"></i>
-                                <h3>Generate Report</h3>
-                                <p>Create attendance report</p>
+                            <div class="action-card" id="quickSetGeofence">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h3>Set Geofence</h3>
+                                <p>Configure attendance area</p>
                             </div>
                         </div>
                     </div>
@@ -1153,6 +1243,18 @@
                                     <div class="location-row">
                                         <span>Photo Time:</span>
                                         <span id="photoCaptureTime">Not captured</span>
+                                    </div>
+                                    <div class="location-row">
+                                        <span>Distance from Office:</span>
+                                        <span id="distanceFromOffice">Calculating...</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Geofence Status -->
+                                <div id="geofenceStatusContainer" style="display: none;">
+                                    <div class="geofence-status" id="geofenceStatus">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span>Checking location permissions...</span>
                                     </div>
                                 </div>
                             </div>
@@ -1214,6 +1316,7 @@
                                         <th>Time</th>
                                         <th>Status</th>
                                         <th>Location</th>
+                                        <th>Distance</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -1266,6 +1369,53 @@
                                     <!-- Employees will be loaded here -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Geofence Settings Section -->
+                <section id="geofenceSection" class="content-section">
+                    <div class="records-container">
+                        <div class="section-header">
+                            <h2><i class="fas fa-map-marker-alt"></i> Geofence Settings</h2>
+                        </div>
+                        
+                        <div class="geofence-settings">
+                            <h4><i class="fas fa-bullseye"></i> Configure Attendance Area</h4>
+                            <p style="margin-bottom: 20px; color: var(--gray);">
+                                Set the geofence boundary for attendance marking. Employees must be within 50 meters of this location to mark attendance.
+                            </p>
+                            
+                            <div class="geofence-controls">
+                                <input type="number" id="geofenceLat" class="form-control" placeholder="Latitude (e.g., 25.5941)" step="any">
+                                <input type="number" id="geofenceLng" class="form-control" placeholder="Longitude (e.g., 85.1376)" step="any">
+                                <button class="btn btn-primary" id="setGeofenceBtn">
+                                    <i class="fas fa-save"></i> Set Geofence
+                                </button>
+                            </div>
+                            
+                            <div class="map-container">
+                                <div id="geofenceMap"></div>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <p><strong>Current Geofence:</strong></p>
+                                <div id="currentGeofenceInfo">
+                                    <p>Latitude: <span id="currentGeofenceLat">Not set</span></p>
+                                    <p>Longitude: <span id="currentGeofenceLng">Not set</span></p>
+                                    <p>Radius: <span id="currentGeofenceRadius">50 meters</span></p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: var(--radius);">
+                                <h4><i class="fas fa-info-circle"></i> How it works:</h4>
+                                <ul style="margin-top: 10px; padding-left: 20px;">
+                                    <li>Set the central point for attendance marking</li>
+                                    <li>Employees must be within 50 meters of this point</li>
+                                    <li>Real-time location tracking verifies employee presence</li>
+                                    <li>Prevents attendance marking from outside the designated area</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1338,6 +1488,18 @@
                             <div class="form-group">
                                 <label>Attendance End Time</label>
                                 <input type="time" class="form-control" id="endTime" value="17:00">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Geofence Radius (meters)</label>
+                                <input type="number" class="form-control" id="geofenceRadius" value="50" min="10" max="200">
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="enableGeofence" checked>
+                                    <span>Enable Geofence Restriction</span>
+                                </label>
                             </div>
                             
                             <div class="form-group" style="margin-bottom: 20px;">
@@ -1417,9 +1579,12 @@
         </div>
     </div>
 
+    <!-- Leaflet JS for Maps -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <!-- JavaScript -->
     <script>
-        // App State
+        // App State with Geofencing
         const AppState = {
             isAuthenticated: false,
             currentUser: null,
@@ -1428,18 +1593,30 @@
             currentStream: null,
             capturedPhoto: null,
             currentLocation: null,
+            geofenceCenter: null,
+            geofenceRadius: 50, // meters
+            geofenceEnabled: true,
+            locationWatchId: null,
+            map: null,
+            geofenceCircle: null,
+            marker: null,
             
             init() {
                 this.loadData();
                 this.setupEventListeners();
                 this.initializeDemoData();
                 this.hideLoading();
+                
+                // Load geofence settings
+                this.loadGeofenceSettings();
             },
             
             loadData() {
                 try {
                     const savedEmployees = localStorage.getItem('panchayat_employees');
                     const savedRecords = localStorage.getItem('panchayat_attendance');
+                    const savedGeofence = localStorage.getItem('panchayat_geofence');
+                    const savedSettings = localStorage.getItem('panchayat_settings');
                     
                     if (savedEmployees) {
                         this.employees = JSON.parse(savedEmployees);
@@ -1447,6 +1624,17 @@
                     
                     if (savedRecords) {
                         this.attendanceRecords = JSON.parse(savedRecords);
+                    }
+                    
+                    if (savedGeofence) {
+                        const geofence = JSON.parse(savedGeofence);
+                        this.geofenceCenter = geofence.center;
+                        this.geofenceRadius = geofence.radius || 50;
+                    }
+                    
+                    if (savedSettings) {
+                        const settings = JSON.parse(savedSettings);
+                        this.geofenceEnabled = settings.enableGeofence !== false;
                     }
                 } catch (error) {
                     console.error('Error loading data:', error);
@@ -1457,8 +1645,144 @@
                 try {
                     localStorage.setItem('panchayat_employees', JSON.stringify(this.employees));
                     localStorage.setItem('panchayat_attendance', JSON.stringify(this.attendanceRecords));
+                    
+                    // Save geofence
+                    localStorage.setItem('panchayat_geofence', JSON.stringify({
+                        center: this.geofenceCenter,
+                        radius: this.geofenceRadius
+                    }));
                 } catch (error) {
                     console.error('Error saving data:', error);
+                }
+            },
+            
+            loadGeofenceSettings() {
+                if (this.geofenceCenter) {
+                    document.getElementById('currentGeofenceLat').textContent = this.geofenceCenter.lat.toFixed(6);
+                    document.getElementById('currentGeofenceLng').textContent = this.geofenceCenter.lng.toFixed(6);
+                    document.getElementById('currentGeofenceRadius').textContent = this.geofenceRadius + ' meters';
+                    
+                    // Set input values
+                    document.getElementById('geofenceLat').value = this.geofenceCenter.lat;
+                    document.getElementById('geofenceLng').value = this.geofenceCenter.lng;
+                    document.getElementById('geofenceRadius').value = this.geofenceRadius;
+                    
+                    // Initialize map if needed
+                    if (document.getElementById('geofenceMap')) {
+                        this.initMap();
+                    }
+                }
+            },
+            
+            initMap() {
+                if (!this.geofenceCenter) return;
+                
+                if (!this.map) {
+                    this.map = L.map('geofenceMap').setView([this.geofenceCenter.lat, this.geofenceCenter.lng], 16);
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(this.map);
+                }
+                
+                // Clear existing circle and marker
+                if (this.geofenceCircle) {
+                    this.map.removeLayer(this.geofenceCircle);
+                }
+                if (this.marker) {
+                    this.map.removeLayer(this.marker);
+                }
+                
+                // Add geofence circle
+                this.geofenceCircle = L.circle([this.geofenceCenter.lat, this.geofenceCenter.lng], {
+                    color: '#1a237e',
+                    fillColor: '#1a237e',
+                    fillOpacity: 0.1,
+                    radius: this.geofenceRadius
+                }).addTo(this.map);
+                
+                // Add center marker
+                this.marker = L.marker([this.geofenceCenter.lat, this.geofenceCenter.lng]).addTo(this.map)
+                    .bindPopup('Attendance Center<br>Radius: ' + this.geofenceRadius + ' meters')
+                    .openPopup();
+            },
+            
+            setGeofence(lat, lng) {
+                this.geofenceCenter = {
+                    lat: parseFloat(lat),
+                    lng: parseFloat(lng)
+                };
+                
+                this.saveData();
+                this.loadGeofenceSettings();
+                this.showNotification('Geofence location set successfully', 'success');
+            },
+            
+            // Calculate distance between two coordinates in meters
+            calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371e3; // Earth's radius in meters
+                const φ1 = lat1 * Math.PI / 180;
+                const φ2 = lat2 * Math.PI / 180;
+                const Δφ = (lat2 - lat1) * Math.PI / 180;
+                const Δλ = (lon2 - lon1) * Math.PI / 180;
+                
+                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                          Math.cos(φ1) * Math.cos(φ2) *
+                          Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                
+                return R * c; // Distance in meters
+            },
+            
+            // Check if current location is within geofence
+            isWithinGeofence(location) {
+                if (!this.geofenceCenter || !this.geofenceEnabled) return true;
+                
+                const distance = this.calculateDistance(
+                    location.lat, location.lng,
+                    this.geofenceCenter.lat, this.geofenceCenter.lng
+                );
+                
+                return distance <= this.geofenceRadius;
+            },
+            
+            // Update geofence status display
+            updateGeofenceStatus(location) {
+                const statusContainer = document.getElementById('geofenceStatusContainer');
+                const statusElement = document.getElementById('geofenceStatus');
+                const distanceElement = document.getElementById('distanceFromOffice');
+                
+                if (!this.geofenceCenter || !location) {
+                    statusContainer.style.display = 'none';
+                    return;
+                }
+                
+                const distance = this.calculateDistance(
+                    location.lat, location.lng,
+                    this.geofenceCenter.lat, this.geofenceCenter.lng
+                );
+                
+                // Update distance display
+                distanceElement.textContent = distance.toFixed(1) + ' meters';
+                
+                // Update status
+                statusContainer.style.display = 'block';
+                if (distance <= this.geofenceRadius) {
+                    statusElement.className = 'geofence-status inside';
+                    statusElement.innerHTML = `<i class="fas fa-check-circle"></i><span>Within attendance area (${distance.toFixed(1)}m)</span>`;
+                    
+                    // Enable attendance button if employee is selected and photo is captured
+                    const employeeSelected = document.getElementById('attendanceEmployee').value;
+                    const photoCaptured = this.capturedPhoto;
+                    if (employeeSelected && photoCaptured) {
+                        document.getElementById('markAttendanceBtn').disabled = false;
+                    }
+                } else {
+                    statusElement.className = 'geofence-status outside';
+                    statusElement.innerHTML = `<i class="fas fa-times-circle"></i><span>Outside attendance area (${distance.toFixed(1)}m)</span>`;
+                    
+                    // Disable attendance button
+                    document.getElementById('markAttendanceBtn').disabled = true;
                 }
             },
             
@@ -1496,11 +1820,20 @@
                             date: today,
                             status: 'present',
                             location: '25.5941, 85.1376',
+                            distance: '15.2m',
                             ip: '192.168.1.1',
                             remarks: 'On time'
                         }
                     ];
                     this.saveData();
+                }
+                
+                // Set default geofence if not set
+                if (!this.geofenceCenter) {
+                    this.geofenceCenter = {
+                        lat: 25.5941,
+                        lng: 85.1376
+                    };
                 }
             },
             
@@ -1538,8 +1871,8 @@
                     this.showEmployeeModal();
                 });
                 
-                document.getElementById('quickGenerateReport').addEventListener('click', () => {
-                    this.showSection('reports');
+                document.getElementById('quickSetGeofence').addEventListener('click', () => {
+                    this.showSection('geofence');
                 });
                 
                 // Camera Controls
@@ -1573,6 +1906,19 @@
                 document.getElementById('employeeForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.saveEmployee();
+                });
+                
+                // Geofence Settings
+                document.getElementById('setGeofenceBtn').addEventListener('click', () => {
+                    const lat = document.getElementById('geofenceLat').value;
+                    const lng = document.getElementById('geofenceLng').value;
+                    
+                    if (!lat || !lng) {
+                        this.showNotification('Please enter both latitude and longitude', 'error');
+                        return;
+                    }
+                    
+                    this.setGeofence(lat, lng);
                 });
                 
                 // Reports
@@ -1617,6 +1963,25 @@
                 // Employee Select Change
                 document.getElementById('attendanceEmployee').addEventListener('change', (e) => {
                     this.onEmployeeSelect(e.target.value);
+                    
+                    // Check if we can enable attendance button
+                    if (e.target.value && this.capturedPhoto) {
+                        // Check geofence if enabled
+                        if (this.geofenceEnabled && this.currentLocation) {
+                            if (this.isWithinGeofence(this.currentLocation)) {
+                                document.getElementById('markAttendanceBtn').disabled = false;
+                            } else {
+                                document.getElementById('markAttendanceBtn').disabled = true;
+                            }
+                        } else {
+                            document.getElementById('markAttendanceBtn').disabled = false;
+                        }
+                    }
+                });
+                
+                // Enable Geofence checkbox
+                document.getElementById('enableGeofence').addEventListener('change', (e) => {
+                    this.geofenceEnabled = e.target.checked;
                 });
             },
             
@@ -1640,8 +2005,9 @@
                     
                     this.showNotification('Login successful!', 'success');
                     
-                    // Get location
+                    // Get location and start watching
                     this.getCurrentLocation();
+                    this.startLocationWatching();
                     this.getIPAddress();
                     
                 } else {
@@ -1654,6 +2020,9 @@
                     this.isAuthenticated = false;
                     this.currentUser = null;
                     
+                    // Stop location watching
+                    this.stopLocationWatching();
+                    
                     // Hide app, show login
                     document.getElementById('mainApp').style.display = 'none';
                     document.getElementById('loginPage').style.display = 'block';
@@ -1662,6 +2031,46 @@
                     document.getElementById('loginForm').reset();
                     
                     this.showNotification('Logged out successfully', 'success');
+                }
+            },
+            
+            startLocationWatching() {
+                if (navigator.geolocation) {
+                    this.locationWatchId = navigator.geolocation.watchPosition(
+                        (position) => {
+                            this.currentLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            
+                            document.getElementById('locationCoordinates').textContent = 
+                                `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                            
+                            // Update geofence status
+                            this.updateGeofenceStatus(this.currentLocation);
+                        },
+                        (error) => {
+                            console.error('Geolocation error:', error);
+                            document.getElementById('locationCoordinates').textContent = 'Location not available';
+                            
+                            // Hide geofence status
+                            document.getElementById('geofenceStatusContainer').style.display = 'none';
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            maximumAge: 0,
+                            timeout: 5000
+                        }
+                    );
+                } else {
+                    document.getElementById('locationCoordinates').textContent = 'Geolocation not supported';
+                }
+            },
+            
+            stopLocationWatching() {
+                if (this.locationWatchId && navigator.geolocation) {
+                    navigator.geolocation.clearWatch(this.locationWatchId);
+                    this.locationWatchId = null;
                 }
             },
             
@@ -1693,9 +2102,21 @@
                     case 'employees':
                         this.loadEmployeesTable();
                         break;
+                    case 'geofence':
+                        this.initGeofenceSection();
+                        break;
                     case 'dashboard':
                         this.updateDashboard();
                         break;
+                }
+            },
+            
+            initGeofenceSection() {
+                // Initialize map if geofence is set
+                if (this.geofenceCenter) {
+                    setTimeout(() => {
+                        this.initMap();
+                    }, 100);
                 }
             },
             
@@ -1817,10 +2238,23 @@
                 const now = new Date();
                 document.getElementById('photoCaptureTime').textContent = now.toLocaleTimeString('en-IN');
                 
-                // Enable mark attendance button
-                document.getElementById('markAttendanceBtn').disabled = false;
-                
-                this.showNotification('Photo captured successfully!', 'success');
+                // Check if we can enable attendance button
+                const employeeSelected = document.getElementById('attendanceEmployee').value;
+                if (employeeSelected) {
+                    // Check geofence if enabled
+                    if (this.geofenceEnabled && this.currentLocation) {
+                        if (this.isWithinGeofence(this.currentLocation)) {
+                            document.getElementById('markAttendanceBtn').disabled = false;
+                            this.showNotification('Photo captured! You are within the attendance area.', 'success');
+                        } else {
+                            document.getElementById('markAttendanceBtn').disabled = true;
+                            this.showNotification('Photo captured! But you are outside the attendance area.', 'warning');
+                        }
+                    } else {
+                        document.getElementById('markAttendanceBtn').disabled = false;
+                        this.showNotification('Photo captured successfully!', 'success');
+                    }
+                }
             },
             
             stopCamera() {
@@ -1836,6 +2270,10 @@
                 document.getElementById('startCameraBtn').disabled = false;
                 document.getElementById('capturePhotoBtn').disabled = true;
                 document.getElementById('stopCameraBtn').disabled = true;
+                
+                // Clear captured photo
+                this.capturedPhoto = null;
+                document.getElementById('markAttendanceBtn').disabled = true;
             },
             
             getCurrentLocation() {
@@ -1848,10 +2286,16 @@
                             };
                             document.getElementById('locationCoordinates').textContent = 
                                 `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                            
+                            // Update geofence status
+                            this.updateGeofenceStatus(this.currentLocation);
                         },
                         (error) => {
                             console.error('Geolocation error:', error);
                             document.getElementById('locationCoordinates').textContent = 'Location not available';
+                            
+                            // Hide geofence status
+                            document.getElementById('geofenceStatusContainer').style.display = 'none';
                         }
                     );
                 } else {
@@ -1878,8 +2322,31 @@
                     return;
                 }
                 
+                if (!this.capturedPhoto) {
+                    this.showNotification('Please capture a photo first', 'error');
+                    return;
+                }
+                
+                // Check geofence if enabled
+                if (this.geofenceEnabled && this.geofenceCenter) {
+                    if (!this.isWithinGeofence(this.currentLocation)) {
+                        this.showNotification('You are outside the allowed attendance area!', 'error');
+                        return;
+                    }
+                }
+                
                 const employee = this.employees.find(emp => emp.id == employeeId);
                 const now = new Date();
+                
+                // Calculate distance from office
+                let distanceFromOffice = 'N/A';
+                if (this.geofenceCenter && this.currentLocation) {
+                    const distance = this.calculateDistance(
+                        this.currentLocation.lat, this.currentLocation.lng,
+                        this.geofenceCenter.lat, this.geofenceCenter.lng
+                    );
+                    distanceFromOffice = distance.toFixed(1) + 'm';
+                }
                 
                 const attendanceRecord = {
                     id: Date.now(),
@@ -1891,6 +2358,7 @@
                     date: now.toISOString().split('T')[0],
                     status: 'present',
                     location: document.getElementById('locationCoordinates').textContent,
+                    distance: distanceFromOffice,
                     ip: document.getElementById('ipAddress').textContent,
                     remarks: remarks,
                     photoTime: document.getElementById('photoCaptureTime').textContent
@@ -1900,9 +2368,10 @@
                 this.saveData();
                 
                 // Reset form
-                document.getElementById('attendanceForm').reset();
+                document.getElementById('attendanceEmployee').value = '';
                 document.getElementById('attendanceDepartment').value = '';
                 document.getElementById('attendanceDesignation').value = '';
+                document.getElementById('attendanceRemarks').value = '';
                 document.getElementById('photoCaptureTime').textContent = 'Not captured';
                 document.getElementById('markAttendanceBtn').disabled = true;
                 
@@ -1950,6 +2419,7 @@
                                 </span>
                             </td>
                             <td>${record.location}</td>
+                            <td>${record.distance}</td>
                             <td>
                                 <div class="table-actions">
                                     <button class="btn btn-icon" style="background: #2196f3; color: white;" onclick="AppState.viewRecord(${record.id})">
@@ -1968,7 +2438,72 @@
             },
             
             filterRecords() {
-                // Implementation for filtering records
+                const date = document.getElementById('filterDate').value;
+                const employeeId = document.getElementById('filterEmployee').value;
+                
+                let filteredRecords = [...this.attendanceRecords];
+                
+                if (date) {
+                    filteredRecords = filteredRecords.filter(record => record.date === date);
+                }
+                
+                if (employeeId) {
+                    filteredRecords = filteredRecords.filter(record => record.employeeId == employeeId);
+                }
+                
+                // Update table with filtered records
+                const tbody = document.getElementById('recordsTableBody');
+                const noRecordsMessage = document.getElementById('noRecordsMessage');
+                
+                if (filteredRecords.length === 0) {
+                    tbody.innerHTML = '';
+                    noRecordsMessage.style.display = 'block';
+                    return;
+                }
+                
+                noRecordsMessage.style.display = 'none';
+                
+                let html = '';
+                filteredRecords.forEach((record, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 40px; height: 40px; background: #1a237e; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                        ${record.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600;">${record.name}</div>
+                                        <div style="font-size: 12px; color: #666;">${record.designation}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${record.department}</td>
+                            <td>${record.time}</td>
+                            <td>
+                                <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                    ${record.status === 'present' ? 'Present' : 'Absent'}
+                                </span>
+                            </td>
+                            <td>${record.location}</td>
+                            <td>${record.distance}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn btn-icon" style="background: #2196f3; color: white;" onclick="AppState.viewRecord(${record.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-icon" style="background: #f44336; color: white;" onclick="AppState.deleteRecord(${record.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                
                 this.showNotification('Filter applied', 'success');
             },
             
@@ -1984,7 +2519,7 @@
                     return;
                 }
                 
-                const headers = ['Name', 'Department', 'Designation', 'Date', 'Time', 'Status', 'Location', 'IP Address', 'Remarks'];
+                const headers = ['Name', 'Department', 'Designation', 'Date', 'Time', 'Status', 'Location', 'Distance', 'IP Address', 'Remarks'];
                 const csvData = [
                     headers.join(','),
                     ...this.attendanceRecords.map(record => [
@@ -1995,6 +2530,7 @@
                         `"${record.time}"`,
                         `"${record.status}"`,
                         `"${record.location}"`,
+                        `"${record.distance}"`,
                         `"${record.ip}"`,
                         `"${record.remarks || ''}"`
                     ].join(','))
@@ -2153,7 +2689,7 @@
             viewRecord(id) {
                 const record = this.attendanceRecords.find(r => r.id == id);
                 if (record) {
-                    alert(`Attendance Details:\n\nName: ${record.name}\nDepartment: ${record.department}\nTime: ${record.time}\nDate: ${record.date}\nStatus: ${record.status}\nLocation: ${record.location}\nIP: ${record.ip}\nRemarks: ${record.remarks || 'None'}`);
+                    alert(`Attendance Details:\n\nName: ${record.name}\nDepartment: ${record.department}\nTime: ${record.time}\nDate: ${record.date}\nStatus: ${record.status}\nLocation: ${record.location}\nDistance: ${record.distance}\nIP: ${record.ip}\nRemarks: ${record.remarks || 'None'}`);
                 }
             },
             
@@ -2233,12 +2769,24 @@
                     language: document.getElementById('systemLanguage').value,
                     startTime: document.getElementById('startTime').value,
                     endTime: document.getElementById('endTime').value,
+                    geofenceRadius: parseInt(document.getElementById('geofenceRadius').value),
+                    enableGeofence: document.getElementById('enableGeofence').checked,
                     notifications: document.getElementById('enableNotifications').checked,
                     camera: document.getElementById('enableCamera').checked,
                     gps: document.getElementById('enableGPS').checked
                 };
                 
+                // Update geofence radius
+                this.geofenceRadius = settings.geofenceRadius;
+                
+                // Save to localStorage
                 localStorage.setItem('panchayat_settings', JSON.stringify(settings));
+                
+                // Update geofence circle if exists
+                if (this.geofenceCircle && this.geofenceCenter) {
+                    this.geofenceCircle.setRadius(this.geofenceRadius);
+                }
+                
                 this.showNotification('Settings saved successfully', 'success');
             },
             
@@ -2247,9 +2795,20 @@
                     document.getElementById('systemLanguage').value = 'hi';
                     document.getElementById('startTime').value = '09:00';
                     document.getElementById('endTime').value = '17:00';
+                    document.getElementById('geofenceRadius').value = '50';
+                    document.getElementById('enableGeofence').checked = true;
                     document.getElementById('enableNotifications').checked = true;
                     document.getElementById('enableCamera').checked = true;
                     document.getElementById('enableGPS').checked = true;
+                    
+                    // Update app state
+                    this.geofenceRadius = 50;
+                    this.geofenceEnabled = true;
+                    
+                    // Update geofence circle if exists
+                    if (this.geofenceCircle && this.geofenceCenter) {
+                        this.geofenceCircle.setRadius(this.geofenceRadius);
+                    }
                     
                     this.showNotification('Settings reset to default', 'success');
                 }

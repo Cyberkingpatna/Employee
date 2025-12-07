@@ -1758,6 +1758,7 @@
                     <select id="empDesignation" class="form-control" required>
                         <option value="">Select Designation</option>
                         <option value="DATA ENTRY OPERATOR">DATA ENTRY OPERATOR</option>
+                        <option value="EXECUTIVE ASSISTANT">EXECUTIVE ASSISTANT</option>
                         <option value="PANCHAYATI RAJ OFFICER">PANCHAYATI RAJ OFFICER</option>
                         <option value="SUPERVISOR">SUPERVISOR</option>
                         <option value="MANAGER">MANAGER</option>
@@ -2106,13 +2107,13 @@
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '9876543210', 
                             status: 'active',
-                            geofence: null // Will use designation/global
+                            geofence: null
                         },
                         { 
                             id: 3, 
                             name: 'DHIRAJ KUMAR', 
                             department: 'पंचायती राज विभाग', 
-                            designation: 'PANCHAYATI RAJ OFFICER', 
+                            designation: 'EXECUTIVE ASSISTANT', 
                             contact: '8765432109', 
                             status: 'active',
                             geofence: { lat: 25.6010, lng: 85.1250, radius: 100 }
@@ -2121,7 +2122,7 @@
                             id: 4, 
                             name: 'DEEPAK KUMAR SINGH', 
                             department: 'पंचायती राज विभाग', 
-                            designation: 'SUPERVISOR', 
+                            designation: 'DATA ENTRY OPERATOR', 
                             contact: '7654321098', 
                             status: 'active',
                             geofence: null
@@ -2139,7 +2140,7 @@
                             id: 6, 
                             name: 'PRATIMA KUMARI', 
                             department: 'पंचायती राज विभाग', 
-                            designation: 'DATA ENTRY OPERATOR', 
+                            designation: 'EXECUTIVE ASSISTANT', 
                             contact: '5432109876', 
                             status: 'active',
                             geofence: null
@@ -2148,10 +2149,317 @@
                             id: 7, 
                             name: 'JULI KUMARI', 
                             department: 'पंचायती राज विभाग', 
-                            designation: 'MANAGER', 
+                            designation: 'EXECUTIVE ASSISTANT', 
                             contact: '4321098765', 
                             status: 'active',
                             geofence: { lat: 25.5900, lng: 85.1450, radius: 75 }
+                        },
+                        // New employees added from the list
+                        { 
+                            id: 8, 
+                            name: 'DHANBEER KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 9, 
+                            name: 'VIKASH KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 10, 
+                            name: 'AMAN KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 11, 
+                            name: 'ANUSHA KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 12, 
+                            name: 'TRIVENI NATH SAHU', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 13, 
+                            name: 'KAJAL KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 14, 
+                            name: 'BITTU KUMAR SINHA', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 15, 
+                            name: 'SURAJ KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 16, 
+                            name: 'RANJEET KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 17, 
+                            name: 'MD SHAMSHAD', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 18, 
+                            name: 'AMRITA KIRAN', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 19, 
+                            name: 'PAMMI KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 20, 
+                            name: 'PINTU KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 21, 
+                            name: 'PUNAM KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 22, 
+                            name: 'PRITY KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 23, 
+                            name: 'SACHIN KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 24, 
+                            name: 'MANTU THAKUR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 25, 
+                            name: 'RAJENDRA YADAV', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 26, 
+                            name: 'NITU KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 27, 
+                            name: 'RANJAN KUMAR PANDIT', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 28, 
+                            name: 'SADDAM HUSSAIN', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 29, 
+                            name: 'ARPANA KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 30, 
+                            name: 'RAHUL KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 31, 
+                            name: 'RAJU KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 32, 
+                            name: 'VIRENDRA CHAUDHARY', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 33, 
+                            name: 'PRABHAT KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 34, 
+                            name: 'PINTU KUMAR CHAUDHARY', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 35, 
+                            name: 'KUMAR ANAND', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 36, 
+                            name: 'GAURAV BIHARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 37, 
+                            name: 'SHAILENDRA KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 38, 
+                            name: 'RAJNEET KUMAR RAJAK', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 39, 
+                            name: 'DILIP KUMAR', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 40, 
+                            name: 'MAMTA KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'EXECUTIVE ASSISTANT', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
+                        },
+                        { 
+                            id: 41, 
+                            name: 'SHRISHTY KUMARI', 
+                            department: 'पंचायती राज विभाग', 
+                            designation: 'DATA ENTRY OPERATOR', 
+                            contact: '', 
+                            status: 'active',
+                            geofence: null
                         }
                     ];
                     this.saveData();
@@ -2170,6 +2478,11 @@
                 if (Object.keys(this.designationGeofences).length === 0) {
                     this.designationGeofences = {
                         'DATA ENTRY OPERATOR': {
+                            lat: 25.5941,
+                            lng: 85.1376,
+                            radius: 50
+                        },
+                        'EXECUTIVE ASSISTANT': {
                             lat: 25.5941,
                             lng: 85.1376,
                             radius: 50
@@ -3365,8 +3678,312 @@
                 }
             },
             
-            // Other methods (loadRecords, filterRecords, exportRecords, updateDashboard, etc.)
-            // These remain largely the same as previous version, just update to include geofence type
+            loadRecords() {
+                const tbody = document.getElementById('recordsTableBody');
+                const noRecordsMessage = document.getElementById('noRecordsMessage');
+                
+                if (this.attendanceRecords.length === 0) {
+                    tbody.innerHTML = '';
+                    noRecordsMessage.style.display = 'block';
+                    return;
+                }
+                
+                noRecordsMessage.style.display = 'none';
+                
+                let html = '';
+                this.attendanceRecords.forEach((record, index) => {
+                    const employee = this.employees.find(emp => emp.id == record.employeeId);
+                    const geofence = this.getEmployeeGeofence(record.employeeId);
+                    let geofenceType = 'None';
+                    if (geofence) {
+                        if (geofence.type === 'individual') geofenceType = 'Individual';
+                        else if (geofence.type === 'designation') geofenceType = 'Designation';
+                        else if (geofence.type === 'global') geofenceType = 'Global';
+                    }
+                    
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${record.name}</td>
+                            <td>${record.department}</td>
+                            <td>${record.time}</td>
+                            <td>
+                                <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                    ${record.status === 'present' ? 'Present' : 'Absent'}
+                                </span>
+                            </td>
+                            <td>${record.location}</td>
+                            <td>${record.distance}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn btn-icon" style="background: #2196f3; color: white;" onclick="AppState.viewRecordDetails(${record.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-icon" style="background: #f44336; color: white;" onclick="AppState.deleteRecord(${record.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+            },
+            
+            filterRecords() {
+                const date = document.getElementById('filterDate').value;
+                const employeeId = document.getElementById('filterEmployee').value;
+                
+                let filteredRecords = this.attendanceRecords;
+                
+                if (date) {
+                    filteredRecords = filteredRecords.filter(record => record.date === date);
+                }
+                
+                if (employeeId) {
+                    filteredRecords = filteredRecords.filter(record => record.employeeId == employeeId);
+                }
+                
+                const tbody = document.getElementById('recordsTableBody');
+                const noRecordsMessage = document.getElementById('noRecordsMessage');
+                
+                if (filteredRecords.length === 0) {
+                    tbody.innerHTML = '';
+                    noRecordsMessage.style.display = 'block';
+                    return;
+                }
+                
+                noRecordsMessage.style.display = 'none';
+                
+                let html = '';
+                filteredRecords.forEach((record, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${record.name}</td>
+                            <td>${record.department}</td>
+                            <td>${record.time}</td>
+                            <td>
+                                <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
+                                    ${record.status === 'present' ? 'Present' : 'Absent'}
+                                </span>
+                            </td>
+                            <td>${record.location}</td>
+                            <td>${record.distance}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn btn-icon" style="background: #2196f3; color: white;" onclick="AppState.viewRecordDetails(${record.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-icon" style="background: #f44336; color: white;" onclick="AppState.deleteRecord(${record.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+            },
+            
+            resetFilters() {
+                document.getElementById('filterDate').value = '';
+                document.getElementById('filterEmployee').value = '';
+                this.loadRecords();
+            },
+            
+            viewRecordDetails(recordId) {
+                const record = this.attendanceRecords.find(r => r.id === recordId);
+                if (!record) return;
+                
+                alert(`Record Details:\n
+Name: ${record.name}\n
+Department: ${record.department}\n
+Designation: ${record.designation}\n
+Time: ${record.time}\n
+Date: ${record.date}\n
+Status: ${record.status}\n
+Location: ${record.location}\n
+Distance from Geofence: ${record.distance}\n
+IP Address: ${record.ip}\n
+Remarks: ${record.remarks || 'None'}\n
+Photo Time: ${record.photoTime || 'N/A'}\n
+Geofence Type: ${record.geofenceType || 'None'}`);
+            },
+            
+            deleteRecord(recordId) {
+                if (confirm('Are you sure you want to delete this attendance record?')) {
+                    this.attendanceRecords = this.attendanceRecords.filter(r => r.id !== recordId);
+                    this.saveData();
+                    this.loadRecords();
+                    this.updateDashboard();
+                    this.updateSidebarStats();
+                    
+                    this.showNotification('Attendance record deleted successfully', 'success');
+                }
+            },
+            
+            exportRecords() {
+                const today = new Date().toISOString().split('T')[0];
+                const filename = `attendance_records_${today}.csv`;
+                
+                let csv = 'S.No,Employee Name,Department,Designation,Time,Date,Status,Location,Distance,IP Address,Remarks,Geofence Type\n';
+                
+                this.attendanceRecords.forEach((record, index) => {
+                    const geofence = this.getEmployeeGeofence(record.employeeId);
+                    let geofenceType = 'None';
+                    if (geofence) {
+                        if (geofence.type === 'individual') geofenceType = 'Individual';
+                        else if (geofence.type === 'designation') geofenceType = 'Designation';
+                        else if (geofence.type === 'global') geofenceType = 'Global';
+                    }
+                    
+                    csv += `${index + 1},"${record.name}","${record.department}","${record.designation}","${record.time}","${record.date}","${record.status}","${record.location}","${record.distance}","${record.ip}","${record.remarks || ''}","${geofenceType}"\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                this.showNotification('Records exported successfully', 'success');
+            },
+            
+            generateReport(type) {
+                let reportData = '';
+                let filename = '';
+                
+                const today = new Date().toISOString().split('T')[0];
+                const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+                
+                switch(type) {
+                    case 'daily':
+                        filename = `daily_report_${today}.csv`;
+                        const todayRecords = this.attendanceRecords.filter(r => r.date === today);
+                        
+                        reportData = 'S.No,Employee Name,Department,Designation,Time,Status,Location,Distance,Remarks\n';
+                        todayRecords.forEach((record, index) => {
+                            reportData += `${index + 1},"${record.name}","${record.department}","${record.designation}","${record.time}","${record.status}","${record.location}","${record.distance}","${record.remarks || ''}"\n`;
+                        });
+                        
+                        if (todayRecords.length === 0) {
+                            this.showNotification('No attendance records for today', 'info');
+                            return;
+                        }
+                        break;
+                        
+                    case 'monthly':
+                        filename = `monthly_report_${currentMonth.replace(' ', '_')}.csv`;
+                        
+                        // Group by date
+                        const recordsByDate = {};
+                        this.attendanceRecords.forEach(record => {
+                            if (!recordsByDate[record.date]) {
+                                recordsByDate[record.date] = [];
+                            }
+                            recordsByDate[record.date].push(record);
+                        });
+                        
+                        reportData = 'Date,Present Count,Absent Count,Total Employees,Attendance Percentage\n';
+                        
+                        for (const date in recordsByDate) {
+                            const dateRecords = recordsByDate[date];
+                            const presentCount = dateRecords.filter(r => r.status === 'present').length;
+                            const absentCount = this.employees.length - presentCount;
+                            const attendancePercentage = (presentCount / this.employees.length * 100).toFixed(2);
+                            
+                            reportData += `${date},${presentCount},${absentCount},${this.employees.length},${attendancePercentage}%\n`;
+                        }
+                        break;
+                        
+                    case 'department':
+                        filename = `department_report_${today}.csv`;
+                        
+                        const deptStats = {};
+                        this.employees.forEach(emp => {
+                            if (!deptStats[emp.department]) {
+                                deptStats[emp.department] = { total: 0, present: 0 };
+                            }
+                            deptStats[emp.department].total++;
+                        });
+                        
+                        const todayAttendance = this.attendanceRecords.filter(r => r.date === today);
+                        todayAttendance.forEach(record => {
+                            if (record.status === 'present' && deptStats[record.department]) {
+                                deptStats[record.department].present++;
+                            }
+                        });
+                        
+                        reportData = 'Department,Total Employees,Present Today,Absent Today,Attendance Percentage\n';
+                        
+                        for (const dept in deptStats) {
+                            const stats = deptStats[dept];
+                            const absent = stats.total - stats.present;
+                            const percentage = (stats.present / stats.total * 100).toFixed(2);
+                            
+                            reportData += `"${dept}",${stats.total},${stats.present},${absent},${percentage}%\n`;
+                        }
+                        break;
+                }
+                
+                const blob = new Blob([reportData], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                this.showNotification(`${type} report generated successfully`, 'success');
+            },
+            
+            saveSettings() {
+                const settings = {
+                    enableGeofence: document.getElementById('enableGeofence').checked,
+                    enableNotifications: document.getElementById('enableNotifications').checked,
+                    enableCamera: document.getElementById('enableCamera').checked,
+                    enableGPS: document.getElementById('enableGPS').checked,
+                    startTime: document.getElementById('startTime').value,
+                    endTime: document.getElementById('endTime').value,
+                    language: document.getElementById('systemLanguage').value,
+                    geofenceRadius: this.defaultRadius
+                };
+                
+                this.geofenceEnabled = settings.enableGeofence;
+                
+                try {
+                    localStorage.setItem('panchayat_settings', JSON.stringify(settings));
+                    this.showNotification('Settings saved successfully', 'success');
+                } catch (error) {
+                    this.showNotification('Error saving settings', 'error');
+                }
+            },
+            
+            resetSettings() {
+                if (confirm('Reset all settings to default?')) {
+                    document.getElementById('enableGeofence').checked = true;
+                    document.getElementById('enableNotifications').checked = true;
+                    document.getElementById('enableCamera').checked = true;
+                    document.getElementById('enableGPS').checked = true;
+                    document.getElementById('startTime').value = '09:00';
+                    document.getElementById('endTime').value = '17:00';
+                    document.getElementById('systemLanguage').value = 'hi';
+                    
+                    this.geofenceEnabled = true;
+                    this.defaultRadius = 50;
+                    
+                    this.showNotification('Settings reset to default', 'success');
+                }
+            },
             
             updateDashboard() {
                 const today = new Date().toISOString().split('T')[0];

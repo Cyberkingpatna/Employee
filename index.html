@@ -691,7 +691,7 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
+            min-width: 900px;
         }
 
         .data-table th {
@@ -788,7 +788,7 @@
             border-radius: var(--radius);
             padding: 30px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -1285,6 +1285,11 @@
                                 </div>
                                 
                                 <div class="form-group">
+                                    <label for="attendanceOffice">Office Name</label>
+                                    <input type="text" id="attendanceOffice" class="form-control" readonly>
+                                </div>
+                                
+                                <div class="form-group">
                                     <label for="attendanceRemarks">Remarks (Optional)</label>
                                     <textarea id="attendanceRemarks" class="form-control" rows="3" placeholder="Enter any remarks"></textarea>
                                 </div>
@@ -1372,6 +1377,7 @@
                                         <th>S.No</th>
                                         <th>Employee</th>
                                         <th>Department</th>
+                                        <th>Office Name</th>
                                         <th>Time</th>
                                         <th>Status</th>
                                         <th>Location</th>
@@ -1418,6 +1424,7 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Department</th>
+                                        <th>Office Name</th>
                                         <th>Designation</th>
                                         <th>Geofence</th>
                                         <th>Status</th>
@@ -1465,7 +1472,8 @@
                                     <h4><i class="fas fa-user"></i> Geofence for: <span id="geofenceEmployeeName"></span></h4>
                                     <p style="margin-bottom: 15px; color: var(--gray);">
                                         Designation: <strong id="geofenceEmployeeDesignation"></strong> | 
-                                        Department: <strong id="geofenceEmployeeDepartment"></strong>
+                                        Department: <strong id="geofenceEmployeeDepartment"></strong> |
+                                        Office: <strong id="geofenceEmployeeOffice"></strong>
                                     </p>
                                     
                                     <div class="geofence-controls">
@@ -1750,6 +1758,17 @@
                     <select id="empDepartment" class="form-control" required>
                         <option value="">Select Department</option>
                         <option value="पंचायती राज विभाग">Panchayati Raj Department</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="empOffice">Office Name</label>
+                    <select id="empOffice" class="form-control" required>
+                        <option value="">Select Office</option>
+                        <option value="शेखपुरा पंचायत कार्यालय">Sheikhpura Panchayat Office</option>
+                        <option value="मुख्यालय पंचायत कार्यालय">Headquarters Panchayat Office</option>
+                        <option value="क्षेत्रीय पंचायत कार्यालय">Regional Panchayat Office</option>
+                        <option value="उप कार्यालय">Sub Office</option>
                     </select>
                 </div>
                 
@@ -2095,6 +2114,7 @@
                             id: 1, 
                             name: 'AMRENDRA KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '1234567890', 
                             status: 'active',
@@ -2104,6 +2124,7 @@
                             id: 2, 
                             name: 'SULOK KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '9876543210', 
                             status: 'active',
@@ -2113,6 +2134,7 @@
                             id: 3, 
                             name: 'DHIRAJ KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '8765432109', 
                             status: 'active',
@@ -2122,6 +2144,7 @@
                             id: 4, 
                             name: 'DEEPAK KUMAR SINGH', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '7654321098', 
                             status: 'active',
@@ -2131,6 +2154,7 @@
                             id: 5, 
                             name: 'SANGEETA KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '6543210987', 
                             status: 'active',
@@ -2140,6 +2164,7 @@
                             id: 6, 
                             name: 'PRATIMA KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '5432109876', 
                             status: 'active',
@@ -2149,6 +2174,7 @@
                             id: 7, 
                             name: 'JULI KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '4321098765', 
                             status: 'active',
@@ -2159,6 +2185,7 @@
                             id: 8, 
                             name: 'DHANBEER KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2168,6 +2195,7 @@
                             id: 9, 
                             name: 'VIKASH KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2177,6 +2205,7 @@
                             id: 10, 
                             name: 'AMAN KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2186,6 +2215,7 @@
                             id: 11, 
                             name: 'ANUSHA KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2195,6 +2225,7 @@
                             id: 12, 
                             name: 'TRIVENI NATH SAHU', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2204,6 +2235,7 @@
                             id: 13, 
                             name: 'KAJAL KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2213,6 +2245,7 @@
                             id: 14, 
                             name: 'BITTU KUMAR SINHA', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2222,6 +2255,7 @@
                             id: 15, 
                             name: 'SURAJ KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2231,6 +2265,7 @@
                             id: 16, 
                             name: 'RANJEET KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2240,6 +2275,7 @@
                             id: 17, 
                             name: 'MD SHAMSHAD', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2249,6 +2285,7 @@
                             id: 18, 
                             name: 'AMRITA KIRAN', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2258,6 +2295,7 @@
                             id: 19, 
                             name: 'PAMMI KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2267,6 +2305,7 @@
                             id: 20, 
                             name: 'PINTU KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2276,6 +2315,7 @@
                             id: 21, 
                             name: 'PUNAM KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2285,6 +2325,7 @@
                             id: 22, 
                             name: 'PRITY KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2294,6 +2335,7 @@
                             id: 23, 
                             name: 'SACHIN KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2303,6 +2345,7 @@
                             id: 24, 
                             name: 'MANTU THAKUR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2312,6 +2355,7 @@
                             id: 25, 
                             name: 'RAJENDRA YADAV', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2321,6 +2365,7 @@
                             id: 26, 
                             name: 'NITU KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2330,6 +2375,7 @@
                             id: 27, 
                             name: 'RANJAN KUMAR PANDIT', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2339,6 +2385,7 @@
                             id: 28, 
                             name: 'SADDAM HUSSAIN', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2348,6 +2395,7 @@
                             id: 29, 
                             name: 'ARPANA KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2357,6 +2405,7 @@
                             id: 30, 
                             name: 'RAHUL KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2366,6 +2415,7 @@
                             id: 31, 
                             name: 'RAJU KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2375,6 +2425,7 @@
                             id: 32, 
                             name: 'VIRENDRA CHAUDHARY', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2384,6 +2435,7 @@
                             id: 33, 
                             name: 'PRABHAT KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2393,6 +2445,7 @@
                             id: 34, 
                             name: 'PINTU KUMAR CHAUDHARY', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2402,6 +2455,7 @@
                             id: 35, 
                             name: 'KUMAR ANAND', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2411,6 +2465,7 @@
                             id: 36, 
                             name: 'GAURAV BIHARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2420,6 +2475,7 @@
                             id: 37, 
                             name: 'SHAILENDRA KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'क्षेत्रीय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2429,6 +2485,7 @@
                             id: 38, 
                             name: 'RAJNEET KUMAR RAJAK', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2438,6 +2495,7 @@
                             id: 39, 
                             name: 'DILIP KUMAR', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2447,6 +2505,7 @@
                             id: 40, 
                             name: 'MAMTA KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'उप कार्यालय',
                             designation: 'EXECUTIVE ASSISTANT', 
                             contact: '', 
                             status: 'active',
@@ -2456,6 +2515,7 @@
                             id: 41, 
                             name: 'SHRISHTY KUMARI', 
                             department: 'पंचायती राज विभाग', 
+                            office: 'मुख्यालय पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR', 
                             contact: '', 
                             status: 'active',
@@ -2503,6 +2563,7 @@
                             employeeId: 1,
                             name: 'AMRENDRA KUMAR',
                             department: 'पंचायती राज विभाग',
+                            office: 'शेखपुरा पंचायत कार्यालय',
                             designation: 'DATA ENTRY OPERATOR',
                             time: '09:15 AM',
                             date: today,
@@ -2935,6 +2996,7 @@
                 document.getElementById('geofenceEmployeeName').textContent = employee.name;
                 document.getElementById('geofenceEmployeeDesignation').textContent = employee.designation;
                 document.getElementById('geofenceEmployeeDepartment').textContent = employee.department;
+                document.getElementById('geofenceEmployeeOffice').textContent = employee.office;
                 
                 // Get current geofence for this employee
                 const geofence = this.getEmployeeGeofence(employeeId);
@@ -3249,6 +3311,7 @@
                 if (employee) {
                     document.getElementById('attendanceDepartment').value = employee.department;
                     document.getElementById('attendanceDesignation').value = employee.designation;
+                    document.getElementById('attendanceOffice').value = employee.office;
                 }
             },
             
@@ -3454,6 +3517,7 @@
                     employeeId: parseInt(employeeId),
                     name: employee.name,
                     department: employee.department,
+                    office: employee.office,
                     designation: employee.designation,
                     time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
                     date: now.toISOString().split('T')[0],
@@ -3473,6 +3537,7 @@
                 document.getElementById('attendanceEmployee').value = '';
                 document.getElementById('attendanceDepartment').value = '';
                 document.getElementById('attendanceDesignation').value = '';
+                document.getElementById('attendanceOffice').value = '';
                 document.getElementById('attendanceRemarks').value = '';
                 document.getElementById('photoCaptureTime').textContent = 'Not captured';
                 document.getElementById('employeeGeofenceInfoContainer').style.display = 'none';
@@ -3512,6 +3577,7 @@
                             <td>${employee.id}</td>
                             <td>${employee.name}</td>
                             <td>${employee.department}</td>
+                            <td>${employee.office}</td>
                             <td>${employee.designation}</td>
                             <td>${geofenceBadge}</td>
                             <td>
@@ -3548,6 +3614,7 @@
                     document.getElementById('employeeId').value = employee.id;
                     document.getElementById('empName').value = employee.name;
                     document.getElementById('empDepartment').value = employee.department;
+                    document.getElementById('empOffice').value = employee.office;
                     document.getElementById('empDesignation').value = employee.designation;
                     document.getElementById('empContact').value = employee.contact;
                     
@@ -3595,11 +3662,12 @@
                 const id = document.getElementById('employeeId').value;
                 const name = document.getElementById('empName').value.toUpperCase();
                 const department = document.getElementById('empDepartment').value;
+                const office = document.getElementById('empOffice').value;
                 const designation = document.getElementById('empDesignation').value;
                 const contact = document.getElementById('empContact').value;
                 const geofenceType = document.getElementById('empGeofenceType').value;
                 
-                if (!name || !department || !designation) {
+                if (!name || !department || !office || !designation) {
                     this.showNotification('Please fill all required fields', 'error');
                     return;
                 }
@@ -3608,6 +3676,7 @@
                 const employeeData = {
                     name,
                     department,
+                    office,
                     designation,
                     contact,
                     status: 'active'
@@ -3706,6 +3775,7 @@
                             <td>${index + 1}</td>
                             <td>${record.name}</td>
                             <td>${record.department}</td>
+                            <td>${record.office}</td>
                             <td>${record.time}</td>
                             <td>
                                 <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
@@ -3763,6 +3833,7 @@
                             <td>${index + 1}</td>
                             <td>${record.name}</td>
                             <td>${record.department}</td>
+                            <td>${record.office}</td>
                             <td>${record.time}</td>
                             <td>
                                 <span class="status-badge ${record.status === 'present' ? 'status-present' : 'status-absent'}">
@@ -3801,6 +3872,7 @@
                 alert(`Record Details:\n
 Name: ${record.name}\n
 Department: ${record.department}\n
+Office: ${record.office}\n
 Designation: ${record.designation}\n
 Time: ${record.time}\n
 Date: ${record.date}\n
@@ -3829,7 +3901,7 @@ Geofence Type: ${record.geofenceType || 'None'}`);
                 const today = new Date().toISOString().split('T')[0];
                 const filename = `attendance_records_${today}.csv`;
                 
-                let csv = 'S.No,Employee Name,Department,Designation,Time,Date,Status,Location,Distance,IP Address,Remarks,Geofence Type\n';
+                let csv = 'S.No,Employee Name,Department,Office Name,Designation,Time,Date,Status,Location,Distance,IP Address,Remarks,Geofence Type\n';
                 
                 this.attendanceRecords.forEach((record, index) => {
                     const geofence = this.getEmployeeGeofence(record.employeeId);
@@ -3840,7 +3912,7 @@ Geofence Type: ${record.geofenceType || 'None'}`);
                         else if (geofence.type === 'global') geofenceType = 'Global';
                     }
                     
-                    csv += `${index + 1},"${record.name}","${record.department}","${record.designation}","${record.time}","${record.date}","${record.status}","${record.location}","${record.distance}","${record.ip}","${record.remarks || ''}","${geofenceType}"\n`;
+                    csv += `${index + 1},"${record.name}","${record.department}","${record.office}","${record.designation}","${record.time}","${record.date}","${record.status}","${record.location}","${record.distance}","${record.ip}","${record.remarks || ''}","${geofenceType}"\n`;
                 });
                 
                 const blob = new Blob([csv], { type: 'text/csv' });
@@ -3868,9 +3940,9 @@ Geofence Type: ${record.geofenceType || 'None'}`);
                         filename = `daily_report_${today}.csv`;
                         const todayRecords = this.attendanceRecords.filter(r => r.date === today);
                         
-                        reportData = 'S.No,Employee Name,Department,Designation,Time,Status,Location,Distance,Remarks\n';
+                        reportData = 'S.No,Employee Name,Department,Office Name,Designation,Time,Status,Location,Distance,Remarks\n';
                         todayRecords.forEach((record, index) => {
-                            reportData += `${index + 1},"${record.name}","${record.department}","${record.designation}","${record.time}","${record.status}","${record.location}","${record.distance}","${record.remarks || ''}"\n`;
+                            reportData += `${index + 1},"${record.name}","${record.department}","${record.office}","${record.designation}","${record.time}","${record.status}","${record.location}","${record.distance}","${record.remarks || ''}"\n`;
                         });
                         
                         if (todayRecords.length === 0) {
